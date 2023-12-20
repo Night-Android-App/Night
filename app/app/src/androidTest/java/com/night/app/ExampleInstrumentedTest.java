@@ -1,4 +1,4 @@
-package com.example.alarm;
+package com.night.app;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.alarm", appContext.getPackageName());
+        assertEquals("com.night.app", appContext.getPackageName());
     }
 }

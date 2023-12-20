@@ -1,4 +1,4 @@
-package com.example.alarm;
+package com.night.app;
 
 import org.junit.Test;
 
