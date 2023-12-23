@@ -2,22 +2,32 @@ package com.night.api;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
+import org.json.JSONObject;
 
-public class Database {
-    private Connection connect = getConnection();
+public abstract class Database {
+    public static Connection connect = getConnection();
 
-    public String executeQuery(String query, Boolean isRestricted) throws SQLException {
+    public static Boolean isUserExisted(String uid) throws SQLException {
+        final String QUERY = "SELECT uid  FROM account  WHERE uid=\"%s\"";
+        return executeQuery(QUERY).length == 1;
+    }
+
+    public static JSONObject[] executeQuery(String query, Object ...args)
+    throws SQLException {
+        return executeQuery(String.format(query, args));
+    }
+
+    public static JSONObject[] executeQuery(String query) throws SQLException {
         // communicate with Database
         Statement statement = connect.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
 
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<JSONObject> result = new ArrayList<JSONObject>();
         int nCols = resultSet.getMetaData().getColumnCount();
 
         // loop all selected rows
         while (resultSet.next()) {
-            String[] aRow = new String[nCols];
+            JSONObject aRow = new JSONObject();
             
             for (int i=1; i <= nCols; i++) {
                 // extract column data from ResultSet
@@ -25,38 +35,37 @@ public class Database {
                 String colValue = resultSet.getString(i);
 
                 // format column data into JSON format
-                aRow[i-1] = String.format("{\"%s\": \"%s\"}", colName, colValue);
+                aRow.put(colName, colValue);
             }
 
-            result.add(Arrays.toString(aRow));
-
-            // get one row data only
-            // prevent extracting multiple user data at once
-            if (isRestricted) break;
+            result.add(aRow);
         }
         
-        return result.toString();
+        return (JSONObject[]) result.toArray();
     }
 
-    private Connection getConnection() {
+    public static int executeUpdate(String query, Object ...args) throws SQLException {
+        return executeUpdate(String.format(query, args));
+    }
+
+    public static int executeUpdate(String query) throws SQLException {
+        Statement statement = connect.createStatement();
+        return statement.executeUpdate(query);
+    }
+
+    private static Connection getConnection() {
         try {
             // search and load JDBC from mysql connector in lib folder
-            Class.forName("com.mysql.jdbc.Driver");
-        }
-        catch (ClassNotFoundException e) {
-            System.out.println(e);
-        }
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
-        try {
             // for test only
             // database account shouldn't place at here directly
             String url = "jdbc:mysql://localhost:3306/night";
             return DriverManager.getConnection(url, "root", "night");
         }
-        catch (SQLException e) {
+        catch (Exception e) {
             System.out.println(e);
+            return null;
         }
-        
-        return null;
     }
 }
