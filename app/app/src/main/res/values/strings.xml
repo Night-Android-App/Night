@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">app</string>
+    <string name="notification">Notification</string>
+    <string name="grant">Grant</string>
+    <string name="permission">Permission</string>
+    <string name="login">Login</string>
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>
