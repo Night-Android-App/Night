@@ -1,4 +1,4 @@
-package night.app.fragments;
+package night.app.fragments.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,7 +13,7 @@ import night.app.R;
 import night.app.networks.AccountRequest;
 import night.app.services.Password;
 
-public class LoginModal extends DialogFragment {
+public class LoginDialog extends DialogFragment {
 
     private void handleOnClickLogin(View view) {
         String uid = ((TextInputEditText) view.findViewById(R.id.uidField)).getEditableText().toString();
@@ -36,7 +36,7 @@ public class LoginModal extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.activity_login_modal, null);
+        View view = inflater.inflate(R.layout.dialog_login, null);
         builder.setView(view);
 
         view.findViewById(R.id.loginButton).setOnClickListener(v -> handleOnClickLogin(view));

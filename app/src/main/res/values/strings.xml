@@ -7,4 +7,24 @@
     <string name="welcome_back">Welcome Back!</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="read">Read</string>
+    <string name="you_didn_t_agree_yet">You didn\'t agree yet</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="proceed">Proceed</string>
+    <string name="manual_configuration">Manual Configuration</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="clock">Clock</string>
+    <string name="sleep">Sleep</string>
+    <string name="backup">Backup</string>
+    <string name="others">Others</string>
+    <string name="backup_status">BACKUP STATUS</string>
+    <string name="frequency">frequency</string>
+    <string name="automatically_backup">AUTOMATICALLY BACKUP</string>
+    <string name="recovery">RECOVERY</string>
+    <string name="backupCapital">BACKUP</string>
+    <string name="delete_data">DELETE DATA</string>
+    <string name="action">ACTION</string>
+    <string name="backup_option">BACKUP OPTION</string>
+    <string name="last_backup">Last backup</string>
 </resources>

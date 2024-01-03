@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="night.app.activities.fragments.SettingPage">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
@@ -23,11 +22,11 @@
             android:id="@+id/textView16"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:gravity="center_vertical"
-            android:text="Setting"
+            android:text="Settings"
             android:textColor="#E9ECEF"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -38,13 +37,12 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/account"
+            android:id="@+id/cl_sett_acct"
             android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="4dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:onClick="onClick"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
@@ -53,16 +51,19 @@
             app:layout_constraintTop_toBottomOf="@+id/textView16">
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/img_sett_acct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/linearLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/frame" />
+                app:srcCompat="@drawable/ic_avatar" />
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -72,24 +73,26 @@
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintStart_toEndOf="@+id/img_sett_acct"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/uid"
+                    android:id="@+id/tv_sett_acct_uid"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="24dp"
                     android:layout_weight="1"
                     android:gravity="bottom"
-                    android:text="Username"
-                    android:textColor="#E9ECEF" />
+                    android:text="Press here to login now"
+                    android:textColor="#E9ECEF"
+                    android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/lastBackupDate"
+                    android:id="@+id/tv_sett_acct_desc"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_weight="1"
-                    android:text="backup 50days ago"
+                    android:gravity="bottom"
+                    android:text=">> Proceed"
                     android:textColor="#E4BEBE"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -99,49 +102,53 @@
         <LinearLayout
             android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="24dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/account">
+            app:layout_constraintTop_toBottomOf="@+id/cl_sett_acct">
 
             <TextView
-                android:id="@+id/textView21"
+                android:id="@+id/tab_sett_sleep"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="16dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/sleep"
+                android:textAlignment="gravity"
+                android:textColor="#E9ECEF"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tab_sett_backup"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Backup"
+                android:text="@string/backup"
                 android:textAlignment="gravity"
-                android:textColor="#E9ECEF" />
+                android:textColor="#E9ECEF"
+                android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/textView23"
+                android:id="@+id/tab_sett_others"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="16dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Non disturb"
+                android:text="@string/others"
                 android:textAlignment="gravity"
-                android:textColor="#E9ECEF" />
-
-            <TextView
-                android:id="@+id/textView22"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Other"
-                android:textAlignment="gravity"
-                android:textColor="#E9ECEF" />
+                android:textColor="#E9ECEF"
+                android:textSize="14sp" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fr_setting_details"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -149,49 +156,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
-        app:layout_constraintVertical_bias="0.0">
-
-        <TextView
-            android:id="@+id/textView29"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="24dp"
-            android:text="@string/permission"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView29">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="@string/notification" />
-
-            <Button
-                android:id="@+id/grantNotificationPermission"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_weight="0.4"
-                android:gravity="center"
-                android:onClick=""
-                android:text="@string/grant" />
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

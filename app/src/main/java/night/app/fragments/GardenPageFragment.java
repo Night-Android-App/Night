@@ -4,8 +4,8 @@ import androidx.fragment.app.Fragment;
 
 import night.app.R;
 
-public class GardenPage extends Fragment {
-    public GardenPage() {
+public class GardenPageFragment extends Fragment {
+    public GardenPageFragment() {
         super(R.layout.fragment_garden);
     }
 }
