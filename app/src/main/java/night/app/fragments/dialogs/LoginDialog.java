@@ -16,9 +16,9 @@ import night.app.services.Password;
 public class LoginDialog extends DialogFragment {
 
     private void handleOnClickLogin(View view) {
-        String uid = ((TextInputEditText) view.findViewById(R.id.uidField)).getEditableText().toString();
+        String uid = ((TextInputEditText) view.findViewById(R.id.et_login_uid)).getEditableText().toString();
 
-        String pwd = ((TextInputEditText) view.findViewById(R.id.pwdField)).getEditableText().toString();
+        String pwd = ((TextInputEditText) view.findViewById(R.id.et_login_pwd)).getEditableText().toString();
 
         new Thread(() -> {
             try {
@@ -39,7 +39,7 @@ public class LoginDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_login, null);
         builder.setView(view);
 
-        view.findViewById(R.id.loginButton).setOnClickListener(v -> handleOnClickLogin(view));
+        view.findViewById(R.id.btn_login).setOnClickListener(v -> handleOnClickLogin(view));
 
         return builder.create();
     }

@@ -16,7 +16,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
-            android:text="Sleep information" />
+            android:text="Statistics" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,7 +36,8 @@
                     android:layout_height="32dp"
                     android:gravity="center"
                     android:text="2h 31m"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -58,7 +59,8 @@
                     android:layout_height="32dp"
                     android:gravity="center"
                     android:text="16m"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -80,7 +82,8 @@
                     android:layout_height="32dp"
                     android:gravity="center"
                     android:text="2h 31m"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="match_parent"

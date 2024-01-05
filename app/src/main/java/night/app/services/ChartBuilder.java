@@ -86,13 +86,12 @@ public class ChartBuilder {
 
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xLabel));
 
-        chart.getAxisLeft().setAxisMinimum(0);
-        chart.getAxisLeft().setAxisMaximum(100);
+        chart.getAxisLeft().setAxisMinimum(yRange[0]);
+        chart.getAxisLeft().setAxisMaximum(yRange[1]);
         chart.getAxisLeft().setLabelCount(3, true);
         chart.getAxisLeft().setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-
                 if (value == 0.0f) return "Awake";
 
                 if (value == 50.0f) return "Light sleep";

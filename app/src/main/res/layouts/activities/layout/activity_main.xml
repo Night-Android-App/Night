@@ -29,65 +29,116 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
+        <LinearLayout
             android:id="@+id/btn_page_garden"
             android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:onClick="switchPage"
-            android:paddingTop="2dp"
-            android:text="@string/garden"
-            android:textAlignment="center"
-            android:textColor="#ffffff"
-            android:textSize="11sp"
-            app:drawableTopCompat="@drawable/ic_tab_garden"
-            tools:ignore="TouchTargetSizeCheck" />
+            android:orientation="vertical"
+            tools:ignore="TouchTargetSizeCheck,UseCompoundDrawables">
 
-        <TextView
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:padding="2dp"
+                app:srcCompat="@drawable/ic_tab_garden"
+                tools:tint="#ffffff" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/garden"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/btn_page_clock"
             android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="6dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:onClick="switchPage"
-            android:paddingTop="2dp"
-            android:text="@string/clock"
-            android:textAlignment="center"
-            android:textColor="#ffffff"
-            android:textSize="11sp"
-            app:drawableTopCompat="@drawable/ic_tab_clock"
-            tools:ignore="TouchTargetSizeCheck" />
+            android:orientation="vertical"
+            tools:ignore="TouchTargetSizeCheck,UseCompoundDrawables">
 
-        <TextView
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:padding="2dp"
+                app:srcCompat="@drawable/ic_tab_clock"
+                tools:tint="#a2a2a2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:text="@string/clock"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/btn_page_analysis"
             android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="6dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:onClick="switchPage"
-            android:paddingTop="2dp"
-            android:text="@string/analysis"
-            android:textAlignment="center"
-            android:textColor="#ffffff"
-            android:textSize="11sp"
-            app:drawableTopCompat="@drawable/ic_tab_analysis"
-            tools:ignore="touch,TouchTargetSizeCheck" />
+            android:orientation="vertical"
+            tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,UseCompoundDrawables">
 
-        <TextView
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:padding="2dp"
+                app:srcCompat="@drawable/ic_tab_analysis"
+                tools:tint="#a2a2a2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center|center_vertical"
+                android:text="@string/analysis"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="11sp"
+                tools:ignore="touch,TouchTargetSizeCheck" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/btn_page_settings"
             android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="6dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:onClick="switchPage"
-            android:paddingTop="2dp"
-            android:text="@string/settings"
-            android:textAlignment="center"
-            android:textColor="#ffffff"
-            android:textSize="11sp"
-            app:drawableTopCompat="@drawable/ic_tab_settings"
-            tools:ignore="TouchTargetSizeCheck" />
+            android:orientation="vertical"
+            tools:ignore="TouchTargetSizeCheck,UseCompoundDrawables">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:padding="2dp"
+                app:srcCompat="@drawable/ic_tab_settings"
+                tools:tint="#a2a2a2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:text="@string/settings"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="11sp" />
+        </LinearLayout>
 
     </LinearLayout>
 

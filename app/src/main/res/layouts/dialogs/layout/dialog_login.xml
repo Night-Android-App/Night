@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
     android:layout_height="400dp"
-    tools:context="night.app.activities.fragments.LoginModal">
+    tools:context="night.app.fragments.dialogs.LoginDialog">
 
     <TextView
         android:id="@+id/textView3"
@@ -47,7 +47,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/uidField"
+            android:id="@+id/et_login_uid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/username"
@@ -66,7 +66,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/pwdField"
+            android:id="@+id/et_login_pwd"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/password"
@@ -87,22 +87,21 @@
         app:layout_constraintVertical_bias="0.0">
 
         <TextView
-            android:id="@+id/signupButton"
+            android:id="@+id/btn_login_signin"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginEnd="14dp"
-            android:gravity="center|right"
+            android:gravity="center|end"
             android:text="Sign up"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/loginButton"
+            app:layout_constraintEnd_toStartOf="@+id/btn_login"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/loginButton"
+            android:id="@+id/btn_login"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginEnd="24dp"
-            android:onClick="@null"
             android:text="LOGIN"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

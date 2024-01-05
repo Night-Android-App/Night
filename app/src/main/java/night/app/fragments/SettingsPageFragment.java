@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.tabs.TabLayout;
+
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.fragments.dialogs.LoginDialog;
@@ -44,42 +46,43 @@ public class SettingsPageFragment extends Fragment {
         });
     }
 
-    public void switchSettingsType(View view) {
-        Class<? extends Fragment> fragmentClass;
-
-        if (view.getId() == R.id.tab_sett_sleep) {
-            fragmentClass = SleepConfigFragment.class;
-        }
-        else if (view.getId() == R.id.tab_sett_backup) {
-            fragmentClass = BackupConfigFragment.class;
-        }
-        else if (view.getId() == R.id.tab_sett_others) {
-            fragmentClass = OthersConfigFragment.class;
-        }
-        else return;
-
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fr_setting_details, fragmentClass, null).commit();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings_page, container, false);
 
         view.findViewById(R.id.cl_sett_acct)
             .setOnClickListener(v -> showLoginModal());
 
         loadAccountState(view);
 
+
+        ((TabLayout) view.findViewById(R.id.tab_sett)).addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Class<? extends Fragment> fragmentClass = switch (tab.getPosition()) {
+                    case 0 -> SleepConfigFragment.class;
+                    case 1 -> BackupConfigFragment.class;
+                    case 2 -> OthersConfigFragment.class;
+                    default ->
+                        throw new IllegalStateException("Unexpected value: " + tab.getPosition());
+                };
+
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fr_sett_details, fragmentClass, null).commit();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) { }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) { }
+        });
+
         requireActivity().getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .add(R.id.fr_setting_details, SleepConfigFragment.class, null)
+                .add(R.id.fr_sett_details, SleepConfigFragment.class, null)
                 .commit();
-
-        view.findViewById(R.id.tab_sett_sleep).setOnClickListener(this::switchSettingsType);
-        view.findViewById(R.id.tab_sett_backup).setOnClickListener(this::switchSettingsType);
-        view.findViewById(R.id.tab_sett_others).setOnClickListener(this::switchSettingsType);
-
 
         return view;
     }
