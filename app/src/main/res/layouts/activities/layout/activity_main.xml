@@ -8,142 +8,87 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fr_app_page"
-        android:name="night.app.fragments.GardenPageFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintBottom_toTopOf="@+id/ll_navbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="654dp"
+    <LinearLayout
+        android:id="@+id/ll_navbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:background="#212529"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:baselineAligned="false"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_weight="1">
+        <TextView
+            android:id="@+id/btn_page_garden"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:onClick="switchPage"
+            android:paddingTop="2dp"
+            android:text="@string/garden"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="11sp"
+            app:drawableTopCompat="@drawable/ic_tab_garden"
+            tools:ignore="TouchTargetSizeCheck" />
 
-            <LinearLayout
-                android:id="@+id/garden"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="switchPage"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/btn_page_clock"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_weight="1"
+            android:onClick="switchPage"
+            android:paddingTop="2dp"
+            android:text="@string/clock"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="11sp"
+            app:drawableTopCompat="@drawable/ic_tab_clock"
+            tools:ignore="TouchTargetSizeCheck" />
 
-                <ImageView
-                    android:id="@+id/imageView333"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_tab_garden" />
+        <TextView
+            android:id="@+id/btn_page_analysis"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_weight="1"
+            android:onClick="switchPage"
+            android:paddingTop="2dp"
+            android:text="@string/analysis"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="11sp"
+            app:drawableTopCompat="@drawable/ic_tab_analysis"
+            tools:ignore="touch,TouchTargetSizeCheck" />
 
-                <TextView
-                    android:id="@+id/textView21"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Garden"
-                    android:textAlignment="center"
-                    android:textSize="12sp" />
-            </LinearLayout>
+        <TextView
+            android:id="@+id/btn_page_settings"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:onClick="switchPage"
+            android:paddingTop="2dp"
+            android:text="@string/settings"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="11sp"
+            app:drawableTopCompat="@drawable/ic_tab_settings"
+            tools:ignore="TouchTargetSizeCheck" />
 
-            <LinearLayout
-                android:id="@+id/clock"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="switchPage"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/imageView32"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_tab_clock" />
-
-                <TextView
-                    android:id="@+id/textView24"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="@string/clock"
-                    android:textAlignment="center"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/analysis"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="switchPage"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/imageView3b"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_tab_analysis" />
-
-                <TextView
-                    android:id="@+id/textView2e"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Analysis"
-                    android:textAlignment="center"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/settings"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="switchPage"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_tab_settings" />
-
-                <TextView
-                    android:id="@+id/textView2a"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Setting"
-                    android:textAlignment="center"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

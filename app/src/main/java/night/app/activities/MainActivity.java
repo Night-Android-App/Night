@@ -38,13 +38,13 @@ public class MainActivity extends AppCompatActivity {
     public void switchPage(View view) {
         Class<? extends Fragment> fragmentClass;
 
-        if (view.getId() == R.id.garden) {
+        if (view.getId() == R.id.btn_page_garden) {
             fragmentClass = GardenPageFragment.class;
         }
         else if (view.getId() == R.id.settings) {
             fragmentClass = SettingsPageFragment.class;
         }
-        else if (view.getId() == R.id.analysis) {
+        else if (view.getId() == R.id.btn_page_analysis) {
             fragmentClass = AnalysisPageFragment.class;
         }
         else return;

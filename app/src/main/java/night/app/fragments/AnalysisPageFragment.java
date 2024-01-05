@@ -42,7 +42,7 @@ public class AnalysisPageFragment extends Fragment {
 
         view.findViewById(R.id.tab_anal_day).setOnClickListener(this::switchSettingsType);
         view.findViewById(R.id.tab_anal_week).setOnClickListener(this::switchSettingsType);
-        view.findViewById(R.id.tab_anal_week).setOnClickListener(this::switchSettingsType);
+        view.findViewById(R.id.tab_anal_month).setOnClickListener(this::switchSettingsType);
 
 
         return view;
