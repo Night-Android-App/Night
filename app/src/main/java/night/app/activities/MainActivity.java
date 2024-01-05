@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         if (view.getId() == R.id.btn_page_garden) {
             fragmentClass = GardenPageFragment.class;
         }
-        else if (view.getId() == R.id.settings) {
+        else if (view.getId() == R.id.btn_page_settings) {
             fragmentClass = SettingsPageFragment.class;
         }
         else if (view.getId() == R.id.btn_page_analysis) {
