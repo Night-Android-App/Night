@@ -3,30 +3,37 @@ package night.app.networks;
 import org.json.JSONObject;
 
 public class AccountRequest extends Request {
-    public static Boolean validateSessionID(String sessionID) throws Exception {
-        JSONObject writeData = new JSONObject();
-        writeData.put("sessionID", sessionID);
+    public static Boolean validateSessionID(String sessionID) {
+            try {
+                JSONObject writeData = new JSONObject() {{
+                    put("sessionID", sessionID);
+                }};
 
-        String responseData = createConnection("login", "POST", writeData.toString());
+                String responseData = createConnection("login", "POST", writeData.toString());
 
-        return new JSONObject(responseData).get("status") == "200";
+                return new JSONObject(responseData).get("status") == "200";
+            }
+            catch (Exception e) {
+
+            }
+            return null;
     }
 
-    public static void login(String uid, String hashedPwd) throws Exception {
-        JSONObject writeData = new JSONObject();
-        writeData.put("uid", uid);
-        writeData.put("pwd", hashedPwd);
+    public JSONObject register(String uid, String hashedPwd) throws Exception {
+        JSONObject writeData = new JSONObject() {{
+            put("uid", uid);
+            put("pwd", hashedPwd);
+        }};
 
-        JSONObject responseData
-            = new JSONObject(createConnection("login", "POST", writeData.toString()));
+        return new JSONObject(createConnection("register", "POST", writeData.toString()));
+    }
 
-        if (responseData.getInt("status") == 200) {
-            System.out.println("sucess");
-        }
-        else {
-            System.out.println(responseData.getString("msg"));
-        }
-        // store sessionID into local storage
-        // reload page ()
+    public static JSONObject login(String uid, String hashedPwd) throws Exception {
+        JSONObject writeData = new JSONObject() {{
+            put("uid", uid);
+            put("pwd", hashedPwd);
+        }};
+
+        return new JSONObject(createConnection("login", "POST", writeData.toString()));
     }
 }

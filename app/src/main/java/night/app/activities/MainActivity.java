@@ -1,13 +1,16 @@
 package night.app.activities;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -23,11 +26,12 @@ import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.GardenPageFragment;
 import night.app.fragments.SettingsPageFragment;
 import night.app.R;
+import night.app.services.DataStoreController;
 
 public class MainActivity extends AppCompatActivity {
 
-    public RxDataStore<Preferences> dataStore =
-        new RxPreferenceDataStoreBuilder(this, "settings").build();
+    public DataStoreController dataStore =
+        new DataStoreController(new RxPreferenceDataStoreBuilder(this, "settings").build());
 
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
             registerForActivityResult(
@@ -58,8 +62,13 @@ public class MainActivity extends AppCompatActivity {
         textView.setLayoutParams(params);
     }
 
+    // applied for event handler, which can only pass View as argument
     public void switchPage(View view) {
-        Class<? extends Fragment> fragmentClass = pageMap.get(view.getId());
+        switchPage(view.getId());
+    }
+
+    public void switchPage(int id) {
+        Class<? extends Fragment> fragmentClass = pageMap.get(id);
         if (fragmentClass == null) return;
 
         // get the instance of the display fragment
@@ -74,11 +83,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        setNavItemStyle(view.getId(), LinearLayout.LayoutParams.WRAP_CONTENT, "#FFFFFF");
+        setNavItemStyle(id, LinearLayout.LayoutParams.WRAP_CONTENT, "#FFFFFF");
 
         // change the display fragment
         getSupportFragmentManager().beginTransaction()
-            .replace(R.id.fr_app_page, fragmentClass, null).commit();
+            .replace(R.id.fr_app_page, fragmentClass, null)
+            .commit();
     }
 
     public MainActivity() {
@@ -89,8 +99,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // add event handler - click on the back button
+        // default (disabled): close app whatever the current fragment is
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
+
+                // exit app if fragment container contain Garden page
+                if (fragment instanceof GardenPageFragment) {
+                    System.exit(0);
+                    return;
+                }
+
+                // if fragment container doesn't contain Garden page
+                switchPage(R.id.btn_page_garden);
+            }
+        });
+
+
         getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
                 .add(R.id.fr_app_page, GardenPageFragment.class, null)
                 .commit();
 

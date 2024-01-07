@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 
@@ -19,31 +20,36 @@ import night.app.fragments.settings.BackupConfigFragment;
 import night.app.fragments.settings.OthersConfigFragment;
 import night.app.fragments.settings.SleepConfigFragment;
 import night.app.networks.AccountRequest;
+import night.app.services.DataStoreController;
 
 
 public class SettingsPageFragment extends Fragment {
+
+
     private void showLoginModal() {
         new LoginDialog().show(requireActivity().getSupportFragmentManager(), "GAME_DIALOG");
     }
 
     @SuppressLint("CheckResult")
     private void loadAccountState(View view) {
-        TextView acctUID = view.findViewById(R.id.tv_sett_acct_uid);
-        TextView acctDesc = view.findViewById(R.id.tv_sett_acct_desc);
 
-        ((MainActivity) requireActivity()).dataStore.data().forEach(pref -> {
-            String sessionID = pref.get(PreferencesKeys.stringKey("sessionID"));
+        Preferences pref = ((MainActivity) requireActivity()).dataStore.getPreferences();
 
-            // sessionID isn't existed / expired in local storage
-            if (sessionID == null || !AccountRequest.validateSessionID(sessionID)) {
-                view.findViewById(R.id.cl_sett_acct).setOnClickListener(v -> showLoginModal());
-            }
-            else {
-                view.findViewById(R.id.cl_sett_acct).setOnClickListener(null);
-                acctUID.setText(pref.get(PreferencesKeys.stringKey("username")));
-                acctDesc.setText(pref.get(PreferencesKeys.stringKey("lastBackupDate")));
-            }
-        });
+        String sessionID = pref.get(PreferencesKeys.stringKey("sessionID"));
+
+        // sessionID isn't existed / expired in local storage
+        if (sessionID == null || Boolean.FALSE.equals(AccountRequest.validateSessionID(sessionID))) {
+            view.findViewById(R.id.cl_sett_acct).setOnClickListener(v -> showLoginModal());
+        }
+        else {
+            view.findViewById(R.id.cl_sett_acct).setOnClickListener(null);
+
+            TextView acctUID = view.findViewById(R.id.tv_sett_acct_uid);
+            acctUID.setText(pref.get(PreferencesKeys.stringKey("username")));
+
+            TextView acctDesc = view.findViewById(R.id.tv_sett_acct_desc);
+            acctDesc.setText(pref.get(PreferencesKeys.stringKey("lastBackupDate")));
+        }
     }
 
 
@@ -51,11 +57,10 @@ public class SettingsPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings_page, container, false);
 
-        view.findViewById(R.id.cl_sett_acct)
-            .setOnClickListener(v -> showLoginModal());
-
         loadAccountState(view);
 
+        // init listeners inside the fragment layout
+        view.findViewById(R.id.cl_sett_acct).setOnClickListener(v -> showLoginModal());
 
         ((TabLayout) view.findViewById(R.id.tab_sett)).addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

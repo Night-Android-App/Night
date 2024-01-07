@@ -40,4 +40,7 @@
     <string name="press_here_to_login_now">Press here to login now</string>
     <string name="acct_proceed"><![CDATA[>> Proceed]]></string>
     <string name="desc_avatar">Avatar</string>
+    <string name="alarm_list">Alarm list</string>
+    <string name="sleep_data">Sleep data</string>
+    <string name="not_applicable">N/A</string>
 </resources>

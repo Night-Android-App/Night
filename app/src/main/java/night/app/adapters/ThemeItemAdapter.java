@@ -1,47 +1,68 @@
 package night.app.adapters;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import night.app.R;
 
 public class ThemeItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final String[] localDataSet;
+    private final JSONObject[] localDataSet;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textView;
+        private final TextView tvItemName;
+        private final TextView tvItemPrice;
 
+        @SuppressLint("ClickableViewAccessibility")
         public ViewHolder(View view) {
             super(view);
-            textView = (TextView) view.findViewById(R.id.tv_shop_item_name);
+            tvItemName = view.findViewById(R.id.tv_shop_item_name);
+            tvItemPrice = view.findViewById(R.id.tv_shop_item_price);
+
+            // disable scroll
+            view.findViewById(R.id.sv_day_record).setOnTouchListener((view1, motionEvent) -> true);
         }
 
-        public TextView getTextView() {
-            return textView;
+        public void loadData(JSONObject itemData) throws JSONException {
+            tvItemName.setText(itemData.getString("name"));
+            tvItemPrice.setText(itemData.getString("price"));
         }
     }
 
-    public ThemeItemAdapter(String[] dataSet) {
+    public ThemeItemAdapter(JSONObject[] dataSet) {
         localDataSet = dataSet;
     }
+
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item_shop, viewGroup, false);
+                .inflate(R.layout.item_shop_theme, viewGroup, false);
 
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
-        ((ViewHolder) viewHolder).getTextView().setText(localDataSet[position]);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) {
+
+        try {
+            ((ViewHolder) viewHolder).loadData(localDataSet[position]);
+        }
+        catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
