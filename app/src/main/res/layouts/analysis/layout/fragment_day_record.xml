@@ -27,8 +27,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="8dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -36,30 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
-                    android:text="2h 31m"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_horizontal|top"
-                    android:text="DEEP SLEEP"
-                    android:textSize="11sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:gravity="center"
-                    android:text="16m"
+                    android:text="@string/not_applicable"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -74,7 +51,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -82,7 +59,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
-                    android:text="2h 31m"
+                    android:text="@string/not_applicable"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal|top"
+                    android:text="DEEP SLEEP"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:gravity="center"
+                    android:text="@string/not_applicable"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 

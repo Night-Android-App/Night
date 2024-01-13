@@ -36,14 +36,19 @@ public class Password {
         return "Pass";
     }
 
-    public static String hash(String text) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hashedByte = md.digest(text.getBytes(StandardCharsets.UTF_8));
+    public static String hash(String text)  {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedByte = md.digest(text.getBytes(StandardCharsets.UTF_8));
 
-        BigInteger number = new BigInteger(1, hashedByte);
-        StringBuilder hexString = new StringBuilder(number.toString(16));
+            BigInteger number = new BigInteger(1, hashedByte);
+            StringBuilder hexString = new StringBuilder(number.toString(16));
 
-        while (hexString.length() < 64) hexString.insert(0, '0');
-        return hexString.toString();
+            while (hexString.length() < 64) hexString.insert(0, '0');
+            return hexString.toString();
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

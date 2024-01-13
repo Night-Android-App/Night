@@ -1,12 +1,35 @@
 package night.app.networks;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ServiceRequest extends Request {
-    public static void deleteBackup(String uid) throws Exception {
-        JSONObject writeData = new JSONObject();
-        writeData.put("uid", uid);
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
-        createConnection("backup", "DELETE", writeData.toString());
+public class ServiceRequest extends Request {
+    public void recovery(Callback Callback) {
+        new Thread(() -> {
+            // recovery all backup types
+            Map<String, Object> params = new HashMap<>() {{
+                put("sleep", true);
+                put("alarm", true);
+                put("dream", true);
+            }};
+
+            JSONObject response = connect("data" + parseURLParams(params), "GET")
+                    .getResponse();
+
+            Callback.run(response);
+        });
+    }
+
+    public void delBackup(Callback Callback) {
+        new Thread(() -> {
+            JSONObject response = connect("data", "DELETE")
+                    .getResponse();
+
+            Callback.run(response);
+        }).start();
     }
 }

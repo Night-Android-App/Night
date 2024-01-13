@@ -1,39 +1,58 @@
 package night.app.networks;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AccountRequest extends Request {
-    public static Boolean validateSessionID(String sessionID) {
+    public void validateSession(Callback Callback) {
+        new Thread(() -> {
+            JSONObject response = connect("session", "POST").getResponse();
+
+            if (response != null && response.optInt("responseCode") != 200) {
+                // set session id to empty in cookie
+            }
+
+            Callback.run(response);
+        });
+    }
+
+    public void register(String uid, String hashedPwd, Callback Callback) {
+        new Thread(() -> {
             try {
-                JSONObject writeData = new JSONObject() {{
-                    put("sessionID", sessionID);
+                JSONObject data = new JSONObject() {{
+                    put("uid", uid);
+                    put("pwd", hashedPwd);
                 }};
 
-                String responseData = createConnection("login", "POST", writeData.toString());
+                JSONObject response = connect("register", "POST")
+                        .sendData(data.toString())
+                        .getResponse();
 
-                return new JSONObject(responseData).get("status") == "200";
+                Callback.run(response);
             }
-            catch (Exception e) {
-
+            catch (JSONException e) {
+                throw new RuntimeException(e);
             }
-            return null;
+        }).start();
     }
 
-    public JSONObject register(String uid, String hashedPwd) throws Exception {
-        JSONObject writeData = new JSONObject() {{
-            put("uid", uid);
-            put("pwd", hashedPwd);
-        }};
+    public void login(String uid, String hashedPwd, Callback Callback) {
+        new Thread(() -> {
+            try {
+                JSONObject data = new JSONObject() {{
+                    put("uid", uid);
+                    put("pwd", hashedPwd);
+                }};
 
-        return new JSONObject(createConnection("register", "POST", writeData.toString()));
-    }
+                JSONObject response = connect("login", "POST")
+                        .sendData(data.toString())
+                        .getResponse();
 
-    public static JSONObject login(String uid, String hashedPwd) throws Exception {
-        JSONObject writeData = new JSONObject() {{
-            put("uid", uid);
-            put("pwd", hashedPwd);
-        }};
-
-        return new JSONObject(createConnection("login", "POST", writeData.toString()));
+                Callback.run(response);
+            }
+            catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 }

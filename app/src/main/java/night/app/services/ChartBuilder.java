@@ -62,10 +62,10 @@ public class ChartBuilder {
         }
 
         LineDataSet dataSet = new LineDataSet(dataEntries, "");
-        dataSet.setDrawValues(false);
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         dataSet.setColor(Color.parseColor("#441E9F"));
 
-        chart.setData(new LineData(dataSet, new LineDataSet(dataEntries, "")));
+        chart.setData(new LineData(dataSet));
     }
 
     public ChartBuilder(BarChart chart, String[] xLabel, Integer[] yRange, Integer[] data) {

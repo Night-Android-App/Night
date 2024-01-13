@@ -9,8 +9,9 @@ import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -22,16 +23,15 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
+import night.app.data.PreferenceViewModel;
 import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.GardenPageFragment;
 import night.app.fragments.SettingsPageFragment;
 import night.app.R;
-import night.app.services.DataStoreController;
 
 public class MainActivity extends AppCompatActivity {
-
-    public DataStoreController dataStore =
-        new DataStoreController(new RxPreferenceDataStoreBuilder(this, "settings").build());
+    public PreferenceViewModel preferenceViewModel;
+    public RxDataStore<Preferences> dataStore;
 
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
             registerForActivityResult(
@@ -99,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        dataStore =  new RxPreferenceDataStoreBuilder(this, "settings").build();
+        preferenceViewModel =  new ViewModelProvider(this, new ViewModelProvider.Factory() {
+            @NonNull @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                return (T) new PreferenceViewModel(dataStore);
+            }
+        }).get(PreferenceViewModel.class);
+        
         // add event handler - click on the back button
         // default (disabled): close app whatever the current fragment is
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -116,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 switchPage(R.id.btn_page_garden);
             }
         });
-
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fr_app_page, GardenPageFragment.class, null)
