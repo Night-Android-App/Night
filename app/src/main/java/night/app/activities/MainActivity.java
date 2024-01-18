@@ -23,6 +23,7 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
+import night.app.data.DataStoreHelper;
 import night.app.data.PreferenceViewModel;
 import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.GardenPageFragment;
@@ -31,7 +32,7 @@ import night.app.R;
 
 public class MainActivity extends AppCompatActivity {
     public PreferenceViewModel preferenceViewModel;
-    public RxDataStore<Preferences> dataStore;
+    public DataStoreHelper dataStore;
 
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
             registerForActivityResult(
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dataStore =  new RxPreferenceDataStoreBuilder(this, "settings").build();
+        dataStore =  new DataStoreHelper(new RxPreferenceDataStoreBuilder(this, "settings").build());
         preferenceViewModel =  new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {

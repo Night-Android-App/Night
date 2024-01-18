@@ -9,24 +9,46 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import night.app.R;
 import night.app.activities.MainActivity;
+import night.app.data.PreferenceViewModel;
+import night.app.databinding.DialogLoginBinding;
+import night.app.fragments.SettingsPageFragment;
 import night.app.networks.AccountRequest;
 import night.app.services.Password;
 
 public class LoginDialog extends BottomSheetDialogFragment {
+    DialogLoginBinding binding;
+    public void switchToRegisterDialog() {
+        dismiss();
+        new RegisterDialog().show(getParentFragmentManager(), null);
+    }
+
     private void initFieldOnKeyListener(View view) {
-        LinearLayout fieldContainer = view.findViewById(R.id.ll_form_fields);
+        LinearLayout fieldContainer = binding.llFormFields;
 
         // loop all fields and set key down listener
         for (int i = 0; i < fieldContainer.getChildCount(); i++) {
             EditText etFieldChild = ((TextInputLayout) fieldContainer.getChildAt(i))
                     .getEditText();
+
 
             if (etFieldChild == null) continue;
 
@@ -68,21 +90,26 @@ public class LoginDialog extends BottomSheetDialogFragment {
             });
         }
     }
-    private void handleOnClickLogin(View view) {
+    public void handleOnClickLogin(View view) {
         // get user inputs from the fields
-        String uidValue = ((TextInputEditText) view.findViewById(R.id.et_login_uid))
-                .getEditableText()
-                .toString();
-
-        String pwdValue = ((TextInputEditText) view.findViewById(R.id.et_login_pwd))
-                .getEditableText()
-                .toString();
+        String uidValue = binding.etLoginUid.getEditableText().toString();
+        String pwdValue = binding.etLoginPwd.getEditableText().toString();
 
         new AccountRequest().login(uidValue, Password.hash(pwdValue), res -> {
 
             if (res != null && res.optInt("responseCode") == 200) {
-                System.out.println("Success");
-                // code
+                try {
+                    String date = (String) ((JSONObject) res.get("response")).get("createdDate");
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("uid", uidValue);
+                    bundle.putString("desc", date.substring(0, 10));
+
+                    getParentFragmentManager().setFragmentResult("accountStatus", bundle);
+                    dismiss();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
                 return;
             }
 
@@ -92,13 +119,15 @@ public class LoginDialog extends BottomSheetDialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_login, container);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_login, container, false);
+        binding.setFragment(this);
 
-        view.findViewById(R.id.et_login_uid).requestFocus();
+        View view = binding.getRoot();
+
+        binding.etLoginUid.requestFocus();
 
         initFieldOnKeyListener(view);
-        view.findViewById(R.id.btn_login).setOnClickListener(v -> handleOnClickLogin(view));
 
         return view;
     }

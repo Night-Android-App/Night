@@ -1,12 +1,8 @@
 package night.app.adapters;
 
-import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,14 +20,10 @@ public class ThemeItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private final TextView tvItemName;
         private final TextView tvItemPrice;
 
-        @SuppressLint("ClickableViewAccessibility")
         public ViewHolder(View view) {
             super(view);
             tvItemName = view.findViewById(R.id.tv_shop_item_name);
             tvItemPrice = view.findViewById(R.id.tv_shop_item_price);
-
-            // disable scroll
-            view.findViewById(R.id.sv_day_record).setOnTouchListener((view1, motionEvent) -> true);
         }
 
         public void loadData(JSONObject itemData) throws JSONException {

@@ -44,7 +44,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical|end"
-                    android:text="@{viewModel.lastBackupDate}" />
+                    android:text="@{viewModel.lastBackupDate, default=`No backup data`}" />
 
             </LinearLayout>
 

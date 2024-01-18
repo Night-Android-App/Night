@@ -22,8 +22,7 @@ import java.util.Map;
 public abstract class Request {
     HttpURLConnection connection;
 
-    // server deployment hasn't done yet, use loopback address instead
-    private static final String DOMAIN = "http://127.0.0.1/";
+    private static final String DOMAIN = "https://apifunction.azurewebsites.net/api/";
 
     public interface Callback {
         void run(@Nullable JSONObject res);

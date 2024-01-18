@@ -84,8 +84,8 @@ public class PreferenceViewModel extends ViewModel implements Observable {
         dataStore.update(PreferencesKeys.booleanKey("backupDreamRecord"), value);
     }
 
-    public PreferenceViewModel(RxDataStore<Preferences> rxDataStore) {
-        dataStore = new DataStoreHelper(rxDataStore);
+    public PreferenceViewModel(DataStoreHelper dataStoreHelper) {
+        dataStore = dataStoreHelper;
         prefs = dataStore.getPrefs();
     }
 }

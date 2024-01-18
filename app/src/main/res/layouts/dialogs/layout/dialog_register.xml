@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <data>
-    <variable name="fragment" type="night.app.fragments.dialogs.LoginDialog" />
+    <variable name="fragment" type="night.app.fragments.dialogs.RegisterDialog"/>
 </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +19,7 @@
             android:layout_marginTop="44dp"
             android:layout_marginEnd="24dp"
             android:gravity="center"
-            android:text="@string/login"
+            android:text="Sign up"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +33,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:gravity="center"
-            android:text="@string/welcome_back"
+            android:text="Welcome to Night!"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -77,11 +77,24 @@
                     android:maxLength="20" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_login_pwd_confirmed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Confirm password"
+                    android:inputType="textPassword"
+                    android:maxLength="20" />
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
@@ -90,8 +103,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_form_fields"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintTop_toBottomOf="@+id/ll_form_fields">
 
             <Button
                 android:id="@+id/btn_register_login"
@@ -99,8 +111,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginEnd="14dp"
                 android:gravity="center|end"
-                android:text="Didn't has an account?"
-                android:onClick="@{v -> fragment.switchToRegisterDialog()}"
+                android:onClick="@{v -> fragment.switchToLoginDialog()}"
+                android:text="Already have an account?"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btn_login"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -109,8 +121,7 @@
                 android:id="@+id/btn_login"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:onClick="@{fragment.handleOnClickLogin}"
-                android:text="LOGIN"
+                android:text="PROCEED"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
