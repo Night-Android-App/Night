@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONObject;
 
@@ -23,8 +24,8 @@ public class RegisterDialog extends DialogFragment {
     DialogRegisterBinding binding;
 
     public void switchToLoginDialog() {
-        dismiss();
         new LoginDialog().show(getParentFragmentManager(), null);
+        dismiss();
     }
 
     public void confirmRegister() {
@@ -33,13 +34,22 @@ public class RegisterDialog extends DialogFragment {
         String pwdValue = binding.etLoginPwd.getEditableText().toString();
         String pwdValueConfirmed = binding.etLoginPwdConfirmed.getEditableText().toString();
 
-        if (12 < uidValue.length() || uidValue.length() > 20) return;
-        if (!pwdValue.equals(pwdValueConfirmed)) return;
 
-        if (Password.validate(pwdValue) != null) {
-            System.out.println(Password.validate(pwdValue));
+        if (uidValue.length() < 12 || uidValue.length() > 20) {
+            binding.etLoginUid.setError("length should be between 12 to 20 characters.");
             return;
         }
+
+        if (!pwdValue.equals(pwdValueConfirmed)) {
+            binding.etLoginPwdConfirmed.setError("Unmatched password.");
+            return;
+        }
+
+        if (Password.validate(pwdValue) != null) {
+            binding.etLoginPwd.setError(Password.validate(pwdValue));
+            return;
+        }
+
         new AccountRequest().register(uidValue, Password.hash(pwdValue), res -> {
 
             if (res != null && res.optInt("responseCode") == 200) {

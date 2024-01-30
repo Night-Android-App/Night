@@ -1,5 +1,6 @@
 package night.app.adapters;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -30,7 +31,16 @@ class ViewHolder extends RecyclerView.ViewHolder {
         binding.tvShopItemPrice.setText(itemData.getOrDefault("price", ""));
 
         binding.btnShopItemPurchase.setOnClickListener(v -> {
-            new PurchaseDialog().show(activity.getSupportFragmentManager(), null);
+            PurchaseDialog dialog = new PurchaseDialog();
+
+
+            Bundle bundle = new Bundle();
+
+            bundle.putString("price", itemData.getOrDefault("price", ""));
+            dialog.setArguments(bundle);
+
+            dialog.show(activity.getSupportFragmentManager(), null);
+
         });
     }
 }
