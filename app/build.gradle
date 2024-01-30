@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -40,6 +41,9 @@ android {
             res {
                 srcDirs 'src\\main\\res', 'src\\main\\res\\layouts\\activities', 'src\\main\\res\\layouts\\dialogs', 'src\\main\\res\\layouts\\settings', 'src\\main\\res\\layouts\\analysis', 'src\\main\\res\\layouts\\garden', 'src\\main\\res\\layouts\\adapters'
             }
+            assets {
+                srcDirs 'src\\main\\assets'
+            }
         }
     }
     buildFeatures {
@@ -60,6 +64,11 @@ dependencies {
 
     // avoid to throw "duplicate class found" of kotlin
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
+
+    // room (local database)
+    implementation "androidx.room:room-runtime:2.3.0"
+    annotationProcessor "androidx.room:room-compiler:2.3.0:"
+    implementation "androidx.room:room-rxjava3:2.3.0"
 
     implementation fileTree("libs")
     implementation 'androidx.appcompat:appcompat:1.6.1'

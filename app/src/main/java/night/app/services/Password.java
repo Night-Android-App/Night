@@ -4,36 +4,59 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 
 public class Password {
-    private static String checkLength(String text) {
-        if (text.length() < 12) return "Password should be at least 12 characters.";
-        if (text.length() > 20) return "Password should be at most 20 characters.";
+    private static HashMap<String, String> checkLength(String text) {
+        HashMap<String, String> returnObj = new HashMap<>();
+        returnObj.put("error", "Password should be at least 12 characters.");
 
-        return "true";
+        if (text.length() < 12) {
+            returnObj.put("error", "Password should be at least 12 characters.");
+        }
+        else if (text.length() > 20) {
+            returnObj.put("error", "Password should be at most 20 characters.");
+        }
+        else {
+            returnObj.put("error", null);
+        }
+
+        return returnObj;
     }
 
-    private static String checkCharTypeCombination(String text) {
+    private static HashMap<String, String> checkCharTypeCombination(String text) {
+        HashMap<String, String> returnObj = new HashMap<>();
+
         // require entire string is matched, not based on substring
-        if (!text.matches(".*[A-Z].*"))
-            return "Password should has at least one uppercase letter.";
-        if (!text.matches(".*\\d.*"))
-            return "Password should has at least one number.";
-        if (!text.matches(".*[#?!@$%^&*-].*"))
-            return "Password should has at least one symbol.";
-        if (!text.matches(".*[a-z].*"))
-            return "Password should has at least one lowercase letter.";
-        return "true";
+        if (!text.matches(".*[A-Z].*")) {
+            returnObj.put("error", "Password should has at least one uppercase letter.");
+        }
+        else if (!text.matches(".*\\d.*")) {
+            returnObj.put("error", "Password should has at least one number.");
+        }
+        else if (!text.matches(".*[#?!@$%^&*-].*")) {
+            returnObj.put("error", "Password should has at least one symbol.");
+        }
+        else if (!text.matches(".*[a-z].*")) {
+            returnObj.put("error", "Password should has at least one lowercase letter.");
+        }
+        else {
+            returnObj.put("error", null);
+        }
+
+        return returnObj;
     }
 
     public static String validate(String text) {
-        String isPass = checkLength(text);
-        if (!isPass.equals("true")) return isPass;
+        HashMap<String, String>  result;
 
-        isPass = checkCharTypeCombination(text);
-        if (!isPass.equals("true")) return isPass;
+        result = checkLength(text);
+        if (result.get("error") != null) return result.get("error");
 
-        return "Pass";
+        result = checkCharTypeCombination(text);
+        if (result.get("error") != null) return result.get("error");
+
+        return null;
     }
 
     public static String hash(String text)  {

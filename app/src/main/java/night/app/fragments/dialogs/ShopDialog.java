@@ -15,26 +15,28 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import night.app.R;
+import night.app.activities.MainActivity;
 import night.app.adapters.ThemeItemAdapter;
 
 public class ShopDialog extends DialogFragment {
     View view;
 
-    private JSONObject[] getSampleData() {
-        try {
-            JSONObject itemData = new JSONObject() {{
-                put("name", "test234");
-                put("price", "40");
-            }};
+    private ArrayList<HashMap<String, String>> getSampleData() {
+        HashMap<String, String> itemData = new HashMap<>() {{
+            put("name", "test234");
+            put("price", "40");
+        }};
 
-            return new JSONObject[] {itemData, itemData};
-        }
-        catch (JSONException e) {
-            System.out.println(e.toString());
-        }
+        ArrayList<HashMap<String, String>> array = new ArrayList<>() {{
+            add(itemData);
+            add(itemData);
+        }};
 
-        return new JSONObject[] {};
+        return array;
     }
 
     private void loadItemList(RecyclerView.Adapter adapter) {
@@ -53,10 +55,10 @@ public class ShopDialog extends DialogFragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     // Themes tab
-                    case 0 -> loadItemList(new ThemeItemAdapter(getSampleData()));
+                    case 0 -> loadItemList(new ThemeItemAdapter(requireActivity(), getSampleData()));
 
                     // Ringtones tab
-                    case 1 -> loadItemList(new ThemeItemAdapter(new JSONObject[]{}));
+                    case 1 -> loadItemList(new ThemeItemAdapter(requireActivity(), getSampleData()));
                 };
             }
 
@@ -86,7 +88,7 @@ public class ShopDialog extends DialogFragment {
         RecyclerView itemListView = view.findViewById(R.id.rv_shop_items);
         itemListView.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
-        loadItemList(new ThemeItemAdapter(getSampleData()));
+        loadItemList(new ThemeItemAdapter(requireActivity(), getSampleData()));
 
         return view;
     }

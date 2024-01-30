@@ -28,7 +28,6 @@ public class PreferenceViewModel extends ViewModel implements Observable {
         if (lastBackupDate == null) {
             lastBackupDate = prefs.get(PreferencesKeys.stringKey("lastBackupDate"));
         }
-
         if (lastBackupDate == null || lastBackupDate.equals("")) return "No backup data";
         return lastBackupDate;
     }

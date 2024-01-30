@@ -1,64 +1,66 @@
 package night.app.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import night.app.R;
+import night.app.databinding.ItemShopThemeBinding;
+import night.app.fragments.dialogs.PurchaseDialog;
+
+class ViewHolder extends RecyclerView.ViewHolder {
+    ItemShopThemeBinding binding;
+
+    public ViewHolder(ItemShopThemeBinding binding) {
+        super(binding.getRoot());
+
+        this.binding = binding;
+    }
+
+    public void loadData(FragmentActivity activity, HashMap<String, String> itemData) {
+        binding.tvShopItemName.setText(itemData.getOrDefault("name", ""));
+        binding.tvShopItemPrice.setText(itemData.getOrDefault("price", ""));
+
+        binding.btnShopItemPurchase.setOnClickListener(v -> {
+            new PurchaseDialog().show(activity.getSupportFragmentManager(), null);
+        });
+    }
+}
 
 public class ThemeItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final JSONObject[] localDataSet;
+    private final ArrayList<HashMap<String, String>> localDataSet;
+    private final FragmentActivity activity;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvItemName;
-        private final TextView tvItemPrice;
-
-        public ViewHolder(View view) {
-            super(view);
-            tvItemName = view.findViewById(R.id.tv_shop_item_name);
-            tvItemPrice = view.findViewById(R.id.tv_shop_item_price);
-        }
-
-        public void loadData(JSONObject itemData) throws JSONException {
-            tvItemName.setText(itemData.getString("name"));
-            tvItemPrice.setText(itemData.getString("price"));
-        }
-    }
-
-    public ThemeItemAdapter(JSONObject[] dataSet) {
-        localDataSet = dataSet;
-    }
-
-
-    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item_shop_theme, viewGroup, false);
+    public int getItemCount() {
+        return localDataSet.size();
+    }
 
-        return new ViewHolder(view);
+    @Override @NonNull
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+
+        ItemShopThemeBinding binding =
+            DataBindingUtil.inflate(inflater, R.layout.item_shop_theme, viewGroup, false);
+
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) {
-
-        try {
-            ((ViewHolder) viewHolder).loadData(localDataSet[position]);
-        }
-        catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        ((ViewHolder) viewHolder).loadData(activity, localDataSet.get(position));
     }
 
-    @Override
-    public int getItemCount() {
-        return localDataSet.length;
+    public ThemeItemAdapter(FragmentActivity mainActivity, ArrayList<HashMap<String, String>> dataSet) {
+        activity = mainActivity;
+        localDataSet = dataSet;
     }
 }

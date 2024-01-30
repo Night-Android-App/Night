@@ -1,136 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:fitsSystemWindows="true">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<data>
+    <variable name="fragment" type="night.app.fragments.AnalysisPageFragment" />
+    <variable name="theme" type="night.app.data.Theme" />
+</data>
 
     <LinearLayout
-        android:id="@+id/constraintLayout2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="526dp"
-        android:background="#212529"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/linearLayout3"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:paddingHorizontal="8dp">
-
-            <TextView
-                android:id="@+id/tab_anal_day"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="8dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Day"
-                android:textAlignment="gravity"
-                android:textColor="#E9ECEF"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tab_anal_week"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="8dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Week"
-                android:textAlignment="gravity"
-                android:textColor="#E9ECEF"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tab_anal_month"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="8dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Month"
-                android:textAlignment="gravity"
-                android:textColor="#E9ECEF"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
-            android:gravity="center"
-            android:text="15 November 2023"
-            android:textAlignment="center"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:id="@+id/ll_analysis_summary"
+            android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="34dp"
-            android:minHeight="160dp"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:background="@{theme.primary}"
+            tools:background="#212529"
+            android:paddingTop="8dp"
+            android:paddingBottom="34dp">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_anal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                app:tabRippleColor="@{theme.textInactive}"
+                tools:tabRippleColor="#757a7f"
+                tools:tabIndicatorColor="#fff"
+                tools:tabTextColor="#757a7f"
+                tools:tabSelectedTextColor="#fff" >
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Day" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Week" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Month" />
+            </com.google.android.material.tabs.TabLayout>
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="15 November 2023"
+                android:textAlignment="center"
+                android:textColor="@{theme.textContrast}"
+                tools:textColor="#fff"
+                android:textSize="16sp" />
 
             <LinearLayout
-                android:id="@+id/linearLayout4"
+                android:id="@+id/ll_analysis_summary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="12dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="10dp"
+                android:minHeight="160dp"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tv_anal_main_score_data"
+                <LinearLayout
+                    android:id="@+id/linearLayout4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-20dp"
-                    android:gravity="bottom|center_horizontal"
-                    android:text="80"
-                    android:textColor="#ffffff"
-                    android:textSize="60sp" />
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_anal_main_score_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-16dp"
-                    android:gravity="center_horizontal|top"
-                    android:text="@string/score"
-                    android:textColor="#5e6a75"
-                    android:textSize="16sp" />
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_anal_main_score_data"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-20dp"
+                        android:gravity="bottom|center_horizontal"
+                        android:text="80"
+                        android:textColor="@{theme.textContrast}"
+                        tools:textColor="#fff"
+                        android:textSize="60sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="12dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tv_anal_main_score_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-16dp"
+                        android:gravity="center_horizontal|top"
+                        android:text="@string/score"
+                        android:textColor="@{theme.textInactive}"
+                        tools:textColor="#757a7f"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="6dp"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
@@ -138,7 +117,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
                         android:text="23:49"
-                        android:textColor="#ffffff"
+                        android:textColor="@{theme.textContrast}"
+                        tools:textColor="#fff"
                         android:textSize="16sp" />
 
                     <TextView
@@ -146,22 +126,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
                         android:text="@string/sleep_start"
-                        android:textColor="#5e6a75"
+                        android:textColor="#757a7f"
                         android:textSize="11sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="6dp"
-                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_anal_main_info_data2"
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
+                        android:layout_marginTop="6dp"
                         android:text="23:49"
-                        android:textColor="#ffffff"
+                        android:textColor="@{theme.textContrast}"
+                        tools:textColor="#fff"
                         android:textSize="16sp" />
 
                     <TextView
@@ -169,21 +144,25 @@
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
                         android:text="@string/sleep_end"
-                        android:textColor="#5e6a75"
-                        android:textSize="11sp" />
-                </LinearLayout>
+                        android:textColor="@{theme.textInactive}"
+                        tools:textColor="#757a7f"
 
+                        android:textSize="11sp" />
+
+                </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fr_anal_details"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fr_anal_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+
+    </LinearLayout>
+</layout>

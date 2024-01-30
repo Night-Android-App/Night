@@ -44,4 +44,5 @@
     <string name="sleep_data">Sleep data</string>
     <string name="not_applicable">N/A</string>
     <string name="dream_record">Dream record</string>
+    <string name="purchase">Purchase</string>
 </resources>

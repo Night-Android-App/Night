@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -20,11 +21,14 @@ import java.util.List;
 import java.util.Map;
 
 import night.app.R;
+import night.app.databinding.FragmentDayRecordBinding;
 import night.app.services.ChartBuilder;
 
 public class DayRecordFragment extends Fragment {
-    private void loadLineChart(View view) {
-        LineChart lineChart = view.findViewById(R.id.lineChart_day_record);
+    FragmentDayRecordBinding binding;
+
+    private void loadLineChart() {
+        LineChart lineChart = binding.getRoot().findViewById(R.id.lineChart_day_record);
 
         Integer[] data = {32,98, 53, 49, 0};
 
@@ -37,7 +41,7 @@ public class DayRecordFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_day_record, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_day_record, container, false);
 
         ((TextView) requireActivity().findViewById(R.id.tv_anal_main_info_title1))
                 .setText(R.string.sleep_start);
@@ -45,7 +49,7 @@ public class DayRecordFragment extends Fragment {
         ((TextView) requireActivity().findViewById(R.id.tv_anal_main_info_title2))
                 .setText(R.string.sleep_end);
 
-        loadLineChart(view);
-        return view;
+        loadLineChart();
+        return binding.getRoot();
     }
 }
