@@ -1,6 +1,5 @@
 package night.app.fragments;
 
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,32 +18,9 @@ import night.app.databinding.FragmentAnalysisPageBinding;
 import night.app.fragments.analysis.DayRecordFragment;
 import night.app.fragments.analysis.MonthRecordFragment;
 import night.app.fragments.analysis.WeekRecordFragment;
-import night.app.fragments.settings.BackupConfigFragment;
-import night.app.fragments.settings.OthersConfigFragment;
-import night.app.fragments.settings.SleepConfigFragment;
 
 public class AnalysisPageFragment extends Fragment {
     FragmentAnalysisPageBinding binding;
-
-    private Class<? extends Fragment> getFragmentById(int id) {
-        if (id == R.id.tab_anal_day) return DayRecordFragment.class;
-        if (id == R.id.tab_anal_week) return WeekRecordFragment.class;
-        return MonthRecordFragment.class;
-    }
-
-    public void switchSettingsType(View view) {
-        Class<? extends Fragment> fragmentClass = getFragmentById(view.getId());
-
-        // get the instance of the display fragment
-        Fragment fragment = requireActivity().getSupportFragmentManager().findFragmentById(R.id.fr_anal_details);
-
-        // no action if user click the active tab
-        if (fragmentClass.isInstance(fragment)) return;
-
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fr_anal_details, fragmentClass, null)
-                .commit();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -83,8 +59,8 @@ public class AnalysisPageFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) { }
         });
 
-        binding.tabAnal.setSelectedTabIndicatorColor(theme.textContrast);
-        binding.tabAnal.setTabTextColors(theme.textInactive, theme.textContrast);
+        binding.tabAnal.setSelectedTabIndicatorColor(theme.onPrimary);
+        binding.tabAnal.setTabTextColors(theme.onPrimaryVariant, theme.onPrimary);
         return binding.getRoot();
     }
 }

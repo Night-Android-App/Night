@@ -9,11 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.textfield.TextInputLayout;
-
 import org.json.JSONObject;
-
 
 import night.app.R;
 import night.app.databinding.DialogRegisterBinding;
@@ -33,7 +29,6 @@ public class RegisterDialog extends DialogFragment {
         String uidValue = binding.etLoginUid.getEditableText().toString();
         String pwdValue = binding.etLoginPwd.getEditableText().toString();
         String pwdValueConfirmed = binding.etLoginPwdConfirmed.getEditableText().toString();
-
 
         if (uidValue.length() < 12 || uidValue.length() > 20) {
             binding.etLoginUid.setError("length should be between 12 to 20 characters.");

@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="December"
-        android:textColor="@{theme.text, default=`#000`}"
+        android:textColor="@{theme.onPrimary, default=`#000`}"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

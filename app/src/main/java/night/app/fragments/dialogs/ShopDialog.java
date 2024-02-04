@@ -5,61 +5,57 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.adapters.ThemeItemAdapter;
+import night.app.data.Theme;
+import night.app.databinding.DialogShopBinding;
 
 public class ShopDialog extends DialogFragment {
-    View view;
+    DialogShopBinding binding;
 
-    private ArrayList<HashMap<String, String>> getSampleData() {
-        HashMap<String, String> itemData = new HashMap<>() {{
-            put("name", "test234");
-            put("price", "40");
-        }};
 
-        ArrayList<HashMap<String, String>> array = new ArrayList<>() {{
-            add(itemData);
-            add(itemData);
-        }};
+    private void switchTheme(String reqKey, Bundle bundle) {
+        switchTheme();
+    }
 
-        return array;
+    private void switchTheme() {
+        Theme theme = ((MainActivity) requireActivity()).theme;
+        binding.setTheme(theme);
+
+        binding.tabShop.setSelectedTabIndicatorColor(theme.onPrimary);
+        binding.tabShop.setTabTextColors(theme.onPrimaryVariant, theme.onPrimary);
+
+        requireDialog().getWindow().setStatusBarColor(theme.primary);
+        requireDialog().getWindow().setNavigationBarColor(theme.secondary);
     }
 
     private void loadItemList(RecyclerView.Adapter adapter) {
-        RecyclerView itemListView = view.findViewById(R.id.rv_shop_items);
-
+        RecyclerView itemListView = binding.rvShopItems;
         itemListView.removeAllViewsInLayout();
 
         itemListView.setAdapter(adapter);
     }
 
     private void initTabLayout() {
-        TabLayout shopTab = view.findViewById(R.id.tab_shop);
+        MainActivity activity = (MainActivity) requireActivity();
 
-        shopTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        binding.tabShop.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
-                    // Themes tab
-                    case 0 -> loadItemList(new ThemeItemAdapter(requireActivity(), getSampleData()));
+                    case 0 -> loadItemList(new ThemeItemAdapter(activity));
 
-                    // Ringtones tab
-                    case 1 -> loadItemList(new ThemeItemAdapter(requireActivity(), getSampleData()));
-                };
+                    case 1 -> binding.rvShopItems.removeAllViewsInLayout();
+                }
             }
 
             @Override
@@ -78,19 +74,24 @@ public class ShopDialog extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.dialog_shop, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_shop, container, false);
 
-        view.findViewById(R.id.btn_shop_close).setOnClickListener(v -> dismiss());
+        switchTheme();
+
+        MainActivity activity = (MainActivity) requireActivity();
+        binding.btnShopClose.setOnClickListener(v -> dismiss());
 
         initTabLayout();
 
-        RecyclerView itemListView = view.findViewById(R.id.rv_shop_items);
-        itemListView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        binding.rvShopItems.setLayoutManager(new LinearLayoutManager(activity));
 
-        loadItemList(new ThemeItemAdapter(requireActivity(), getSampleData()));
+        new Thread(() -> loadItemList(new ThemeItemAdapter(activity))).start();
 
-        return view;
+        getParentFragmentManager()
+                .setFragmentResultListener("switchTheme", this, this::switchTheme);
+
+        return binding.getRoot();
     }
 }
 

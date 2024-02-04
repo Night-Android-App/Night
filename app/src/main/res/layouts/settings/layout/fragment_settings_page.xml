@@ -5,6 +5,7 @@
     <data>
         <import type="androidx.datastore.preferences.core.PreferencesKeys" />
         <variable name="prefs" type="androidx.datastore.preferences.core.Preferences" />
+        <variable name="theme" type="night.app.data.Theme" />
     </data>
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +16,7 @@
             android:id="@+id/cl_sett_acct"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#212529"
+            android:background="@{theme.primary, default=`#212529`}"
             android:paddingHorizontal="24dp"
             android:paddingTop="24dp"
             android:paddingBottom="12dp">
@@ -41,7 +42,7 @@
                 android:layout_weight="1"
                 android:gravity="bottom"
                 android:text="@string/press_here_to_login_now"
-                android:textColor="#FFFFFF"
+                android:textColor="@{theme.onPrimary, default=`#fff`}"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.868"
@@ -68,7 +69,7 @@
             android:id="@+id/tab_sett"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="#212529"
+            android:background="@{theme.primary, default=`#212529`}"
             app:tabIndicatorColor="#FFFFFF"
             app:tabRippleColor="#A2A2A2"
             app:tabSelectedTextColor="#FFFFFF"

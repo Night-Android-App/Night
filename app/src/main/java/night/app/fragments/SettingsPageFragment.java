@@ -91,6 +91,8 @@ public class SettingsPageFragment extends Fragment {
 
         binding.clSettAcct.setOnClickListener(v -> showLoginModal());
 
+        binding.setTheme(((MainActivity) requireActivity()).theme);
+
         loadAccountState();
 
         getParentFragmentManager().setFragmentResultListener("accountStatus", this, (reqKey, result) -> {

@@ -18,8 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@{theme.primary}"
-            tools:background="#212529"
+            android:background="@{theme.primary, default=`#212529`}"
             android:paddingTop="8dp"
             android:paddingBottom="34dp">
 
@@ -28,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                app:tabRippleColor="@{theme.textInactive}"
+                app:tabRippleColor="@{theme.onPrimaryVariant}"
                 tools:tabRippleColor="#757a7f"
                 tools:tabIndicatorColor="#fff"
                 tools:tabTextColor="#757a7f"
@@ -59,8 +58,7 @@
                 android:gravity="center"
                 android:text="15 November 2023"
                 android:textAlignment="center"
-                android:textColor="@{theme.textContrast}"
-                tools:textColor="#fff"
+                android:textColor="@{theme.onPrimary, default=`#fff`}"
                 android:textSize="16sp" />
 
             <LinearLayout
@@ -88,8 +86,7 @@
                         android:layout_marginTop="-20dp"
                         android:gravity="bottom|center_horizontal"
                         android:text="80"
-                        android:textColor="@{theme.textContrast}"
-                        tools:textColor="#fff"
+                        android:textColor="@{theme.onPrimary, default=`#fff`}"
                         android:textSize="60sp" />
 
                     <TextView
@@ -99,8 +96,7 @@
                         android:layout_marginTop="-16dp"
                         android:gravity="center_horizontal|top"
                         android:text="@string/score"
-                        android:textColor="@{theme.textInactive}"
-                        tools:textColor="#757a7f"
+                        android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -117,8 +113,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
                         android:text="23:49"
-                        android:textColor="@{theme.textContrast}"
-                        tools:textColor="#fff"
+                        android:textColor="@{theme.onPrimary, default=`#fff`}"
                         android:textSize="16sp" />
 
                     <TextView
@@ -133,10 +128,9 @@
                         android:id="@+id/tv_anal_main_info_data2"
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="24dp"
                         android:text="23:49"
-                        android:textColor="@{theme.textContrast}"
-                        tools:textColor="#fff"
+                        android:textColor="@{theme.onPrimary, default=`#fff`}"
                         android:textSize="16sp" />
 
                     <TextView
@@ -144,9 +138,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
                         android:text="@string/sleep_end"
-                        android:textColor="@{theme.textInactive}"
-                        tools:textColor="#757a7f"
-
+                        android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
                         android:textSize="11sp" />
 
                 </LinearLayout>

@@ -55,7 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="24dp"
                     android:padding="2dp"
-                    android:tint="@{theme.textContrast, default=`#ffffff`}"
+                    android:tint="@{theme.onPrimary, default=`#fff`}"
                     android:tintMode="src_in"
                     app:srcCompat="@drawable/ic_tab_garden" />
 
@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/garden"
                     android:textAlignment="center"
-                    android:textColor="@{theme.textContrast, default=`#ffffff`}"
+                    android:textColor="@{theme.onPrimary, default=`#fff`}"
                     android:textSize="11sp" />
             </LinearLayout>
 
@@ -84,14 +84,14 @@
                     android:layout_height="24dp"
                     android:padding="2dp"
                     app:srcCompat="@drawable/ic_tab_clock"
-                    android:tint="@{theme.textInactive, default=`#61666a`}" />
+                    android:tint="@{theme.onPrimaryVariant, default=`#61666a`}" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:text="@string/clock"
                     android:textAlignment="center"
-                    android:textColor="@{theme.textContrast, default=`#ffffff`}"
+                    android:textColor="@{theme.onPrimary, default=`#fff`}"
                     android:textSize="11sp" />
             </LinearLayout>
 
@@ -111,7 +111,7 @@
                     android:layout_height="24dp"
                     android:padding="2dp"
                     app:srcCompat="@drawable/ic_tab_analysis"
-                    android:tint="@{theme.textInactive, default=`#61666a`}" />
+                    android:tint="@{theme.onPrimaryVariant, default=`#61666a`}" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -119,7 +119,7 @@
                     android:layout_gravity="center|center_vertical"
                     android:text="@string/analysis"
                     android:textAlignment="center"
-                    android:textColor="@{theme.textContrast, default=`#ffffff`}"
+                    android:textColor="@{theme.onPrimary, default=`#fff`}"
                     android:textSize="11sp"
                     tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
@@ -140,14 +140,14 @@
                     android:layout_height="24dp"
                     android:padding="2dp"
                     app:srcCompat="@drawable/ic_tab_settings"
-                    android:tint="@{theme.textInactive, default=`#61666a`}" />
+                    android:tint="@{theme.onPrimaryVariant, default=`#61666a`}" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:text="@string/settings"
                     android:textAlignment="center"
-                    android:textColor="@{theme.textContrast, default=`#ffffff`}"
+                    android:textColor="@{theme.onPrimary, default=`#fff`}"
                     android:textSize="11sp" />
             </LinearLayout>
 

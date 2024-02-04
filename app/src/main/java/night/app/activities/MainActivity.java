@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
     public PreferenceViewModel preferenceViewModel;
     public DataStoreHelper dataStore;
+    public AppDatabase appDatabase;
     public Theme theme;
 
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
@@ -81,11 +82,11 @@ public class MainActivity extends AppCompatActivity {
 
         for (Map.Entry<Integer, Class<? extends Fragment>> entry : pageMap.entrySet()) {
             if (entry.getValue().isInstance(fragment)) {
-                setNavItemStyle(entry.getKey(), 0, theme.textInactive);
+                setNavItemStyle(entry.getKey(), 0, theme.onPrimaryVariant);
             }
         }
 
-        setNavItemStyle(id, LinearLayout.LayoutParams.WRAP_CONTENT, theme.textContrast);
+        setNavItemStyle(id, LinearLayout.LayoutParams.WRAP_CONTENT, theme.onPrimary);
 
         getSupportFragmentManager().beginTransaction()
             .replace(R.id.fr_app_page, fragmentClass, null)
@@ -128,13 +129,13 @@ public class MainActivity extends AppCompatActivity {
 
         new Thread(() -> {
             Boolean isFirstVisited = dataStore.getPrefs().get(PreferencesKeys.booleanKey("isFirstVisited"));
-            AppDatabase db;
-            String themeID = "Default";
+            String themeID = "Default Theme";
 
-            if (isFirstVisited == null) {
-                dataStore.update(PreferencesKeys.booleanKey("isFirstVisited"), true);
+            if (isFirstVisited == null || isFirstVisited) {
+                dataStore.update(PreferencesKeys.booleanKey("isFirstVisited"), false);
+                dataStore.update(PreferencesKeys.stringKey("theme"), "Default Theme");
 
-                db = Room.databaseBuilder(this, AppDatabase.class, "app")
+                appDatabase = Room.databaseBuilder(this, AppDatabase.class, "app")
                         .createFromAsset("app.db")
                         .build();
 
@@ -146,15 +147,18 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
             else {
-                db = Room.databaseBuilder(this, AppDatabase.class, "app").build();
+                appDatabase = Room.databaseBuilder(this, AppDatabase.class, "app").build();
 
                 String result = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));
-                if (theme != null) themeID = result;
+
+                if (result != null) themeID = result;
             }
 
-            // store Theme in activity and then fragments can access it
-            theme = db.themeDAO().getTheme(themeID).get(0);
+            theme = appDatabase.dao().getTheme(themeID).get(0);
             binding.setTheme(theme);
+
+            getWindow().setStatusBarColor(theme.primary);
+            getWindow().setNavigationBarColor(theme.primary);
         }).start();
     }
 }

@@ -1,51 +1,33 @@
 package night.app.data;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
-import androidx.room.Dao;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.Query;
-
-import java.util.List;
 
 @Entity
 public class Theme {
 
     @NonNull
     @PrimaryKey
-    public String id;
+    @ColumnInfo(name = "theme_name")
+    public String name;
 
-    @ColorInt
-    @ColumnInfo(name = "primary")
-    public int primary;
+    public Integer primary ;
 
-    @ColorInt
-    @ColumnInfo(name = "secondary")
-    public int secondary;
+    public Integer secondary;
 
-    @ColorInt
-    @ColumnInfo(name="onSecondary")
-    public int onSecondary;
+    public Integer surface;
 
-    @ColorInt
-    @ColumnInfo(name="onSecondaryVariant")
-    public int onSecondaryVariant;
+    @ColumnInfo(name="surface_variant")
+    public Integer surfaceVariant;
 
-    @ColorInt
-    @ColumnInfo(name = "accent")
-    public int accent;
+    public Integer accent;
 
-    @ColorInt
-    @ColumnInfo(name = "text")
-    public int text;
+    public Integer onPrimary;
 
-    @ColorInt
-    @ColumnInfo(name = "textInactive")
-    public int textInactive;
+    @ColumnInfo(name = "onPrimary_variant")
+    public Integer onPrimaryVariant;
 
-    @ColorInt
-    @ColumnInfo(name = "textContrast")
-    public int textContrast;
+    public Integer onSurface;
 }
