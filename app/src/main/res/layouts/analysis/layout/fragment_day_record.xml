@@ -36,6 +36,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_fellAsleep"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
@@ -61,6 +62,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_deepSleep"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
@@ -86,6 +88,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_inBed"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"

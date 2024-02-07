@@ -17,6 +17,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ChartBuilder {
@@ -53,12 +54,12 @@ public class ChartBuilder {
         chart.setData(new BarData(dataSet));
     }
 
-    private void setData(LineChart chart, Integer[] data) {
+    private void setData(LineChart chart, List<Integer> data) {
         ArrayList<Entry> dataEntries = new ArrayList<>();
 
-        for (int i=0; i < data.length; i++) {
-            if (data[i] == null) continue;
-            dataEntries.add(new Entry(i, data[i]));
+        for (int i=0; i < data.size(); i++) {
+            if (data.get(i) == null) continue;
+            dataEntries.add(new Entry(i, data.get(i)));
         }
 
         LineDataSet dataSet = new LineDataSet(dataEntries, "");
@@ -68,7 +69,7 @@ public class ChartBuilder {
         chart.setData(new LineData(dataSet));
     }
 
-    public ChartBuilder(BarChart chart, String[] xLabel, Integer[] yRange, Integer[] data) {
+    public ChartBuilder(BarChart chart, List<String> xLabel, Integer[] yRange, Integer[] data) {
         initStyle(chart);
 
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xLabel));
@@ -81,7 +82,7 @@ public class ChartBuilder {
         chart.invalidate();
     }
 
-    public ChartBuilder(LineChart chart, String[] xLabel, Integer[] yRange, Integer[] data) {
+    public ChartBuilder(LineChart chart, List<String> xLabel, Integer[] yRange, List<Integer> data) {
         initStyle(chart);
 
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xLabel));

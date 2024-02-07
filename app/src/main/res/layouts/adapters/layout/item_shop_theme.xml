@@ -20,7 +20,8 @@
         android:layout_marginBottom="10dp"
         android:textSize="16sp"
         android:textStyle="bold"
-        tools:text="Default Theme" />
+        tools:text="Default Theme"
+        android:textColor="@{theme.onSurface, default=`#000`}"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -176,6 +177,7 @@
                 android:layout_marginBottom="6dp"
                 android:gravity="center_vertical"
                 android:text="Sleep Confidence"
+                android:textColor="@{preview.onPrimaryVariant, default=`#5e6a75`}"
                 android:textSize="8.4dp" />
 
             <LinearLayout

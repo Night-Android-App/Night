@@ -121,7 +121,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
                         android:text="@string/sleep_start"
-                        android:textColor="#757a7f"
+                        android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
                         android:textSize="11sp" />
 
                     <TextView

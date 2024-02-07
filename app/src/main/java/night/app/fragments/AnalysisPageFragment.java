@@ -23,7 +23,7 @@ public class AnalysisPageFragment extends Fragment {
     FragmentAnalysisPageBinding binding;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_analysis_page, container, false);
         Theme theme = ((MainActivity) requireActivity()).theme;
 
@@ -58,6 +58,21 @@ public class AnalysisPageFragment extends Fragment {
             @Override
             public void onTabReselected(TabLayout.Tab tab) { }
         });
+
+        getParentFragmentManager()
+                .setFragmentResultListener("updateAnalytics", this, (String key, Bundle bundle) -> {
+                    if (bundle.getInt("type") == 0) {
+                        binding.tvAnalMainInfoTitle1.setText("SLEEP START");
+                        binding.tvAnalMainInfoTitle2.setText("SLEEP END");
+                    }
+                    else {
+                        binding.tvAnalMainInfoTitle1.setText("AVG SLEEP");
+                        binding.tvAnalMainInfoTitle2.setText("SLEEP EFFICIENCY");
+                    }
+
+                    binding.tvAnalMainInfoData1.setText(bundle.getString("info1"));
+                    binding.tvAnalMainInfoData2.setText(bundle.getString("info2"));
+                });
 
         binding.tabAnal.setSelectedTabIndicatorColor(theme.onPrimary);
         binding.tabAnal.setTabTextColors(theme.onPrimaryVariant, theme.onPrimary);

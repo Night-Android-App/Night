@@ -17,29 +17,76 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import night.app.R;
 import night.app.activities.MainActivity;
+import night.app.data.Day;
 import night.app.databinding.FragmentDayRecordBinding;
 import night.app.fragments.dialogs.DreamDialog;
 import night.app.services.ChartBuilder;
+import night.app.services.DateTimeFormatter;
 
 public class DayRecordFragment extends Fragment {
     FragmentDayRecordBinding binding;
 
     private void loadLineChart() {
-        LineChart lineChart = binding.getRoot().findViewById(R.id.lineChart_day_record);
+        LineChart lineChart = binding.lineChartDayRecord;
 
-        Integer[] data = {32,98, 53, 49, 0};
+        new Thread(() -> {
+            Day day = ((MainActivity) requireActivity()).appDatabase.dao().getDayByID(1).get(0);
 
-        String[] xLabel = {"23:42", "01:00", "04:00", "06:00", "07:00"};
+            JSONObject sleepData = null;
 
-        Integer[] yRange = {0, 100};
+            try { sleepData = new JSONObject(day.sleep); }
+            catch (JSONException e) { return; }
 
-        new ChartBuilder(lineChart, xLabel, yRange, data);
+            List<Integer> data = new ArrayList<>();
+            List<Integer> xLabel = new ArrayList<>();
+
+            for (Iterator<String> it = sleepData.keys(); it.hasNext(); ) {
+                String key = it.next();
+                xLabel.add(Integer.parseInt(key));
+
+                data.add(sleepData.optInt(key));
+            }
+
+            if (xLabel.get(0) > xLabel.get(xLabel.size()-1)) {
+                binding.tvInBed.setText(
+                    DateTimeFormatter.convertIntTime(
+                        DateTimeFormatter.getTimeDifference(
+                            xLabel.get(0),
+                            xLabel.get(xLabel.size()-1)
+                        )
+                    )
+                );
+            }
+            else {
+                binding.tvInBed.setText(String.valueOf(xLabel.get(xLabel.size()-1) - xLabel.get(0)));
+            }
+
+            List<String> nXLabel = new ArrayList<>();
+            for (Integer i : xLabel) {
+                nXLabel.add(DateTimeFormatter.convertIntTime(i));
+            }
+
+            Integer[] yRange = {0, 100};
+
+            Bundle bundle = new Bundle();
+            bundle.putInt("type", 0);
+            bundle.putString("info1", nXLabel.get(0));
+            bundle.putString("info2", nXLabel.get(nXLabel.size()-1));
+            getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
+
+            new ChartBuilder(lineChart, nXLabel, yRange, data);
+        }).start();
     }
 
     @Override

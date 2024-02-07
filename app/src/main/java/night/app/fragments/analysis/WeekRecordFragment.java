@@ -15,15 +15,15 @@ import night.app.services.ChartBuilder;
 
 public class WeekRecordFragment extends Fragment {
     private void loadBarChart(View view) {
-        BarChart barchart = (BarChart) view.findViewById(R.id.barChart_week_record);
-
-        String[] xLabel = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-
-        Integer[] yRange = {0, 16};
-
-        Integer[] data = {3,4,6,null,4,12,0};
-
-        new ChartBuilder(barchart, xLabel, yRange, data);
+//        BarChart barchart = (BarChart) view.findViewById(R.id.barChart_week_record);
+//
+//        String[] xLabel = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+//
+//        Integer[] yRange = {0, 16};
+//
+//        Integer[] data = {3,4,6,null,4,12,0};
+//
+//        new ChartBuilder(barchart, xLabel, yRange, data);
     }
 
 

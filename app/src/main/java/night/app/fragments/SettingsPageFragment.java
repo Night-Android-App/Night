@@ -1,18 +1,15 @@
 package night.app.fragments;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -23,8 +20,6 @@ import night.app.databinding.FragmentSettingsPageBinding;
 import night.app.fragments.dialogs.LoginDialog;
 import night.app.fragments.settings.BackupConfigFragment;
 import night.app.fragments.settings.OthersConfigFragment;
-import night.app.fragments.settings.SleepConfigFragment;
-import night.app.networks.AccountRequest;
 
 
 public class SettingsPageFragment extends Fragment {
@@ -35,13 +30,6 @@ public class SettingsPageFragment extends Fragment {
         new LoginDialog().show(requireActivity().getSupportFragmentManager(), null);
     }
 
-    private void setDefaultAcctView() {
-        if (getView() == null) return;
-
-        binding.tvSettAcctUid.setText(R.string.press_here_to_login_now);
-        binding.tvSettAcctDesc.setText(R.string.proceed);
-        binding.clSettAcct.setOnClickListener(v -> showLoginModal());
-    }
 
     private void loadAccountState() {
         // load data from local storage first
@@ -110,16 +98,13 @@ public class SettingsPageFragment extends Fragment {
         binding.tabSett.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Class<? extends Fragment> fragmentClass = switch (tab.getPosition()) {
-                    case 0 -> SleepConfigFragment.class;
-                    case 1 -> BackupConfigFragment.class;
-                    case 2 -> OthersConfigFragment.class;
-                    default ->
-                        throw new IllegalStateException("Unexpected value: " + tab.getPosition());
-                };
+                Class<? extends Fragment> fragmentClass = BackupConfigFragment.class;
 
-                requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
+                if (tab.getPosition() == 1) {
+                    fragmentClass = OthersConfigFragment.class;
+                }
+
+                getParentFragmentManager().beginTransaction()
                     .replace(R.id.fr_sett_details, fragmentClass, null)
                     .commit();
             }
@@ -131,9 +116,8 @@ public class SettingsPageFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) { }
         });
 
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .add(R.id.fr_sett_details, SleepConfigFragment.class, null)
+        getParentFragmentManager().beginTransaction()
+                .add(R.id.fr_sett_details, BackupConfigFragment.class, null)
                 .commit();
 
         return view;

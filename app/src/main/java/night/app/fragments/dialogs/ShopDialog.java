@@ -15,7 +15,8 @@ import com.google.android.material.tabs.TabLayout;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.adapters.ThemeItemAdapter;
+import night.app.adapters.RingtoneAdapter;
+import night.app.adapters.ThemeAdapter;
 import night.app.data.Theme;
 import night.app.databinding.DialogShopBinding;
 
@@ -52,9 +53,9 @@ public class ShopDialog extends DialogFragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
-                    case 0 -> loadItemList(new ThemeItemAdapter(activity));
+                    case 0 -> loadItemList(new ThemeAdapter(activity));
 
-                    case 1 -> binding.rvShopItems.removeAllViewsInLayout();
+                    case 1 -> loadItemList(new RingtoneAdapter(activity));
                 }
             }
 
@@ -86,7 +87,7 @@ public class ShopDialog extends DialogFragment {
 
         binding.rvShopItems.setLayoutManager(new LinearLayoutManager(activity));
 
-        new Thread(() -> loadItemList(new ThemeItemAdapter(activity))).start();
+        new Thread(() -> loadItemList(new ThemeAdapter(activity))).start();
 
         getParentFragmentManager()
                 .setFragmentResultListener("switchTheme", this, this::switchTheme);
