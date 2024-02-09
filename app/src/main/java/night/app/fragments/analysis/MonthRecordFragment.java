@@ -6,19 +6,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import night.app.R;
+import night.app.activities.MainActivity;
+import night.app.adapters.ThemeAdapter;
+import night.app.databinding.FragmentRecycleViewBinding;
 
 public class MonthRecordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_month_record, container, false);
+        RecyclerView view = (RecyclerView) inflater.inflate(R.layout.fragment_recycle_view, container, false);
 
-        ((TextView) requireActivity().findViewById(R.id.tv_anal_main_info_title1))
-                .setText(R.string.average_sleep);
-        ((TextView) requireActivity().findViewById(R.id.tv_anal_main_info_title2))
-                .setText(R.string.sleep_efficiency);
+        view.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
         return view;
     }

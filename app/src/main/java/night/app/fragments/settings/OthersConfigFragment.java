@@ -8,11 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import night.app.R;
+import night.app.activities.MainActivity;
+import night.app.databinding.FragmentOthersConfigBinding;
 
 public class OthersConfigFragment extends Fragment {
+    FragmentOthersConfigBinding binding;
+
     public void requestNotificationPermission() {
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -22,11 +27,12 @@ public class OthersConfigFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_others_config, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_others_config, container, false);
+        binding.setTheme(((MainActivity) requireActivity()).theme);
 
-        view.findViewById(R.id.grantNotificationPermission)
-            .setOnClickListener(v -> requestNotificationPermission());
+        binding.grantNotificationPermission
+                .setOnClickListener(v -> requestNotificationPermission());
 
-        return view;
+        return binding.getRoot();
     }
 }

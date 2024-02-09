@@ -77,15 +77,13 @@ public class DayRecordFragment extends Fragment {
                 nXLabel.add(DateTimeFormatter.convertIntTime(i));
             }
 
-            Integer[] yRange = {0, 100};
-
             Bundle bundle = new Bundle();
             bundle.putInt("type", 0);
             bundle.putString("info1", nXLabel.get(0));
             bundle.putString("info2", nXLabel.get(nXLabel.size()-1));
             getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
 
-            new ChartBuilder(lineChart, nXLabel, yRange, data);
+            new ChartBuilder(lineChart, binding.getTheme(), nXLabel, data);
         }).start();
     }
 
@@ -101,10 +99,6 @@ public class DayRecordFragment extends Fragment {
                 .setText(R.string.sleep_end);
 
         loadLineChart();
-
-        binding.tvAnalDream.setOnClickListener(v -> {
-            new DreamDialog().show(getParentFragmentManager(), null);
-        });
 
         return binding.getRoot();
     }

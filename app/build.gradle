@@ -57,7 +57,9 @@ dependencies {
 
     // store data at local
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation "androidx.datastore:datastore-preferences-rxjava2:1.0.0"
     implementation "androidx.datastore:datastore-preferences-rxjava3:1.0.0"
+    implementation "androidx.datastore:datastore-preferences:1.1.0-alpha04"
 
     // draw a chart for analysis page
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'

@@ -1,13 +1,20 @@
 package night.app.data;
 
+import android.content.Context;
+
 import androidx.datastore.preferences.core.MutablePreferences;
 import androidx.datastore.preferences.core.Preferences;
+import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
 
 import io.reactivex.rxjava3.core.Single;
 
 public class DataStoreHelper {
-    public final RxDataStore<Preferences> dataStore;
+    private final RxDataStore<Preferences> dataStore;
+
+    public void dispose() {
+        dataStore.dispose();
+    }
 
     public Preferences getPrefs() {
         return dataStore.data().blockingFirst();
@@ -22,7 +29,7 @@ public class DataStoreHelper {
         });
     }
 
-    public DataStoreHelper(RxDataStore<Preferences> ds) {
-        dataStore = ds;
+    public DataStoreHelper(Context context) {
+        dataStore = new RxPreferenceDataStoreBuilder(context, "settings").build();
     }
 }

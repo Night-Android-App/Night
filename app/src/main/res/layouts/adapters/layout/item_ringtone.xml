@@ -1,11 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable name="theme" type="night.app.data.Theme" />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/view_rect_r10"
+        android:backgroundTint="@{theme.surface, default=`#fff`}"
+        android:minHeight="48dp"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/tv_ringtone_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@{theme.onSurface, default=`#000`}"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_ringtone_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="00:04"
+            android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="@+id/tv_ringtone_name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_ringtone_name" />
+
+        <TextView
+            android:id="@+id/tv_shop_item_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="59pt"
+            android:textSize="11sp"
+            android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
+            app:layout_constraintStart_toEndOf="@+id/tv_ringtone_duration"
+            app:layout_constraintTop_toTopOf="@+id/tv_ringtone_duration" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Purchase"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:layout_editor_absoluteY="5dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

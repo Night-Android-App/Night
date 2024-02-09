@@ -402,16 +402,10 @@
             android:id="@+id/tv_shop_item_price"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            tools:text="30" />
-
-        <TextView
-            android:id="@+id/tv_shop_price_label"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:layout_marginEnd="12dp"
             android:gravity="center_vertical"
-            android:text="pt" />
+            android:textColor="@{theme.onPrimaryVariant, default=`#5e6a75`}"
+            tools:text="30 coins" />
 
         <Button
             android:id="@+id/btn_shop_item_purchase"

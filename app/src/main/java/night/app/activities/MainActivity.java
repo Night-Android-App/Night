@@ -3,13 +3,9 @@ package night.app.activities;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.datastore.preferences.core.PreferencesKeys;
-import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 
 import android.os.Bundle;
@@ -20,11 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import night.app.data.AppDatabase;
 import night.app.data.DataStoreHelper;
-import night.app.data.PreferenceViewModel;
 import night.app.data.Theme;
 import night.app.databinding.ActivityMainBinding;
 import night.app.fragments.AnalysisPageFragment;
@@ -34,10 +30,10 @@ import night.app.R;
 
 public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
-    public PreferenceViewModel preferenceViewModel;
-    public DataStoreHelper dataStore;
+
     public AppDatabase appDatabase;
-    public Theme theme;
+    public DataStoreHelper dataStore = new DataStoreHelper(this);
+    public Theme theme = new Theme();
 
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
             registerForActivityResult(
@@ -45,12 +41,12 @@ public class MainActivity extends AppCompatActivity {
                     result -> { }
             );
 
-    private final HashMap<Integer, Class<? extends  Fragment>> pageMap = new HashMap<>() {{
-        put(R.id.btn_page_garden, GardenPageFragment.class);
-        put(R.id.btn_page_analysis, AnalysisPageFragment.class);
-        put(R.id.btn_page_settings, SettingsPageFragment.class);
-    }};
-
+    public void requestPermissions() {
+        requestPermissionLauncher.launch(new String[]{
+                "android.permission.ACTIVITY_RECOGNITION",
+                "android.permission.POST_NOTIFICATIONS"
+        });
+    }
 
     private void setNavItemStyle(int id, int height, int color) {
         LinearLayout navItem = findViewById(id);
@@ -74,6 +70,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void switchPage(int id) {
+        HashMap<Integer, Class<? extends  Fragment>> pageMap = new HashMap<>() {{
+            put(R.id.btn_page_garden, GardenPageFragment.class);
+            put(R.id.btn_page_analysis, AnalysisPageFragment.class);
+            put(R.id.btn_page_settings, SettingsPageFragment.class);
+        }};
+
         Class<? extends Fragment> fragmentClass = pageMap.get(id);
         if (fragmentClass == null) return;
 
@@ -93,6 +95,24 @@ public class MainActivity extends AppCompatActivity {
             .commit();
     }
 
+    private void setOnBackPressedListener() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
+
+                if (fragment instanceof GardenPageFragment) System.exit(0);
+                switchPage(R.id.btn_page_garden);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dataStore.dispose();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,65 +120,38 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        dataStore =  new DataStoreHelper(new RxPreferenceDataStoreBuilder(this, "settings").build());
 
-        preferenceViewModel =  new ViewModelProvider(this, new ViewModelProvider.Factory() {
-            @NonNull @Override
-            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new PreferenceViewModel(dataStore);
-            }
-        }).get(PreferenceViewModel.class);
+        binding.setTheme(new Theme());
+        getWindow().setStatusBarColor(theme.primary);
+        getWindow().setNavigationBarColor(theme.primary);
 
-        // default (disabled): close app whatever the current fragment is
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
-
-                // exit app if fragment container contain Garden page
-                if (fragment instanceof GardenPageFragment) System.exit(0);
-
-                // if fragment container doesn't contain Garden page
-                switchPage(R.id.btn_page_garden);
-            }
-        });
+        setOnBackPressedListener();
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fr_app_page, GardenPageFragment.class, null)
                 .commit();
 
         new Thread(() -> {
-            Boolean isFirstVisited = dataStore.getPrefs().get(PreferencesKeys.booleanKey("isFirstVisited"));
-            String themeID = "Default Theme";
+            appDatabase = Room.databaseBuilder(this, AppDatabase.class, "app")
+                    .createFromAsset("app.db")
+                    .build();
 
-            if (isFirstVisited == null || isFirstVisited) {
-                dataStore.update(PreferencesKeys.booleanKey("isFirstVisited"), false);
-                dataStore.update(PreferencesKeys.stringKey("theme"), "Default Theme");
-
-                appDatabase = Room.databaseBuilder(this, AppDatabase.class, "app")
-                        .createFromAsset("app.db")
-                        .build();
-
-                // TODO: request user accept the privacy policy
-
-                requestPermissionLauncher.launch(new String[]{
-                        "android.permission.ACTIVITY_RECOGNITION",
-                        "android.permission.POST_NOTIFICATIONS"
-                });
-            }
-            else {
-                appDatabase = Room.databaseBuilder(this, AppDatabase.class, "app").build();
-
-                String result = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));
-
-                if (result != null) themeID = result;
+            if (dataStore.getPrefs().get(PreferencesKeys.booleanKey("isFirstVisited")) == null) {
+                requestPermissions();
             }
 
-            theme = appDatabase.dao().getTheme(themeID).get(0);
-            binding.setTheme(theme);
+            String appliedTheme = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));
+            if (theme != null) {
+                List<Theme> themeList = appDatabase.dao().getTheme(appliedTheme);
 
-            getWindow().setStatusBarColor(theme.primary);
-            getWindow().setNavigationBarColor(theme.primary);
+                if (themeList.size() > 0) {
+                    theme = themeList.get(0);
+                    binding.setTheme(theme);
+
+                    getWindow().setStatusBarColor(theme.primary);
+                    getWindow().setNavigationBarColor(theme.primary);
+                }
+            }
         }).start();
     }
 }

@@ -15,11 +15,13 @@ import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.Product;
 import night.app.databinding.ItemRingtoneBinding;
+import night.app.services.RingtonePlayer;
 
 public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public List<Product> productList;
     public final MainActivity activity;
     public List<RingtoneViewHolder> viewHolders = new ArrayList<>();
+    public RingtonePlayer ringtonePlayer;
 
     @Override
     public int getItemCount() {
@@ -34,18 +36,18 @@ public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 DataBindingUtil.inflate(inflater, R.layout.item_ringtone, viewGroup, false);
 
         binding.setTheme(activity.theme);
+
         return new RingtoneViewHolder(this, binding);
     }
 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) {
         ((RingtoneViewHolder) viewHolder).loadData(productList.get(position));
+
+
     }
 
-    public RingtoneAdapter(MainActivity mainActivity) {
+    public RingtoneAdapter(MainActivity mainActivity, List<Product> productList) {
         activity = mainActivity;
-
-        new Thread(() -> {
-            productList = activity.appDatabase.dao().getProducts("ringtone");
-        }).start();
+        this.productList = productList;
     }
 }

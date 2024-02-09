@@ -4,14 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <data>
     <variable name="fragment" type="night.app.fragments.dialogs.RegisterDialog"/>
+    <variable name="theme" type="night.app.data.Theme" />
 </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:minHeight="400dp">
+        android:minHeight="400dp"
+        android:background="@{theme.secondary, default=`#F5F5F5`}">
 
-        <TextView
+    <TextView
             android:id="@+id/textView3"
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -22,6 +24,7 @@
             android:text="Sign up"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:textColor="@{theme.onSurface, default=`#000`}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -34,6 +37,7 @@
             android:layout_marginEnd="24dp"
             android:gravity="center"
             android:text="Welcome to Night!"
+            android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -100,9 +104,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:backgroundTint="@android:color/black"
             android:onClick="@{v -> fragment.confirmRegister()}"
+            android:textColor="@{theme.onPrimary, default=`#fff`}"
             android:text="PROCEED"
+            android:backgroundTint="@{theme.accent, default=`#441E9F`}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_form_fields" />
 
@@ -117,7 +122,7 @@
             android:gravity="center|end"
             android:onClick="@{v -> fragment.switchToLoginDialog()}"
             android:text="Login"
-            android:textColor="@android:color/black"
+            android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
             app:layout_constraintEnd_toStartOf="@+id/btn_positive"
             app:layout_constraintTop_toBottomOf="@+id/ll_form_fields" />
 

@@ -33,7 +33,7 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         ItemShopThemeBinding binding =
             DataBindingUtil.inflate(inflater, R.layout.item_shop_theme, viewGroup, false);
 
-        binding.setTheme(activity.theme);
+        binding.setTheme(activity.binding.getTheme());
 
         return new ThemeViewHolder(this, binding);
     }
@@ -44,11 +44,8 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         ((ThemeViewHolder) viewHolder).loadData(productList.get(position));
     }
 
-    public ThemeAdapter(MainActivity mainActivity) {
+    public ThemeAdapter(MainActivity mainActivity, List<Product> productList) {
         activity = mainActivity;
-
-        new Thread(() -> {
-            productList = activity.appDatabase.dao().getProducts("theme");
-        }).start();
+        this.productList = productList;
     }
 }

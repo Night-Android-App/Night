@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment;
 import org.json.JSONObject;
 
 import night.app.R;
+import night.app.activities.MainActivity;
 import night.app.databinding.DialogRegisterBinding;
 import night.app.networks.AccountRequest;
 import night.app.services.Password;
@@ -71,6 +72,10 @@ public class RegisterDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_register, container, false);
         binding.setFragment(this);
+        binding.setTheme(((MainActivity) requireActivity()).theme);
+
+        requireDialog().getWindow().setStatusBarColor(binding.getTheme().secondary);
+        requireDialog().getWindow().setNavigationBarColor(binding.getTheme().secondary);
 
         return binding.getRoot();
     }

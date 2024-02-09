@@ -26,6 +26,7 @@ import night.app.services.Password;
 
 public class LoginDialog extends DialogFragment {
     DialogLoginBinding binding;
+
     public void switchToRegisterDialog() {
         dismiss();
         new RegisterDialog().show(getParentFragmentManager(), null);
@@ -64,6 +65,9 @@ public class LoginDialog extends DialogFragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_login, container, false);
         binding.setFragment(this);
         binding.setTheme(((MainActivity) requireActivity()).theme);
+
+        requireDialog().getWindow().setStatusBarColor(binding.getTheme().secondary);
+        requireDialog().getWindow().setNavigationBarColor(binding.getTheme().secondary);
 
         return binding.getRoot();
     }

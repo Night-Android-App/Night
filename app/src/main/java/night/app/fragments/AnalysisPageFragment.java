@@ -8,11 +8,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
 import night.app.R;
 import night.app.activities.MainActivity;
+import night.app.adapters.ThemeAdapter;
 import night.app.data.Theme;
 import night.app.databinding.FragmentAnalysisPageBinding;
 import night.app.fragments.analysis.DayRecordFragment;
@@ -46,8 +49,7 @@ public class AnalysisPageFragment extends Fragment {
                             throw new IllegalStateException("Unexpected value: " + tab.getPosition());
                 };
 
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
+                getParentFragmentManager().beginTransaction()
                         .replace(R.id.fr_anal_details, fragmentClass, null)
                         .commit();
             }

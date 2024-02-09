@@ -1,51 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="16dp"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/textView"
+<layout>
+    <data>
+        <variable name="theme" type="night.app.data.Theme" />
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="5dp"
-        android:text="PERMISSION"
-        android:textSize="11sp" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginVertical="5dp"
-        android:layout_marginStart="5dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="Manual configuration"
-            android:textSize="16sp" />
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:text="PERMISSION"
+            android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
+            android:textSize="11sp" />
 
-        <Button
-            android:id="@+id/grantNotificationPermission"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:gravity="center"
-            android:onClick="@null"
-            android:text="@string/proceed" />
+            android:layout_marginVertical="5dp"
+            android:layout_marginStart="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Manual configuration"
+                android:textColor="@{theme.onSurface, default=`#000`}"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/grantNotificationPermission"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:gravity="center"
+                android:text="@string/proceed"
+                android:backgroundTint="@{theme.accent, default=`#441E9F`}" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="29dp"
+            android:layout_marginBottom="5dp"
+            android:text="PRIVACY POLICY"
+            android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
+            android:textSize="11sp" />
+
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/textView18"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
-        android:layout_marginBottom="5dp"
-        android:text="PRIVACY POLICY"
-        android:textSize="11sp" />
-
-</LinearLayout>
+</layout>

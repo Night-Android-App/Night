@@ -24,15 +24,11 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
     public void setThemeApplied() {
         binding.btnShopItemPurchase.setEnabled(false);
         binding.btnShopItemPurchase.setText("APPLIED");
-
-        binding.tvShopPriceLabel.setVisibility(View.GONE);
     }
 
     public void setThemePurchased(Product itemData) {
         binding.btnShopItemPurchase.setEnabled(true);
         binding.btnShopItemPurchase.setText("APPLY");
-
-        binding.tvShopPriceLabel.setVisibility(View.GONE);
 
         binding.btnShopItemPurchase.setOnClickListener(v -> {
             MainActivity activity = adapter.activity;
@@ -107,7 +103,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
             return;
         }
 
-        binding.tvShopItemPrice.setText(String.valueOf(itemData.prodPrice));
+        binding.tvShopItemPrice.setText(itemData.prodPrice + " coins");
 
         binding.btnShopItemPurchase.setOnClickListener(v -> {
             PurchaseDialog dialog = new PurchaseDialog();

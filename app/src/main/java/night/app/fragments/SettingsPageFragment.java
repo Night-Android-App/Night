@@ -1,6 +1,7 @@
 package night.app.fragments;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
+import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.tabs.TabLayout;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.DataStoreHelper;
+import night.app.data.PreferenceViewModel;
 import night.app.databinding.FragmentSettingsPageBinding;
 import night.app.fragments.dialogs.LoginDialog;
 import night.app.fragments.settings.BackupConfigFragment;
@@ -24,44 +29,9 @@ import night.app.fragments.settings.OthersConfigFragment;
 
 public class SettingsPageFragment extends Fragment {
     FragmentSettingsPageBinding binding;
-    DataStoreHelper dataStore;
 
     private void showLoginModal() {
         new LoginDialog().show(requireActivity().getSupportFragmentManager(), null);
-    }
-
-
-    private void loadAccountState() {
-        // load data from local storage first
-        // to avoid no content can show when waiting the server
-        Preferences pref = dataStore.getPrefs();
-
-        String uidVal = pref.get(PreferencesKeys.stringKey("username"));
-        String descVal = pref.get(PreferencesKeys.stringKey("account_createdDate"));
-
-        // user didn't login or the app has some issues on storing data
-        // xml layout is default to the view of not logged in, no need to set default view at here
-        if (uidVal == null || descVal == null) return;
-
-        binding.clSettAcct.setOnClickListener(null);
-
-        binding.tvSettAcctUid.setText(uidVal);
-        binding.tvSettAcctDesc.setText(descVal);
-
-        // if the session was expired, request the user to login
-        // and change the account view to default (not logged in)
-//        new AccountRequest().validateSession(res -> {
-//
-//            // no action if cannot connect to the server
-//            // remain the account view, but the user cannot uses any server services
-//            if (res == null) return;
-//
-//            // no action if session is valid
-//            if (res.optInt("responseCode") == 200) return;
-//
-//            // if session is invalid
-//            setDefaultAcctView();
-//        });
     }
 
     @Override
@@ -72,16 +42,21 @@ public class SettingsPageFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings_page, container, false);
+        MainActivity activity = (MainActivity) requireActivity();
 
-        View view = binding.getRoot();
-        dataStore = ((MainActivity) requireActivity()).dataStore;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings_page, container, false);
+        binding.setTheme(activity.theme);
+
+
+        new ViewModelProvider(requireActivity(), new ViewModelProvider.Factory() {
+            @NonNull @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                return (T) new PreferenceViewModel(activity.dataStore);
+            }
+        }).get(PreferenceViewModel.class);
+
 
         binding.clSettAcct.setOnClickListener(v -> showLoginModal());
-
-        binding.setTheme(((MainActivity) requireActivity()).theme);
-
-        loadAccountState();
 
         getParentFragmentManager().setFragmentResultListener("accountStatus", this, (reqKey, result) -> {
             String uid = result.getString("uid");
@@ -91,8 +66,8 @@ public class SettingsPageFragment extends Fragment {
             binding.tvSettAcctDesc.setText(desc);
             binding.clSettAcct.setOnClickListener(null);
 
-            dataStore.update(PreferencesKeys.stringKey("username"), uid);
-            dataStore.update(PreferencesKeys.stringKey("account_createdDate"), desc);
+            activity.dataStore.update(PreferencesKeys.stringKey("username"), uid);
+            activity.dataStore.update(PreferencesKeys.stringKey("account_createdDate"), desc);
         });
 
         binding.tabSett.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -116,10 +91,11 @@ public class SettingsPageFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) { }
         });
 
+
         getParentFragmentManager().beginTransaction()
                 .add(R.id.fr_sett_details, BackupConfigFragment.class, null)
                 .commit();
 
-        return view;
+        return binding.getRoot();
     }
 }

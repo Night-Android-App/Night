@@ -14,5 +14,8 @@ public class Ringtone {
     public String name;
 
     @NonNull
-    public byte[] file;
+    public Integer duration;
+
+    @NonNull
+    public String file;
 }
