@@ -68,7 +68,7 @@ public class ChartBuilder {
         LineDataSet dataSet = new LineDataSet(dataEntries, "");
         dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         dataSet.setColor(theme.accent);
-        dataSet.setValueTextColor(theme.onPrimaryVariant);
+        dataSet.setValueTextColor(theme.getOnPrimaryVariant());
         dataSet.setHighlightEnabled(false);
         chart.setData(new LineData(dataSet));
     }

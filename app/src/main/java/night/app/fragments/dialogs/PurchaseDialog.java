@@ -43,6 +43,7 @@ public class PurchaseDialog extends DialogFragment {
         binding.tvPurchaseCoins.setText(String.valueOf(coins == null ? coins = 0 : coins));
 
         binding.tvPurchaseRemain.setText(String.valueOf(coins - price));
+        binding.tvPurchaseName.setText(getArguments().getString("name", ""));
 
         // button operation
         if (Integer.parseInt(binding.tvPurchaseRemain.getText().toString()) < 0) {

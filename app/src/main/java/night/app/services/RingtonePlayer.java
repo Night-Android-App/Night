@@ -1,18 +1,13 @@
 package night.app.services;
 
-import android.app.Activity;
+import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Base64;
 
 import night.app.activities.MainActivity;
 
 public class RingtonePlayer {
     private MediaPlayer mediaPlayer;
+    public int playerOwner;
     private MainActivity activity;
     private String ringtoneName;
 
@@ -23,32 +18,30 @@ public class RingtonePlayer {
     public void run() {
         new Thread(() -> {
             try {
-                String path = activity.getCacheDir() + "/" + ringtoneName + ".mp3";
-
-                File file = new File(path);
-                FileOutputStream out = new FileOutputStream(file);
-
-                String base64 = activity.appDatabase.dao().getRingtone(ringtoneName).get(0).file;
-                byte[] bytes = Base64.getDecoder().decode(base64);
-                out.write(bytes);
-
-                out.close();
+                String path = activity.appDatabase.dao().getRingtone(ringtoneName).get(0).path;
 
                 mediaPlayer = new MediaPlayer();
-                mediaPlayer.setDataSource(path);
 
-                mediaPlayer.prepare();
-                mediaPlayer.start();
+                if (path.startsWith("file://android_asset/")) {
+                    AssetFileDescriptor afd =
+                            activity.getAssets().openFd(path.replace("file://android_asset/", ""));
+
+                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    mediaPlayer.prepare();
+                    mediaPlayer.start();
+
+                    afd.close();
+                }
             }
             catch (Exception e) {
-                System.err.println(e);
+                System.err.println(e.toString());
             }
-
         }).start();
     }
 
-    public RingtonePlayer(MainActivity activity, String ringtoneName) {
+    public RingtonePlayer(MainActivity activity, String ringtoneName, int playerOwner) {
         this.activity = activity;
         this.ringtoneName = ringtoneName;
+        this.playerOwner = playerOwner;
     }
 }

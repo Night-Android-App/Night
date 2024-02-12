@@ -9,11 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
+
+import java.util.Date;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.databinding.FragmentOthersConfigBinding;
+import night.app.fragments.dialogs.PrivacyPolicyDialog;
 
 public class OthersConfigFragment extends Fragment {
     FragmentOthersConfigBinding binding;
@@ -33,6 +37,13 @@ public class OthersConfigFragment extends Fragment {
         binding.grantNotificationPermission
                 .setOnClickListener(v -> requestNotificationPermission());
 
+        binding.btnOpenPolicy.setOnClickListener(v -> new PrivacyPolicyDialog().show(getParentFragmentManager(), null));
+
+        String agreedDate = ((MainActivity) requireActivity()).dataStore
+                .getPrefs()
+                .get(PreferencesKeys.stringKey("PolicyAgreedDate"));
+
+        binding.tvPolicyAgreedDate.setText(agreedDate);
         return binding.getRoot();
     }
 }

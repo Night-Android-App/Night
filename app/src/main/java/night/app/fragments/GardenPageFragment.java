@@ -1,26 +1,55 @@
 package night.app.fragments;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import androidx.databinding.DataBindingUtil;
+import androidx.datastore.preferences.core.Preferences;
+import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 
 import night.app.R;
+import night.app.activities.MainActivity;
+import night.app.databinding.FragmentGardenPageBinding;
 import night.app.fragments.dialogs.ShopDialog;
 
 public class GardenPageFragment extends Fragment {
+    public FragmentGardenPageBinding binding;
+
     private void openShopMenu() {
         new ShopDialog().show(requireActivity().getSupportFragmentManager(), null);
     }
 
+    private void loadData() {
+        Preferences prefs = ((MainActivity) requireActivity()).dataStore.getPrefs();
+
+        Integer preyCaught = prefs.get(PreferencesKeys.intKey("preyCaught"));
+        binding.tvCoinsOwned.setText(preyCaught == null ? "N/A" : String.valueOf(preyCaught));
+
+        Integer salePrice = prefs.get(PreferencesKeys.intKey("salePrice"));
+        binding.tvSalePrice.setText(salePrice == null ? "N/A" : String.valueOf(salePrice));
+
+        Integer coinOwned = prefs.get(PreferencesKeys.intKey("coinOwned"));
+        binding.tvCoinsOwned.setText(coinOwned == null ? "N/A" : String.valueOf(coinOwned));
+
+        Integer totalEarned = prefs.get(PreferencesKeys.intKey("totalEarned"));
+        binding.tvTotalEarned.setText(totalEarned == null ? "N/A" : String.valueOf(totalEarned));
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_garden_page, container, false);
+        MainActivity activity = (MainActivity) requireActivity();
 
-        view.findViewById(R.id.btn_garden_shop).setOnClickListener(v -> openShopMenu());
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_garden_page, container, false);
+        binding.setTheme(activity.theme);
 
-        return view;
+        binding.btnGardenShop.setOnClickListener(v -> openShopMenu());
+        loadData();
+
+        return binding.getRoot();
     }
 }

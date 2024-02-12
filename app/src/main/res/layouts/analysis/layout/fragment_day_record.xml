@@ -18,8 +18,9 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
+            android:text="STATISTICS"
             android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
-            android:text="Statistics" />
+            android:textSize="11sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,7 +37,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_fellAsleep"
+                    android:id="@+id/tv_lightSleep"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
@@ -49,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal|top"
-                    android:text="FELL ASLEEP"
+                    android:text="Light sleep"
                     android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -75,7 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal|top"
-                    android:text="DEEP SLEEP"
+                    android:text="Deep sleep"
                     android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -101,7 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal|top"
-                    android:text="IN BED"
+                    android:text="In bed"
                     android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -115,8 +116,9 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
+            android:text="SLEEP CONFIDENCE"
             android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
-            android:text="Sleep Confidence" />
+            android:textSize="11sp" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/lineChart_day_record"
@@ -134,8 +136,9 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
-            android:text="@string/dream_record"
-            android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}" />
+            android:text="DREAM RECORD"
+            android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/tv_anal_dream"

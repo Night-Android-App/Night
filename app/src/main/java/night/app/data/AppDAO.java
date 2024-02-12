@@ -49,9 +49,9 @@ public interface AppDAO {
     @Query("SELECT * FROM ringtone WHERE ring_name in (SELECT ring_name FROM product WHERE prod_isbought=1)")
     List<Ringtone> getAllOwnedRingtones();
 
-    @Query("INSERT INTO ringtone (ring_name, file) VALUES (:ringName, :file)")
+    @Query("INSERT INTO ringtone (ring_name, path) VALUES (:ringName, :file)")
     void insertRingtone(String ringName, Byte file);
 
-    @Query("INSERT INTO theme (theme_name, `primary`, secondary, surface, surface_variant, accent, onPrimary, onPrimary_variant, onSurface) VALUES (:id, :pr, :sec, :sur, :surVar, :accent, :onPr, :onPrVar, :onSur)")
-    void insertTheme(String id, int pr, int sec, int sur, int surVar, int accent, int onPr, int onPrVar, int onSur);
+    @Query("INSERT INTO theme (theme_name, `primary`, secondary, surface, accent, onPrimary, onSurface) VALUES (:id, :pr, :sec, :sur, :accent, :onPr, :onSur)")
+    void insertTheme(String id, int pr, int sec, int sur,int accent, int onPr, int onSur);
 }

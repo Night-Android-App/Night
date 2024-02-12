@@ -19,9 +19,16 @@ import night.app.databinding.FragmentRecycleViewBinding;
 public class MonthRecordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         RecyclerView view = (RecyclerView) inflater.inflate(R.layout.fragment_recycle_view, container, false);
 
         view.setLayoutManager(new LinearLayoutManager(requireActivity()));
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", 1);
+        bundle.putString("info1", "N/A");
+        bundle.putString("info2", "N/A");
+        getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
 
         return view;
     }

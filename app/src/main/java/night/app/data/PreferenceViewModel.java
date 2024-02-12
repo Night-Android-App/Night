@@ -14,7 +14,7 @@ public class PreferenceViewModel extends ViewModel implements Observable {
     private final Preferences prefs;
 
     // Preferences
-    private String lastBackupDate, backupFrequency;
+    private String lastBackupDate;
     private Boolean isBackupSleep, isBackupAlarm, isBackupDream;
 
     @Override

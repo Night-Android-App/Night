@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <data>
-    <variable name="fragment" type="night.app.fragments.dialogs.RegisterDialog"/>
     <variable name="theme" type="night.app.data.Theme" />
+    <variable name="isLoginPage" type="Boolean" />
 </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,14 +14,14 @@
         android:background="@{theme.secondary, default=`#F5F5F5`}">
 
     <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="44dp"
             android:layout_marginEnd="24dp"
             android:gravity="center"
-            android:text="Sign up"
+            android:text="@{isLoginPage ? `Login` : `Sign up`}"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@{theme.onSurface, default=`#000`}"
@@ -30,19 +30,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/tv_subtitle"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:gravity="center"
-            android:text="Welcome to Night!"
+            android:text="@{isLoginPage ? `Welcome back!` : `Welcome to Night!`}"
             android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
         <LinearLayout
             android:id="@+id/ll_form_fields"
@@ -52,9 +52,10 @@
             android:paddingHorizontal="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4">
+            app:layout_constraintTop_toBottomOf="@+id/tv_subtitle">
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_uid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">
@@ -64,10 +65,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/username"
+                    android:textColor="@{theme.onSurface, default=`#000`}"
                     android:maxLength="20" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_pwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">
@@ -77,20 +80,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/password"
+                    android:textColor="@{theme.onSurface, default=`#000`}"
                     android:inputType="textPassword"
                     android:maxLength="20" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_pwd_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="12dp"
+                android:visibility="@{isLoginPage ? android.view.View.GONE : android.view.View.VISIBLE}">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_login_pwd_confirmed"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="Confirm password"
+                    android:textColor="@{theme.onSurface, default=`#000`}"
                     android:inputType="textPassword"
                     android:maxLength="20" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -104,7 +111,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:onClick="@{v -> fragment.confirmRegister()}"
             android:textColor="@{theme.onPrimary, default=`#fff`}"
             android:text="PROCEED"
             android:backgroundTint="@{theme.accent, default=`#441E9F`}"
@@ -120,8 +126,7 @@
             android:layout_marginEnd="14dp"
             android:backgroundTint="@android:color/transparent"
             android:gravity="center|end"
-            android:onClick="@{v -> fragment.switchToLoginDialog()}"
-            android:text="Login"
+            android:text="@{isLoginPage ? `SIGN UP` : `Login`}"
             android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
             app:layout_constraintEnd_toStartOf="@+id/btn_positive"
             app:layout_constraintTop_toBottomOf="@+id/ll_form_fields" />

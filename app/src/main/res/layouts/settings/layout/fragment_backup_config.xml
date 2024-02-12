@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
-                android:text="@string/backup_status"
+                android:text="STATUS"
                 android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
                 android:textSize="11sp" />
 
@@ -40,7 +40,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:minHeight="48dp"
-                    android:text="@string/last_backup"
+                    android:text="Recent backup"
                     android:textColor="@{theme.onSurface, default=`#000`}"
                     android:textSize="16sp" />
 
@@ -50,8 +50,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical|end"
-                    android:textColor="@{theme.onSurface, default=`#000`}"
-                    android:text="No data" />
+                    android:text="No record"
+                    android:textColor="@{theme.onSurface, default=`#000`}" />
 
             </LinearLayout>
 
@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
-                android:text="@string/backup_option"
+                android:text="OPTION"
                 android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
                 android:textSize="11sp" />
 
@@ -79,6 +79,8 @@
                 android:layout_marginStart="5dp"
                 android:checked="@={viewModel.isBackupAlarm}"
                 android:textColor="@{theme.onSurface, default=`#000`}"
+                android:thumbTintList="@{theme.switchThumbColors}"
+                android:trackTintList="@{theme.switchTrackColors}"
                 android:text="@string/alarm_list"
                 android:textSize="16sp" />
 
@@ -90,6 +92,8 @@
                 android:layout_marginStart="5dp"
                 android:checked="@={viewModel.isBackupSleep}"
                 android:textColor="@{theme.onSurface, default=`#000`}"
+                android:thumbTintList="@{theme.switchThumbColors}"
+                android:trackTintList="@{theme.switchTrackColors}"
                 android:text="@string/sleep_data"
                 android:textSize="16sp" />
 
@@ -101,6 +105,8 @@
                 android:layout_marginStart="5dp"
                 android:checked="@={viewModel.isBackupDream}"
                 android:textColor="@{theme.onSurface, default=`#000`}"
+                android:thumbTintList="@{theme.switchThumbColors}"
+                android:trackTintList="@{theme.switchTrackColors}"
                 android:text="@string/dream_record"
                 android:textSize="16sp" />
 
@@ -116,7 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
-                android:text="@string/automatically_backup"
+                android:text="AUTO BACKUP"
                 android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
                 android:textSize="11sp" />
 
@@ -132,16 +138,10 @@
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="@string/frequency"
+                    android:text="Backup will be started after you woke up"
                     android:textColor="@{theme.onSurface, default=`#000`}"
                     android:textSize="16sp" />
 
-                <Spinner
-                    android:id="@+id/sp_sett_backup_freq"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:spinnerMode="dropdown" />
             </LinearLayout>
 
         </LinearLayout>
@@ -165,6 +165,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginVertical="5dp"
+                android:backgroundTint="@{theme.accent, default=`#441E9F`}"
                 android:text="@string/backupCapital" />
 
             <Button
@@ -172,14 +173,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginVertical="5dp"
+                android:backgroundTint="@{theme.accent, default=`#441E9F`}"
                 android:text="@string/recovery" />
-
-            <Button
-                android:id="@+id/btn_sett_backup_act_del"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginVertical="5dp"
-                android:text="@string/delete_data" />
 
         </LinearLayout>
 

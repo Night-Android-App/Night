@@ -12,23 +12,28 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Objects;
 
+import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.Product;
 import night.app.databinding.ItemShopThemeBinding;
+import night.app.fragments.GardenPageFragment;
 import night.app.fragments.dialogs.PurchaseDialog;
 
 public class ThemeViewHolder extends RecyclerView.ViewHolder {
+    Product product;
     ItemShopThemeBinding binding;
     ThemeAdapter adapter;
 
     public void setThemeApplied() {
         binding.btnShopItemPurchase.setEnabled(false);
         binding.btnShopItemPurchase.setText("APPLIED");
+        binding.btnShopItemPurchase.setBackgroundColor(binding.getTheme().getOnPrimaryVariant() & 0x00FFFFFF | 0x40000000);
     }
 
     public void setThemePurchased(Product itemData) {
         binding.btnShopItemPurchase.setEnabled(true);
         binding.btnShopItemPurchase.setText("APPLY");
+        binding.btnShopItemPurchase.setBackgroundColor(binding.getTheme().accent);
 
         binding.btnShopItemPurchase.setOnClickListener(v -> {
             MainActivity activity = adapter.activity;
@@ -55,6 +60,8 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                         if (originalTheme.equals(product.prodName)) {
                             holder.setThemePurchased(product);
                         }
+
+                        holder.loadData();
                     }
 
                     // notify the shop page switch the theme (because cannot access its binding)
@@ -63,6 +70,11 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
 
                     activity.getWindow().setStatusBarColor(activity.theme.primary);
                     activity.getWindow().setNavigationBarColor(activity.theme.primary);
+
+                    // refresh the garden page for switching theme
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .add(R.id.fr_app_page, GardenPageFragment.class, null)
+                            .commit();
 
                     setThemeApplied();
                 });
@@ -78,13 +90,18 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                         navItemIcon.setColorFilter(activity.theme.onPrimary);
                         continue;
                     }
-                    navItemIcon.setColorFilter(activity.theme.onPrimaryVariant);
+                    navItemIcon.setColorFilter(activity.theme.getOnPrimaryVariant());
                 }
             }).start();
         });
     }
 
+    public void loadData() {
+        if (product != null) loadData(product);
+    }
+
     public void loadData(Product itemData) {
+        product = itemData;
         MainActivity activity = adapter.activity;
         binding.tvShopItemName.setText(itemData.prodName);
 
@@ -104,11 +121,13 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
         }
 
         binding.tvShopItemPrice.setText(itemData.prodPrice + " coins");
+        binding.btnShopItemPurchase.setBackgroundColor(binding.getTheme().accent);
 
         binding.btnShopItemPurchase.setOnClickListener(v -> {
             PurchaseDialog dialog = new PurchaseDialog();
 
             Bundle bundle = new Bundle();
+            bundle.putString("name", itemData.prodName);
             bundle.putString("price", String.valueOf(itemData.prodPrice));
 
             dialog.setArguments(bundle);

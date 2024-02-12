@@ -16,22 +16,23 @@
         <LinearLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@{theme.primary, default=`#212529`}"
+            android:orientation="vertical"
             android:paddingTop="8dp"
             android:paddingBottom="34dp">
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_anal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 app:tabRippleColor="@{theme.onPrimaryVariant}"
-                tools:tabRippleColor="#757a7f"
                 tools:tabIndicatorColor="#fff"
-                tools:tabTextColor="#757a7f"
-                tools:tabSelectedTextColor="#fff" >
+                tools:tabRippleColor="#757a7f"
+                tools:tabSelectedTextColor="#fff"
+                tools:tabTextColor="#757a7f">
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
@@ -50,7 +51,7 @@
             </com.google.android.material.tabs.TabLayout>
 
             <TextView
-                android:id="@+id/textView11"
+                android:id="@+id/tv_anal_date"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginHorizontal="16dp"
@@ -120,7 +121,7 @@
                         android:id="@+id/tv_anal_main_info_title1"
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
-                        android:text="@string/sleep_start"
+                        android:text="FEEL ASLEEP"
                         android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
                         android:textSize="11sp" />
 
@@ -137,7 +138,7 @@
                         android:id="@+id/tv_anal_main_info_title2"
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
-                        android:text="@string/sleep_end"
+                        android:text="@string/sleep_efficiency"
                         android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
                         android:textSize="11sp" />
 
@@ -148,7 +149,8 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fr_anal_details"

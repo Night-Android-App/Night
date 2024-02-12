@@ -46,7 +46,7 @@ public class ShopDialog extends DialogFragment {
         binding.setTheme(theme);
 
         binding.tabShop.setSelectedTabIndicatorColor(theme.onPrimary);
-        binding.tabShop.setTabTextColors(theme.onPrimaryVariant, theme.onPrimary);
+        binding.tabShop.setTabTextColors(theme.getOnPrimaryVariant(), theme.onPrimary);
 
         requireDialog().getWindow().setStatusBarColor(theme.primary);
         requireDialog().getWindow().setNavigationBarColor(theme.secondary);

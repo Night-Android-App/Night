@@ -33,20 +33,6 @@ public class BackupConfigFragment extends Fragment {
         binding.setTheme(activity.theme);
         binding.setViewModel(new ViewModelProvider(activity).get(PreferenceViewModel.class));
 
-        String[] frequencyOptions = new String[] {"Day", "Week", "Month"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                activity, android.R.layout.simple_spinner_item, frequencyOptions
-        );
-
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spSettBackupFreq.setAdapter(adapter);
-
-        for (SwitchCompat switchCompat : new SwitchCompat[] { binding.btnSettBackupOptAlarm, binding.btnSettBackupOptSleep, binding.btnSettBackupOptDream }) {
-            switchCompat.setThumbTintList(binding.getTheme().getSwitchThumbColors());
-            switchCompat.setTrackTintList(binding.getTheme().getSwitchTrackColors());
-        }
-
         return binding.getRoot();
     }
 }

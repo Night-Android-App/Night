@@ -6,7 +6,6 @@ import android.graphics.Color;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -18,24 +17,33 @@ public class Theme {
     public String name = "Default Theme";
 
     public Integer primary = 0xFF212529;
-
     public Integer secondary = 0xFFF5F5F5;
-
     public Integer surface = 0xFFFFFFFF;
-
-    @ColumnInfo(name="surface_variant")
-    public Integer surfaceVariant = 0xFFF0F0F0;
-
     public Integer accent = 0xFF441E9F;
-
     public Integer onPrimary = 0xFFFFFFFF;
-
-    @ColumnInfo(name = "onPrimary_variant")
-    public Integer onPrimaryVariant = 0xFF61666A;
-
     public Integer onSurface = 0xFF000000;
 
-    @Ignore
+    public int getOnPrimaryVariant() {
+        return darken(onPrimary, 0.4);
+    }
+
+    public int getSurfaceVariant() {
+        return darken(surface, 0.08);
+    }
+
+    public static int darken(int color, double fraction) {
+        return Color.argb(
+                Color.alpha(color),
+                darkenColor(Color.red(color), fraction),
+                darkenColor(Color.green(color), fraction),
+                darkenColor(Color.blue(color), fraction)
+        );
+    }
+
+    private static int darkenColor(int color, double fraction) {
+        return (int) Math.max(color - (color * fraction), 0);
+    }
+
     public ColorStateList getSwitchThumbColors() {
         final int[][] states = new int[2][];
         final int[] colors = new int[2];
@@ -49,24 +57,20 @@ public class Theme {
         return new ColorStateList(states, colors);
     }
 
-    @Ignore
     public ColorStateList getSwitchTrackColors() {
         final int[][] states = new int[2][];
         final int[] colors = new int[2];
 
         states[0] = new int[] { android.R.attr.state_checked };
-
-        int color = accent;
-        colors[0] = Color.argb(
-                (int) Math.round(Color.alpha(color)*0.25),
-                Color.red(color),
-                Color.green(color),
-                Color.blue(color)
-        );
+        colors[0] = accent & 0x00FFFFFF | 0x25000000;
 
         states[1] = new int[0];
-        colors[1] = onPrimaryVariant;
+        colors[1] = getOnPrimaryVariant();
 
         return new ColorStateList(states, colors);
+    }
+
+    public ColorStateList getOnPrimaryColorState() {
+        return ColorStateList.valueOf(onPrimary);
     }
 }

@@ -1,16 +1,13 @@
 package night.app.fragments;
 
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
-import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,10 +16,9 @@ import com.google.android.material.tabs.TabLayout;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.data.DataStoreHelper;
 import night.app.data.PreferenceViewModel;
 import night.app.databinding.FragmentSettingsPageBinding;
-import night.app.fragments.dialogs.LoginDialog;
+import night.app.fragments.dialogs.AccountDialog;
 import night.app.fragments.settings.BackupConfigFragment;
 import night.app.fragments.settings.OthersConfigFragment;
 
@@ -31,7 +27,7 @@ public class SettingsPageFragment extends Fragment {
     FragmentSettingsPageBinding binding;
 
     private void showLoginModal() {
-        new LoginDialog().show(requireActivity().getSupportFragmentManager(), null);
+        new AccountDialog().show(requireActivity().getSupportFragmentManager(), null);
     }
 
     @Override

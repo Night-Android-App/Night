@@ -49,9 +49,11 @@ public class AnalysisPageFragment extends Fragment {
                             throw new IllegalStateException("Unexpected value: " + tab.getPosition());
                 };
 
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.fr_anal_details, fragmentClass, null)
-                        .commit();
+                requireActivity().runOnUiThread(() -> {
+                    getParentFragmentManager().beginTransaction()
+                            .replace(R.id.fr_anal_details, fragmentClass, null)
+                            .commit();
+                });
             }
 
             @Override
@@ -63,21 +65,22 @@ public class AnalysisPageFragment extends Fragment {
 
         getParentFragmentManager()
                 .setFragmentResultListener("updateAnalytics", this, (String key, Bundle bundle) -> {
-                    if (bundle.getInt("type") == 0) {
-                        binding.tvAnalMainInfoTitle1.setText("SLEEP START");
-                        binding.tvAnalMainInfoTitle2.setText("SLEEP END");
-                    }
-                    else {
-                        binding.tvAnalMainInfoTitle1.setText("AVG SLEEP");
-                        binding.tvAnalMainInfoTitle2.setText("SLEEP EFFICIENCY");
-                    }
+                    requireActivity().runOnUiThread(() -> {
+                        if (bundle.getInt("type") == 0) {
+                            binding.tvAnalMainInfoTitle1.setText("FELL ASLEEP");
+                        }
+                        else {
+                            binding.tvAnalMainInfoTitle1.setText("AVG SLEEP");
+                        }
 
-                    binding.tvAnalMainInfoData1.setText(bundle.getString("info1"));
-                    binding.tvAnalMainInfoData2.setText(bundle.getString("info2"));
+                        binding.tvAnalMainInfoData1.setText(bundle.getString("info1"));
+                        binding.tvAnalMainInfoData2.setText(bundle.getString("info2"));
+                        binding.tvAnalDate.setText(bundle.getString("date"));
+                    });
                 });
 
         binding.tabAnal.setSelectedTabIndicatorColor(theme.onPrimary);
-        binding.tabAnal.setTabTextColors(theme.onPrimaryVariant, theme.onPrimary);
+        binding.tabAnal.setTabTextColors(theme.getOnPrimaryVariant(), theme.onPrimary);
         return binding.getRoot();
     }
 }

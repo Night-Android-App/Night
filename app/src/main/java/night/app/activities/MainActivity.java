@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.GardenPageFragment;
 import night.app.fragments.SettingsPageFragment;
 import night.app.R;
+import night.app.fragments.dialogs.PrivacyPolicyDialog;
 
 public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         for (Map.Entry<Integer, Class<? extends Fragment>> entry : pageMap.entrySet()) {
             if (entry.getValue().isInstance(fragment)) {
-                setNavItemStyle(entry.getKey(), 0, theme.onPrimaryVariant);
+                setNavItemStyle(entry.getKey(), 0, theme.getOnPrimaryVariant());
             }
         }
 
@@ -136,10 +138,10 @@ public class MainActivity extends AppCompatActivity {
                     .createFromAsset("app.db")
                     .build();
 
-            if (dataStore.getPrefs().get(PreferencesKeys.booleanKey("isFirstVisited")) == null) {
+            if (dataStore.getPrefs().get(PreferencesKeys.stringKey("PolicyAgreedDate")) == null) {
+                new PrivacyPolicyDialog().show(getSupportFragmentManager(), null);
                 requestPermissions();
             }
-
             String appliedTheme = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));
             if (theme != null) {
                 List<Theme> themeList = appDatabase.dao().getTheme(appliedTheme);
@@ -147,6 +149,11 @@ public class MainActivity extends AppCompatActivity {
                 if (themeList.size() > 0) {
                     theme = themeList.get(0);
                     binding.setTheme(theme);
+
+                    Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
+                    if (fr instanceof GardenPageFragment) {
+                        ((GardenPageFragment) fr).binding.setTheme(theme);
+                    }
 
                     getWindow().setStatusBarColor(theme.primary);
                     getWindow().setNavigationBarColor(theme.primary);
