@@ -41,7 +41,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:gravity="bottom"
-                android:text="@string/press_here_to_login_now"
+                android:text="Press here to login"
                 android:textColor="@{theme.onPrimary, default=`#fff`}"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"

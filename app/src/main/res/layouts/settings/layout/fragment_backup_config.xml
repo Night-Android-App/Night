@@ -51,7 +51,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|end"
                     android:text="No record"
-                    android:textColor="@{theme.onSurface, default=`#000`}" />
+                    android:textColor="@{theme.onSurface , default=`#000`}" />
 
             </LinearLayout>
 

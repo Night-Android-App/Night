@@ -7,14 +7,12 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Day {
+    @NonNull
     @PrimaryKey
-    @ColumnInfo(name = "day_id")
-    public Integer id;
+    public Integer date = 0;
 
     @NonNull
-    public Integer date;
+    public String sleep = "{\"1422\": 0, \"10\": 52, \"60\": 90, \"120\": 86,  \"240\": 54, \"410\": 51,  \"420\": 0}";
 
-    public String sleep;
-
-    public String dream;
+    public String dream = "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing";
 }

@@ -76,8 +76,8 @@ public class PrivacyPolicyDialog extends DialogFragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_privacy_policy, container, false);
         binding.setTheme(activity.theme);
 
-        requireDialog().getWindow().setStatusBarColor(binding.getTheme().primary);
-        requireDialog().getWindow().setNavigationBarColor(binding.getTheme().secondary);
+        requireDialog().getWindow().setStatusBarColor(binding.getTheme().getPrimary());
+        requireDialog().getWindow().setNavigationBarColor(binding.getTheme().getSecondary());
 
         loadPolicyContent();
 

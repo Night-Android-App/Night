@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 
@@ -22,7 +23,7 @@ import night.app.fragments.dialogs.PrivacyPolicyDialog;
 public class OthersConfigFragment extends Fragment {
     FragmentOthersConfigBinding binding;
 
-    public void requestNotificationPermission() {
+    public void requestPermission() {
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.fromParts("package", requireActivity().getPackageName(), null));
@@ -34,16 +35,17 @@ public class OthersConfigFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_others_config, container, false);
         binding.setTheme(((MainActivity) requireActivity()).theme);
 
-        binding.grantNotificationPermission
-                .setOnClickListener(v -> requestNotificationPermission());
+        binding.btnPermission.setOnClickListener(v -> requestPermission());
+        binding.btnOpenPolicy.setOnClickListener(v -> {
+            new PrivacyPolicyDialog().show(getParentFragmentManager(), null);
+        });
 
-        binding.btnOpenPolicy.setOnClickListener(v -> new PrivacyPolicyDialog().show(getParentFragmentManager(), null));
+        MainActivity activity = (MainActivity) requireActivity();
+        Preferences prefs = activity.dataStore.getPrefs();
 
-        String agreedDate = ((MainActivity) requireActivity()).dataStore
-                .getPrefs()
-                .get(PreferencesKeys.stringKey("PolicyAgreedDate"));
-
+        String agreedDate = prefs.get(PreferencesKeys.stringKey("PolicyAgreedDate"));
         binding.tvPolicyAgreedDate.setText(agreedDate);
+
         return binding.getRoot();
     }
 }

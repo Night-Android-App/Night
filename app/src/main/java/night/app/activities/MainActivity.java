@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        setNavItemStyle(id, LinearLayout.LayoutParams.WRAP_CONTENT, theme.onPrimary);
+        setNavItemStyle(id, LinearLayout.LayoutParams.WRAP_CONTENT, theme.getOnPrimary());
 
         getSupportFragmentManager().beginTransaction()
             .replace(R.id.fr_app_page, fragmentClass, null)
@@ -124,8 +124,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         binding.setTheme(new Theme());
-        getWindow().setStatusBarColor(theme.primary);
-        getWindow().setNavigationBarColor(theme.primary);
+        getWindow().setStatusBarColor(theme.getPrimary());
+        getWindow().setNavigationBarColor(theme.getPrimary());
 
         setOnBackPressedListener();
 
@@ -142,21 +142,24 @@ public class MainActivity extends AppCompatActivity {
                 new PrivacyPolicyDialog().show(getSupportFragmentManager(), null);
                 requestPermissions();
             }
+
             String appliedTheme = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));
             if (theme != null) {
                 List<Theme> themeList = appDatabase.dao().getTheme(appliedTheme);
 
                 if (themeList.size() > 0) {
-                    theme = themeList.get(0);
-                    binding.setTheme(theme);
+                    runOnUiThread(() -> {
+                        theme = themeList.get(0);
+                        binding.setTheme(theme);
 
-                    Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
-                    if (fr instanceof GardenPageFragment) {
-                        ((GardenPageFragment) fr).binding.setTheme(theme);
-                    }
+                        Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
+                        if (fr instanceof GardenPageFragment) {
+                            ((GardenPageFragment) fr).binding.setTheme(theme);
+                        }
 
-                    getWindow().setStatusBarColor(theme.primary);
-                    getWindow().setNavigationBarColor(theme.primary);
+                        getWindow().setStatusBarColor(theme.getPrimary());
+                        getWindow().setNavigationBarColor(theme.getPrimary());
+                    });
                 }
             }
         }).start();

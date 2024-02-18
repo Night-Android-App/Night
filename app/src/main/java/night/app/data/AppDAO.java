@@ -8,14 +8,11 @@ import java.util.List;
 @Dao
 public interface AppDAO {
     // Alarm Query
-    @Query("SELECT * FROM alarm WHERE alarm_id == 1")
-    List<Alarm> getSleepAlarm();
+    @Query("SELECT * FROM alarm")
+    List<Alarm> getAllAlarms();
 
     @Query("UPDATE alarm SET start_time=:startTime, end_time=:endTime, ring_name=:ringName, isAlarmEnabled=:isAlarmEnabled, isDNDEnabled=:isDNDEnabled")
     void updateAlarm(int startTime, int endTime, String ringName, int isAlarmEnabled, int isDNDEnabled);
-
-    @Query("SELECT * FROM alarm WHERE alarm_id != 1")
-    List<Alarm> getAlarms();
 
     @Query("SELECT * FROM alarm WHERE alarm_id=:id LIMIT 1")
     List<Alarm> getAlarmSettings(int id);
@@ -27,18 +24,24 @@ public interface AppDAO {
     void deleteAlarm(int id);
 
     // Analysis Query
-    @Query("SELECT * FROM day WHERE day_id=:id LIMIT 1")
-    List<Day> getDayByID(int id);
-
     @Query("SELECT * FROM day WHERE date=:date LIMIT 1")
     List<Day> getDayByDate(int date);
 
+    @Query("SELECT * FROM day ORDER BY date DESC LIMIT 1")
+    List<Day> getRecentDay();
+
     @Query("SELECT * FROM day WHERE date BETWEEN :start AND :end")
-    List<Day> getDayRange(int start, int end);
+    List<Day> getDayRange(long start, long end);
+
+    @Query("SELECT * FROM day ORDER BY date DESC LIMIT 30")
+    List<Day> getAllDay();
+
+    @Query("DELETE FROM day WHERE date < :dayBefore")
+    void deleteOldDays(long dayBefore);
 
     // Shop Query
-    @Query("SELECT * FROM product WHERE prod_type=:prodType")
-    List<Product> getProducts(String prodType);
+    @Query("SELECT * FROM product WHERE type=:type")
+    List<Product> getProducts(String type);
 
     @Query("SELECT * FROM theme WHERE theme_name=:themeName LIMIT 1")
     List<Theme> getTheme(String themeName);
@@ -46,11 +49,11 @@ public interface AppDAO {
     @Query("SELECT * FROM ringtone WHERE ring_name=:ringName LIMIT 1")
     List<Ringtone> getRingtone(String ringName);
 
-    @Query("SELECT * FROM ringtone WHERE ring_name in (SELECT ring_name FROM product WHERE prod_isbought=1)")
+    @Query("SELECT * FROM ringtone WHERE ring_name in (SELECT ring_name FROM product WHERE isBought=1)")
     List<Ringtone> getAllOwnedRingtones();
 
-    @Query("INSERT INTO ringtone (ring_name, path) VALUES (:ringName, :file)")
-    void insertRingtone(String ringName, Byte file);
+    @Query("INSERT INTO ringtone (ring_name, path) VALUES (:ringName, :path)")
+    void insertRingtone(String ringName, String path);
 
     @Query("INSERT INTO theme (theme_name, `primary`, secondary, surface, accent, onPrimary, onSurface) VALUES (:id, :pr, :sec, :sur, :accent, :onPr, :onSur)")
     void insertTheme(String id, int pr, int sec, int sur,int accent, int onPr, int onSur);

@@ -4,44 +4,58 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(tableName="theme")
 public class Theme {
 
-    @NonNull
-    @PrimaryKey
+    @PrimaryKey @NonNull
     @ColumnInfo(name = "theme_name")
     public String name = "Default Theme";
 
-    public Integer primary = 0xFF212529;
-    public Integer secondary = 0xFFF5F5F5;
-    public Integer surface = 0xFFFFFFFF;
-    public Integer accent = 0xFF441E9F;
-    public Integer onPrimary = 0xFFFFFFFF;
-    public Integer onSurface = 0xFF000000;
+    public String primary;
+    public String secondary;
+    public String surface;
+    public String accent;
+    public String onPrimary;
+    public String onSurface;
 
-    public int getOnPrimaryVariant() {
-        return darken(onPrimary, 0.4);
+    public Integer getPrimary() {
+        return primary == null ? 0xFF212529 : Color.parseColor(primary);
+    }
+    public Integer getSecondary() {
+        return secondary == null ? 0xFFF5F5F5 :Color.parseColor(secondary);
+    }
+    public Integer getSurface() {
+        return surface == null ? 0xFFFFFFFF : Color.parseColor(surface);
+    }
+    public Integer getAccent() {
+        return accent == null ? 0xFF441E9F : Color.parseColor(accent);
+    }
+    public Integer getOnPrimary() {
+        return onPrimary == null ? 0xFFFFFFFF : Color.parseColor(accent);
+    }
+    public Integer getOnSurface() {
+        return onSurface == null ? 0xFF000000 : Color.parseColor(onSurface);
     }
 
+    public int getOnPrimaryVariant() {
+        return darken(getOnPrimary(), 0.6);
+    }
     public int getSurfaceVariant() {
-        return darken(surface, 0.08);
+        return darken(getSurface(), 0.92);
     }
 
     public static int darken(int color, double fraction) {
         return Color.argb(
                 Color.alpha(color),
-                darkenColor(Color.red(color), fraction),
-                darkenColor(Color.green(color), fraction),
-                darkenColor(Color.blue(color), fraction)
+                (int) (Color.red(color) * fraction),
+                (int) (Color.green(color) * fraction),
+                (int) (Color.blue(color) * fraction)
         );
-    }
-
-    private static int darkenColor(int color, double fraction) {
-        return (int) Math.max(color - (color * fraction), 0);
     }
 
     public ColorStateList getSwitchThumbColors() {
@@ -49,10 +63,10 @@ public class Theme {
         final int[] colors = new int[2];
 
         states[0] = new int[] { android.R.attr.state_checked };
-        colors[0] = accent;
+        colors[0] = getAccent();
 
         states[1] = new int[0];
-        colors[1] = primary;
+        colors[1] = getPrimary();
 
         return new ColorStateList(states, colors);
     }
@@ -62,7 +76,7 @@ public class Theme {
         final int[] colors = new int[2];
 
         states[0] = new int[] { android.R.attr.state_checked };
-        colors[0] = accent & 0x00FFFFFF | 0x25000000;
+        colors[0] = getAccent() & 0x00FFFFFF | 0x25000000;
 
         states[1] = new int[0];
         colors[1] = getOnPrimaryVariant();
@@ -70,7 +84,7 @@ public class Theme {
         return new ColorStateList(states, colors);
     }
 
-    public ColorStateList getOnPrimaryColorState() {
-        return ColorStateList.valueOf(onPrimary);
+    public ColorStateList getOnPrimaryColorStateList() {
+        return ColorStateList.valueOf(getOnPrimary());
     }
 }

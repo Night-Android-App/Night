@@ -8,35 +8,68 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.adapters.ThemeAdapter;
-import night.app.data.Theme;
 import night.app.databinding.FragmentAnalysisPageBinding;
 import night.app.fragments.analysis.DayRecordFragment;
 import night.app.fragments.analysis.MonthRecordFragment;
 import night.app.fragments.analysis.WeekRecordFragment;
+import night.app.services.SleepData;
 
 public class AnalysisPageFragment extends Fragment {
     FragmentAnalysisPageBinding binding;
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_analysis_page, container, false);
-        Theme theme = ((MainActivity) requireActivity()).theme;
+    private void deleteOldRecords() {
+        new Thread(() -> {
+            MainActivity activity = (MainActivity) requireActivity();
 
-        binding.setFragment(this);
-        binding.setTheme(theme);
+            long endDate = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+            long startDate = endDate - 29*24*60*60;
 
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .add(R.id.fr_anal_details, DayRecordFragment.class, null)
-                .commit();
+            activity.appDatabase.dao().deleteOldDays(startDate);
+        }).start();
+    }
 
+    private void handleUpperPanelResult(int type, String date, int score, double info1, double info2) {
+        binding.tvAnalMainInfoTitle1.setText(type == 0 ? "FELL ASLEEP" : "AVG SLEEP");
+
+        binding.tvAnalDate.setText(date);
+
+        String scoreString = score >= 0 ? String.valueOf(Math.round(score)) : "N/A";
+        binding.tvAnalMainScoreData.setText(scoreString);
+
+
+        String info1String = info1 >= 0 ? SleepData.toHrMinString((int) Math.round(info1)) : "N/A";
+        binding.tvAnalMainInfoData1.setText(info1String);
+
+        String info2String = info2 >= 0 ? Math.round(info2 * 100) + "%" : "N/A";
+        binding.tvAnalMainInfoData2.setText(info2String);
+    }
+
+    private void setUpperPanelResultListener() {
+        getParentFragmentManager()
+                .setFragmentResultListener("updateAnalytics", this, (String key, Bundle bundle) -> {
+                    requireActivity().runOnUiThread(() -> {
+                        handleUpperPanelResult(
+                                bundle.getInt("type"),
+                                bundle.getString("date"),
+                                bundle.getInt("score", -1),
+                                bundle.getDouble("info1", -1),
+                                bundle.getDouble("info2", -1)
+                        );
+                    });
+                });
+    }
+
+    private void initTabLayout() {
+        binding.tabAnal.setSelectedTabIndicatorColor(binding.getTheme().getOnPrimary());
+        binding.tabAnal.setTabTextColors(binding.getTheme().getOnPrimaryVariant(), binding.getTheme().getOnPrimary());
 
         binding.tabAnal.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -44,16 +77,12 @@ public class AnalysisPageFragment extends Fragment {
                 Class<? extends Fragment> fragmentClass = switch (tab.getPosition()) {
                     case 0 -> DayRecordFragment.class;
                     case 1 -> WeekRecordFragment.class;
-                    case 2 -> MonthRecordFragment.class;
-                    default ->
-                            throw new IllegalStateException("Unexpected value: " + tab.getPosition());
+                    default -> MonthRecordFragment.class;
                 };
 
-                requireActivity().runOnUiThread(() -> {
-                    getParentFragmentManager().beginTransaction()
-                            .replace(R.id.fr_anal_details, fragmentClass, null)
-                            .commit();
-                });
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fr_anal_details, fragmentClass, null)
+                        .commit();
             }
 
             @Override
@@ -63,24 +92,22 @@ public class AnalysisPageFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) { }
         });
 
-        getParentFragmentManager()
-                .setFragmentResultListener("updateAnalytics", this, (String key, Bundle bundle) -> {
-                    requireActivity().runOnUiThread(() -> {
-                        if (bundle.getInt("type") == 0) {
-                            binding.tvAnalMainInfoTitle1.setText("FELL ASLEEP");
-                        }
-                        else {
-                            binding.tvAnalMainInfoTitle1.setText("AVG SLEEP");
-                        }
+    }
 
-                        binding.tvAnalMainInfoData1.setText(bundle.getString("info1"));
-                        binding.tvAnalMainInfoData2.setText(bundle.getString("info2"));
-                        binding.tvAnalDate.setText(bundle.getString("date"));
-                    });
-                });
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_analysis_page, container, false);
+        binding.setTheme(((MainActivity) requireActivity()).theme);
 
-        binding.tabAnal.setSelectedTabIndicatorColor(theme.onPrimary);
-        binding.tabAnal.setTabTextColors(theme.getOnPrimaryVariant(), theme.onPrimary);
+        initTabLayout();
+        setUpperPanelResultListener();
+
+        deleteOldRecords();
+
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .add(R.id.fr_anal_details, DayRecordFragment.class, null)
+                .commit();
+
         return binding.getRoot();
     }
 }

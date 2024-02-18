@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <data>
-    <variable name="fragment" type="night.app.fragments.AnalysisPageFragment" />
     <variable name="theme" type="night.app.data.Theme" />
 </data>
 
@@ -57,10 +56,10 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="15 November 2023"
                 android:textAlignment="center"
                 android:textColor="@{theme.onPrimary, default=`#fff`}"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="15 November 2023" />
 
             <LinearLayout
                 android:id="@+id/ll_analysis_summary"
@@ -86,9 +85,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="-20dp"
                         android:gravity="bottom|center_horizontal"
-                        android:text="80"
                         android:textColor="@{theme.onPrimary, default=`#fff`}"
-                        android:textSize="60sp" />
+                        android:textSize="60sp"
+                        tools:text="80" />
 
                     <TextView
                         android:id="@+id/tv_anal_main_score_title"
@@ -113,15 +112,15 @@
                         android:id="@+id/tv_anal_main_info_data1"
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
-                        android:text="23:49"
                         android:textColor="@{theme.onPrimary, default=`#fff`}"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        tools:text="23 m" />
 
                     <TextView
                         android:id="@+id/tv_anal_main_info_title1"
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
-                        android:text="FEEL ASLEEP"
+                        android:text="FELL ASLEEP"
                         android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
                         android:textSize="11sp" />
 
@@ -130,9 +129,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
                         android:layout_marginTop="24dp"
-                        android:text="23:49"
                         android:textColor="@{theme.onPrimary, default=`#fff`}"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        tools:text="67%" />
 
                     <TextView
                         android:id="@+id/tv_anal_main_info_title2"

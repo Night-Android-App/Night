@@ -45,11 +45,11 @@ public class ShopDialog extends DialogFragment {
         Theme theme = ((MainActivity) requireActivity()).theme;
         binding.setTheme(theme);
 
-        binding.tabShop.setSelectedTabIndicatorColor(theme.onPrimary);
-        binding.tabShop.setTabTextColors(theme.getOnPrimaryVariant(), theme.onPrimary);
+        binding.tabShop.setSelectedTabIndicatorColor(theme.getOnPrimary());
+        binding.tabShop.setTabTextColors(theme.getOnPrimaryVariant(), theme.getOnPrimary());
 
-        requireDialog().getWindow().setStatusBarColor(theme.primary);
-        requireDialog().getWindow().setNavigationBarColor(theme.secondary);
+        requireDialog().getWindow().setStatusBarColor(theme.getPrimary());
+        requireDialog().getWindow().setNavigationBarColor(theme.getSecondary());
     }
 
     private void loadItemList(String type) {

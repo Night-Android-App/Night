@@ -24,9 +24,10 @@ public class ServiceRequest extends Request {
         });
     }
 
-    public void delBackup(Callback Callback) {
+    public void backup(String requestBody, Callback Callback) {
         new Thread(() -> {
-            JSONObject response = connect("data", "DELETE")
+            JSONObject response = connect("data", "POST")
+                    .sendData(requestBody)
                     .getResponse();
 
             Callback.run(response);

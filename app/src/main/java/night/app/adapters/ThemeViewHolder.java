@@ -10,11 +10,13 @@ import android.widget.LinearLayout;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
 import java.util.Objects;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.Product;
+import night.app.data.Theme;
 import night.app.databinding.ItemShopThemeBinding;
 import night.app.fragments.GardenPageFragment;
 import night.app.fragments.dialogs.PurchaseDialog;
@@ -23,6 +25,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
     Product product;
     ItemShopThemeBinding binding;
     ThemeAdapter adapter;
+    Theme theme;
 
     public void setThemeApplied() {
         binding.btnShopItemPurchase.setEnabled(false);
@@ -33,7 +36,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
     public void setThemePurchased(Product itemData) {
         binding.btnShopItemPurchase.setEnabled(true);
         binding.btnShopItemPurchase.setText("APPLY");
-        binding.btnShopItemPurchase.setBackgroundColor(binding.getTheme().accent);
+        binding.btnShopItemPurchase.setBackgroundColor(binding.getTheme().getAccent());
 
         binding.btnShopItemPurchase.setOnClickListener(v -> {
             MainActivity activity = adapter.activity;
@@ -43,7 +46,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
             String originalTheme = activity.theme.name;
 
             new Thread(() -> {
-                activity.theme = activity.appDatabase.dao().getTheme(itemData.prodName).get(0);
+                activity.theme = theme;
                 activity.binding.setTheme(activity.theme);
 
                 activity.dataStore
@@ -68,8 +71,8 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                     activity.getSupportFragmentManager()
                             .setFragmentResult("switchTheme", new Bundle());
 
-                    activity.getWindow().setStatusBarColor(activity.theme.primary);
-                    activity.getWindow().setNavigationBarColor(activity.theme.primary);
+                    activity.getWindow().setStatusBarColor(activity.theme.getPrimary());
+                    activity.getWindow().setNavigationBarColor(activity.theme.getPrimary());
 
                     // refresh the garden page for switching theme
                     activity.getSupportFragmentManager().beginTransaction()
@@ -87,7 +90,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                     ImageView navItemIcon = (ImageView) navItemComponent.getChildAt(0);
                     // shop page is opened from Garden (the first navbar item), it uses active color
                     if (nth == 0) {
-                        navItemIcon.setColorFilter(activity.theme.onPrimary);
+                        navItemIcon.setColorFilter(activity.theme.getOnPrimary());
                         continue;
                     }
                     navItemIcon.setColorFilter(activity.theme.getOnPrimaryVariant());
@@ -106,8 +109,10 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
         binding.tvShopItemName.setText(itemData.prodName);
 
         new Thread(() -> {
-            System.out.println(itemData.prodName);
-            binding.setPreview(activity.appDatabase.dao().getTheme(itemData.prodName).get(0));
+            List<Theme> themeList = activity.appDatabase.dao().getTheme(itemData.prodName);
+            theme = themeList.size() > 0 ? themeList.get(0) : new Theme();
+
+            binding.setPreview(theme);
         }).start();
 
         if (Objects.equals(activity.theme.name, itemData.prodName)) {
@@ -115,20 +120,20 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
             return;
         }
 
-        if (itemData.prodIsBought == 1) {
+        if (itemData.isBought == 1) {
             setThemePurchased(itemData);
             return;
         }
 
-        binding.tvShopItemPrice.setText(itemData.prodPrice + " coins");
-        binding.btnShopItemPurchase.setBackgroundColor(binding.getTheme().accent);
+        binding.tvShopItemPrice.setText(itemData.price + " coins");
+        binding.btnShopItemPurchase.setBackgroundColor(binding.getTheme().getAccent());
 
         binding.btnShopItemPurchase.setOnClickListener(v -> {
             PurchaseDialog dialog = new PurchaseDialog();
 
             Bundle bundle = new Bundle();
             bundle.putString("name", itemData.prodName);
-            bundle.putString("price", String.valueOf(itemData.prodPrice));
+            bundle.putString("price", String.valueOf(itemData.price));
 
             dialog.setArguments(bundle);
             dialog.show(activity.getSupportFragmentManager(), null);

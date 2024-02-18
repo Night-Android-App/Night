@@ -46,6 +46,8 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public ThemeAdapter(MainActivity mainActivity, List<Product> productList) {
         activity = mainActivity;
+
+        productList.add(0, new Product("theme", "Default Theme", 0, 1));
         this.productList = productList;
     }
 }

@@ -25,11 +25,12 @@
                 android:layout_marginEnd="16dp"
                 android:backgroundTint="@{theme.accent, default=`#441E9F`}"
                 android:drawableLeft="@drawable/ic_shop"
-                android:compoundDrawableTintList="@{theme.onPrimaryColorState}"
+                android:compoundDrawableTintList="@{theme.onPrimaryColorStateList}"
                 android:text="SHOP"
                 android:textColor="@{theme.onPrimary, default=`#fff`}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ScrollView

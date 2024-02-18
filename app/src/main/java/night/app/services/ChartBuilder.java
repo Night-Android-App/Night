@@ -8,6 +8,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -20,12 +21,15 @@ import java.util.List;
 import night.app.data.Theme;
 
 
-public class ChartBuilder {
-    Theme theme;
+public class ChartBuilder <T extends  BarLineChartBase<?>> {
+    T chart;
+    DataSet<?> dataSet;
 
-    private void initStyle(BarLineChartBase<?> chart) {
+    private void initStyle() {
         chart.getLegend().setEnabled(false);
-        chart.getAxisRight().setEnabled(false);
+        chart.getAxisRight().setEnabled(true);
+        chart.getAxisRight().setValueFormatter(new IndexAxisValueFormatter(new String[] {}));
+        chart.getAxisRight().setDrawGridLines(false);
         chart.getDescription().setEnabled(false);
         chart.setScaleEnabled(false);
 
@@ -33,14 +37,12 @@ public class ChartBuilder {
         xAxis.setDrawGridLines(false);
         xAxis.setGranularityEnabled(true);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextColor(theme.onSurface);
 
         YAxis yAxis = chart.getAxisRight();
         yAxis.setGranularityEnabled(true);
-        yAxis.setTextColor(theme.onSurface);
     }
 
-    private void setData(BarChart chart, Integer[] data) {
+    private void setBarData(Integer[] data) {
         ArrayList<BarEntry> dataEntries = new ArrayList<>();
 
         for (int i=0; i < data.length; i++) {
@@ -50,51 +52,61 @@ public class ChartBuilder {
 
         BarDataSet dataSet = new BarDataSet(dataEntries, "");
         dataSet.setDrawValues(false);
-        dataSet.setColor(theme.accent);
 
         chart.getAxisLeft().setLabelCount(4, true);
 
-        chart.setData(new BarData(dataSet));
+        this.dataSet = dataSet;
     }
 
-    private void setData(LineChart chart, List<Integer> data) {
+    private void setLineData(Integer[] data) {
         ArrayList<Entry> dataEntries = new ArrayList<>();
 
-        for (int i=0; i < data.size(); i++) {
-            if (data.get(i) == null) continue;
-            dataEntries.add(new Entry(i, data.get(i)));
+        for (int i=0; i < data.length; i++) {
+            if (data[i] == null) dataEntries.add(new Entry(i, 0));
+            dataEntries.add(new Entry(i, data[i]));
         }
 
         LineDataSet dataSet = new LineDataSet(dataEntries, "");
         dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        dataSet.setColor(theme.accent);
-        dataSet.setValueTextColor(theme.getOnPrimaryVariant());
+
         dataSet.setHighlightEnabled(false);
-        chart.setData(new LineData(dataSet));
+
+        this.dataSet = dataSet;
     }
 
-    public ChartBuilder(BarChart chart, Theme theme, List<String> xLabel, Integer[] data) {
-        this.theme = theme;
+    public ChartBuilder<T> setTheme(Theme theme) {
+        dataSet.setValueTextColor(theme.getOnPrimaryVariant());
+        dataSet.setColor(theme.getAccent());
 
-        initStyle(chart);
+        chart.getAxisLeft().setTextColor(theme.getOnSurface());
+        chart.getAxisLeft().setTextColor(theme.getOnSurface());
+
+        chart.getXAxis().setTextColor(theme.getOnSurface());
+        return this;
+    }
+
+
+    public ChartBuilder(T chart, Integer[] data) {
+        this.chart = chart;
+
+        initStyle();
+        String[] xLabel = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xLabel));
 
         YAxis yAxis = chart.getAxisLeft();
-        yAxis.setAxisMinimum(3);
+        yAxis.setAxisMinimum(0);
         yAxis.setAxisMaximum(12);
 
         yAxis.setLabelCount(4, true);
-        yAxis.setTextColor(theme.onSurface);
 
-        setData(chart, data);
-        chart.invalidate();
+        setBarData(data);
     }
 
-    public ChartBuilder(LineChart chart, Theme theme, List<String> xLabel, List<Integer> data) {
-        this.theme = theme;
+    public ChartBuilder(T chart, String[] xLabel, Integer[] data) {
+        this.chart = chart;
 
-        initStyle(chart);
+        initStyle();
 
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xLabel));
 
@@ -108,13 +120,20 @@ public class ChartBuilder {
             public String getFormattedValue(float value) {
                 if (value == 0.0f) return "Awake";
                 if (value == 50.0f) return "Light sleep";
-                if (value == 100.0f) return "Deep sleep";
-
-                return "";
+                return "Deep sleep";
             }
         });
 
-        setData(chart, data);
+        setLineData(data);
+    }
+
+    public void invalidate() {
+        if (chart instanceof LineChart) {
+            ((LineChart) chart).setData(new LineData((LineDataSet) dataSet));
+        }
+        else {
+            ((BarChart) chart).setData(new BarData((BarDataSet) dataSet));
+        }
         chart.invalidate();
     }
 }

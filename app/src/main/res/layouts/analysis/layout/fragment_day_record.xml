@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@{theme.secondary, default=`#f5f5f5`}">
+        android:background="@{theme.secondary}"
+        tools:background="#f5f5f5">
 
         <TextView
             android:id="@+id/textView2"
@@ -19,7 +20,8 @@
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
             android:text="STATISTICS"
-            android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
+            android:textColor="@{theme.onPrimaryVariant}"
+            tools:textColor="#757a7f"
             android:textSize="11sp" />
 
         <LinearLayout
@@ -41,10 +43,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
-                    android:text="@string/not_applicable"
                     android:textColor="@{theme.onSurface, default=`#000`}"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="@string/not_applicable" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -67,10 +69,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
-                    android:text="@string/not_applicable"
                     android:textColor="@{theme.onSurface, default=`#000`}"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="@string/not_applicable" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -93,10 +95,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
-                    android:text="@string/not_applicable"
-                    android:textSize="16sp"
                     android:textColor="@{theme.onSurface, default=`#000`}"
-                    android:textStyle="bold" />
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="@string/not_applicable" />
 
                 <TextView
                     android:layout_width="match_parent"

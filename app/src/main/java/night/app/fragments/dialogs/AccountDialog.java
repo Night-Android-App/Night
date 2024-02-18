@@ -113,7 +113,7 @@ public class AccountDialog extends DialogFragment {
 
     private void loadTextInputLayoutStyle() {
         for (TextInputLayout layout : new TextInputLayout[] {binding.tilUid, binding.tilPwd, binding.tilPwdConfirm}) {
-            layout.setDefaultHintTextColor(ColorStateList.valueOf(binding.getTheme().onSurface));
+            layout.setDefaultHintTextColor(ColorStateList.valueOf(binding.getTheme().getOnSurface()));
         }
     }
 
@@ -122,8 +122,8 @@ public class AccountDialog extends DialogFragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_account, container, false);
 
         binding.setTheme(((MainActivity) requireActivity()).theme);
-        requireDialog().getWindow().setStatusBarColor(binding.getTheme().secondary);
-        requireDialog().getWindow().setNavigationBarColor(binding.getTheme().secondary);
+        requireDialog().getWindow().setStatusBarColor(binding.getTheme().getSecondary());
+        requireDialog().getWindow().setNavigationBarColor(binding.getTheme().getSecondary());
 
         loadTextInputLayoutStyle();
 

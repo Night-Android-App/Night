@@ -13,7 +13,8 @@
         android:layout_marginHorizontal="12dp"
         android:layout_marginVertical="8dp"
         android:background="@drawable/view_rect_r10"
-        android:backgroundTint="@{theme.surface, default=`#fff`}"
+        android:backgroundTint="@{theme.surface}"
+        tools:backgroundTint="#fff"
         android:minHeight="48dp"
         android:padding="8dp">
 
@@ -29,9 +30,9 @@
                 android:id="@+id/tv_ringtone_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
                 android:textColor="@{theme.onSurface, default=`#000`}"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="Ring" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -43,18 +44,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="00:04"
                     android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="00:40" />
 
                 <TextView
                     android:id="@+id/tv_shop_item_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:text="59pt"
                     android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="49 coins" />
             </LinearLayout>
 
         </LinearLayout>
@@ -64,7 +65,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Purchase"
-            android:enabled="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

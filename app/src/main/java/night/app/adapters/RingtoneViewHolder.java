@@ -25,7 +25,7 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
         }
 
         binding.llItemRingtone
-                .setBackgroundTintList(ColorStateList.valueOf(binding.getTheme().surface));
+                .setBackgroundTintList(ColorStateList.valueOf(binding.getTheme().getSurface()));
 
         binding.llItemRingtone.setOnClickListener(v -> playRingtone());
     }
@@ -45,9 +45,9 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
 
     public void loadData(Product itemData) {
         binding.tvRingtoneName.setText(itemData.prodName);
-        binding.tvShopItemPrice.setText(itemData.prodPrice + " coins");
+        binding.tvShopItemPrice.setText(itemData.price + " coins");
 
-        binding.button2.setBackgroundColor(binding.getTheme().accent);
+        binding.button2.setBackgroundColor(binding.getTheme().getAccent());
 
         name = itemData.prodName;
 
@@ -60,19 +60,26 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
                 int minutes = ringtone.duration % 60;
 
                 binding.tvRingtoneDuration.setText(LocalTime.of(hours, minutes).toString());
+                binding.llItemRingtone.setOnClickListener(v -> playRingtone());
+
+
+                if (itemData.isBought == 1) {
+                    binding.button2.setText("OWNED");
+                    binding.button2.setEnabled(false);
+                    binding.button2.setBackgroundColor(binding.getTheme().getOnPrimaryVariant() & 0x00FFFFFF | 0x40000000);
+                    return;
+                }
 
                 binding.button2.setOnClickListener(v -> {
                     PurchaseDialog dialog = new PurchaseDialog();
 
                     Bundle bundle = new Bundle();
                     bundle.putString("name", itemData.prodName);
-                    bundle.putString("price", String.valueOf(itemData.prodPrice));
+                    bundle.putString("price", String.valueOf(itemData.price));
 
                     dialog.setArguments(bundle);
                     dialog.show(adapter.activity.getSupportFragmentManager(), null);
                 });
-
-                binding.llItemRingtone.setOnClickListener(v -> playRingtone());
             });
         }).start();
 

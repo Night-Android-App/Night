@@ -6,6 +6,5 @@
         android:id="@+id/rv_items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:tag="layout/fragment_recycle_view_0"
-        tools:listitem="@layout/item_month_group" />
+        android:tag="layout/fragment_recycle_view_0" />
 </layout>
