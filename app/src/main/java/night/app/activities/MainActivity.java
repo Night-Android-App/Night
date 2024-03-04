@@ -8,7 +8,6 @@ import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.GardenPageFragment;
 import night.app.fragments.SettingsPageFragment;
 import night.app.R;
-import night.app.fragments.dialogs.PrivacyPolicyDialog;
+import night.app.fragments.dialogs.AgreementDialog;
 
 public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     public AppDatabase appDatabase;
     public DataStoreHelper dataStore = new DataStoreHelper(this);
     public Theme theme = new Theme();
+    AgreementDialog agreementDialog = null;
 
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
             registerForActivityResult(
@@ -113,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         dataStore.dispose();
+
+        if (getSupportFragmentManager().findFragmentByTag("agreementDialog") != null) {
+            ((AgreementDialog) getSupportFragmentManager().findFragmentByTag("agreementDialog")).dismiss();
+        }
     }
 
     @Override
@@ -139,8 +143,13 @@ public class MainActivity extends AppCompatActivity {
                     .build();
 
             if (dataStore.getPrefs().get(PreferencesKeys.stringKey("PolicyAgreedDate")) == null) {
-                new PrivacyPolicyDialog().show(getSupportFragmentManager(), null);
-                requestPermissions();
+                if (getSupportFragmentManager().findFragmentByTag("agreementDialog") != null) {
+
+                }
+                else {
+                    new AgreementDialog().show(getSupportFragmentManager(), "agreementDialog");
+                }
+                    
             }
 
             String appliedTheme = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));
@@ -163,15 +172,5 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
-    }
-
-    public static MainActivity getInstance() {
-        return instance;
-    }
-
-    private static MainActivity instance;
-
-    public MainActivity() {
-        instance = this;
     }
 }

@@ -13,12 +13,10 @@ import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 
-import java.util.Date;
-
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.databinding.FragmentOthersConfigBinding;
-import night.app.fragments.dialogs.PrivacyPolicyDialog;
+import night.app.fragments.dialogs.AgreementDialog;
 
 public class OthersConfigFragment extends Fragment {
     FragmentOthersConfigBinding binding;
@@ -37,7 +35,7 @@ public class OthersConfigFragment extends Fragment {
 
         binding.btnPermission.setOnClickListener(v -> requestPermission());
         binding.btnOpenPolicy.setOnClickListener(v -> {
-            new PrivacyPolicyDialog().show(getParentFragmentManager(), null);
+            new AgreementDialog().show(getParentFragmentManager(), null);
         });
 
         MainActivity activity = (MainActivity) requireActivity();
