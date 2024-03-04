@@ -1,19 +1,11 @@
 package night.app.fragments.settings;
 
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
@@ -23,14 +15,13 @@ import androidx.lifecycle.ViewModelProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.Alarm;
+import night.app.data.AppDAO;
 import night.app.data.Day;
 import night.app.data.PreferenceViewModel;
 import night.app.databinding.FragmentBackupConfigBinding;
@@ -39,17 +30,18 @@ import night.app.networks.ServiceRequest;
 public class BackupConfigFragment extends Fragment {
     FragmentBackupConfigBinding binding;
 
-    private String dayToJSON(Day day) throws JSONException {
+    private JSONObject dayToJSON(Day day) throws JSONException {
         JSONObject json = new JSONObject();
 
         json.put("date", day.date);
         json.put("sleep", day.sleep);
-        json.put("dream", binding.getViewModel().getIsBackupDream() ? day.dream : null);
 
-        return json.toString();
+        Boolean isBackupDream = binding.getViewModel().getIsBackupDream();
+        json.put("dream", isBackupDream == null || !isBackupDream ? day.dream : null);
+        return json;
     }
 
-    private String alarmToJSON(Alarm alarm) throws JSONException {
+    private JSONObject alarmToJSON(Alarm alarm) throws JSONException {
         JSONObject json = new JSONObject();
 
         json.put("id", alarm.id);
@@ -57,21 +49,20 @@ public class BackupConfigFragment extends Fragment {
         json.put("endTime", alarm.endTime);
         json.put("isAlarmEnabled", alarm.isAlarmEnabled);
         json.put("isDNDEnabled", alarm.isDNDEnabled);
-        return json.toString();
+        return json;
     }
 
-    private <T> String[] elementToJson(List<T> list) throws JSONException{
-        String[] tempArray = new String[list.size()];
-
-        for (int i=0; i < tempArray.length; i++) {
+    private <T> JSONObject elementToJson(List<T> list) throws JSONException{
+        JSONObject jsonObject = new JSONObject();
+        for (int i=0; i < list.size(); i++) {
             T element = list.get(i);
             if (element instanceof Day) {
-                tempArray[i] = dayToJSON((Day) element);
+                jsonObject.put(String.valueOf(((Day) element).date), dayToJSON((Day) element));
                 continue;
             }
-            tempArray[i] = alarmToJSON((Alarm) element);
+            jsonObject.put(String.valueOf(((Alarm) element).id), alarmToJSON((Alarm) element));
         }
-        return tempArray;
+        return jsonObject;
     }
 
     private void backup() {
@@ -80,34 +71,98 @@ public class BackupConfigFragment extends Fragment {
 
         JSONObject requestBody = new JSONObject();
 
+        new Thread(() -> {
+            try {
+                List<Day> days = activity.appDatabase.dao().getAllDay();
+                List<Alarm> alarms = activity.appDatabase.dao().getAllAlarms();
+
+                requestBody.put("sid", prefs.get(PreferencesKeys.stringKey("sessionId")));
+                requestBody.put("uid", prefs.get(PreferencesKeys.stringKey("username")));
+
+                requestBody.put("sleepData", elementToJson(days).toString());
+                requestBody.put("alarmList", elementToJson(alarms).toString());
+
+                new ServiceRequest().backup(requestBody.toString(), res -> {
+                    if (res.optInt("status") == 200) {
+                        System.out.println("200");
+                    }
+                    else {
+                        System.out.println(res);
+                    }
+                });
+            }
+            catch (JSONException e) {
+                System.err.println("Failed to backup. (JSONException)");
+            }
+        }).start();
+    }
+
+    private void recoverySleepData(String data) throws JSONException {
+        AppDAO dao = ((MainActivity) requireActivity()).appDatabase.dao();
+
+        JSONObject sleepData = new JSONObject(data);
+        Iterator<String> keys = sleepData.keys();
+
+        while (keys.hasNext()) {
+            String key = keys.next();
+            JSONObject day = sleepData.getJSONObject(key);
+
+            dao.insertDay(
+                    Integer.parseInt(key),
+                    day.getString("sleep"),
+                    day.has("dream") ? day.getString("dream") : null
+            );
+        }
+    }
+
+    private void recoveryAlarmList(String data) throws JSONException {
+        AppDAO dao = ((MainActivity) requireActivity()).appDatabase.dao();
+
+        JSONObject alarmList = new JSONObject(data);
+        Iterator<String> keys = alarmList.keys();
+
+        while (keys.hasNext()) {
+            String key = keys.next();
+            JSONObject alarm = alarmList.getJSONObject(key);
+
+            dao.createAlarm(
+                    alarm.getInt("endTime"),
+                    alarm.getInt("isAlarmEnabled"),
+                    alarm.getInt("isDNDEnabled"),
+                    alarm.optString("ringtone", "default")
+            );
+        }
+    }
+
+    private void recoveryCallBack(JSONObject res) {
         try {
-            Integer lastBackupDate = prefs.get(PreferencesKeys.intKey("lastBackupDate"));
-            requestBody.put("lastBackupDate", lastBackupDate);
+            AppDAO dao = ((MainActivity) requireActivity()).appDatabase.dao();
+            dao.deleteAllDays();
 
-            List<Day> days = activity.appDatabase.dao().getAllDay();
-            List<Alarm> alarms = activity.appDatabase.dao().getAllAlarms();
+            JSONObject responseBody = res.getJSONObject("response");
 
-            requestBody.put("sleep", elementToJson(days));
-            requestBody.put("alarm", elementToJson(alarms));
-
-            new ServiceRequest().backup(requestBody.toString(), (res -> {
-                if (res.optInt("status") == 200) {
-
-                }
-                else {
-
-                }
-            }));
+            recoverySleepData(responseBody.getString("sleepData"));
+            recoveryAlarmList(responseBody.getString("alarmList"));
         }
         catch (JSONException e) {
-            System.err.println("Failed to backup. (JSONException)");
+            System.out.println(e);
         }
     }
 
     private void recovery() {
-        new ServiceRequest().recovery((res) -> {
+        try {
+            MainActivity activity = (MainActivity) requireActivity();
+            JSONObject requestBody = new JSONObject();
 
-        });
+            Preferences prefs = activity.dataStore.getPrefs();
+            requestBody.put("sid", prefs.get(PreferencesKeys.stringKey("sessionId")));
+            requestBody.put("uid", prefs.get(PreferencesKeys.stringKey("username")));
+
+            new ServiceRequest().recovery(requestBody.toString(), this::recoveryCallBack);
+        }
+        catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

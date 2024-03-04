@@ -9,11 +9,20 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 
 import night.app.R;
 import night.app.activities.MainActivity;
@@ -29,7 +38,7 @@ public class AccountDialog extends DialogFragment {
         String pwdValue = binding.etLoginPwd.getEditableText().toString();
         String pwdValueConfirmed = binding.etLoginPwdConfirmed.getEditableText().toString();
 
-        if (uidValue.length() < 12 || uidValue.length() > 20) {
+        if (uidValue.length() < 8 || uidValue.length() > 12) {
             binding.etLoginUid.setError("length should be between 12 to 20 characters.");
             return;
         }
@@ -45,24 +54,31 @@ public class AccountDialog extends DialogFragment {
         }
 
         new AccountRequest().register(uidValue, Password.hash(pwdValue), res -> {
-
-            if (res != null && res.optInt("responseCode") == 200) {
-                try {
-                    String date = (String) ((JSONObject) res.get("response")).get("createdDate");
+            try {
+                if (res != null && res.optInt("responseCode") == 200) {
+                    String sessionId = (String) ((JSONObject) res.get("response")).getString("sessionId");
+                    System.out.println(res.get("response"));
+                    ((MainActivity) requireActivity()).dataStore.update(PreferencesKeys.stringKey("sessionId"), sessionId);
 
                     Bundle bundle = new Bundle();
                     bundle.putString("uid", uidValue);
-                    bundle.putString("desc", date.substring(0, 10));
+
+                    ZoneId zoneId = ZoneId.systemDefault();
+                    ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.now(), zoneId);
+
+                    bundle.putString("desc", DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(dateTime));
+
 
                     getParentFragmentManager().setFragmentResult("accountStatus", bundle);
                     dismiss();
-                } catch (Exception e) {
-                    System.out.println(e);
+                    return;
                 }
-                return;
-            }
 
-            System.out.println("Failed");
+            }
+            catch (JSONException e) {
+                System.out.println(res);
+                System.out.println("Failed");
+            }
         });
     }
 
@@ -75,22 +91,25 @@ public class AccountDialog extends DialogFragment {
 
             if (res != null && res.optInt("responseCode") == 200) {
                 try {
-                    String date = (String) ((JSONObject) res.get("response")).get("createdDate");
+                    String sessionId = res.getJSONObject("response").getString("sessionId");
+                    ((MainActivity) requireActivity()).dataStore.update(PreferencesKeys.stringKey("sessionId"), sessionId);
+
+                    String date = res.getJSONObject("response").getString("createdDate");
 
                     Bundle bundle = new Bundle();
                     bundle.putString("uid", uidValue);
                     bundle.putString("desc", date.substring(0, 10));
 
+
                     getParentFragmentManager().setFragmentResult("accountStatus", bundle);
                     dismiss();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     System.out.println(e);
                 }
                 return;
             }
-
             System.out.println("Failed");
-            // code
         });
     }
 

@@ -28,17 +28,19 @@ public abstract class Request {
         void run(@Nullable JSONObject res);
     }
 
-    protected void setCookie() {
+    protected Request setCookie() {
         Map<String, List<String>> headerFields = connection.getHeaderFields();
-        if (headerFields == null) return;
+        if (headerFields == null) return this;
 
         List<String> cookies = headerFields.get("Cookie");
-        if (cookies == null) return;
+        if (cookies == null) return this;
 
         CookieManager cookieManager = CookieManager.getInstance();
         for (String cookie : cookies) {
             cookieManager.setCookie("Cookie", cookie);
         }
+
+        return this;
     }
 
     private String getCookie() {
@@ -65,6 +67,7 @@ public abstract class Request {
             out.flush();
             out.close();
         } catch (IOException e) {
+            System.out.println(e);
         }
 
         return this;
@@ -79,9 +82,16 @@ public abstract class Request {
                         new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)
                 );
 
+                // avoid throw error if request body is empty
+                String line = reader.readLine();
+                if (line == null || line == "") {
+                    line = "{}";
+                }
+
+                String finalLine = line;
                 return new JSONObject() {{
                     put("responseCode", connection.getResponseCode());
-                    put("response", new JSONObject(reader.readLine()));
+                    put("response", new JSONObject(finalLine));
                 }};
             }
 
@@ -91,6 +101,7 @@ public abstract class Request {
         }
         // connection failed
         catch (IOException e) {
+            System.out.println(e);
             return null;
         }
         catch (JSONException e) {
@@ -109,9 +120,6 @@ public abstract class Request {
             connection = (HttpURLConnection) url.openConnection();
 
             connection.setRequestMethod(requestMethod);
-
-            // set cookie, server will get session id from it if available
-            connection.setRequestProperty("cookie", getCookie());
 
             // set format type
             connection.setRequestProperty("content-Type", "application/json");

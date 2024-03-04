@@ -39,6 +39,12 @@ public interface AppDAO {
     @Query("DELETE FROM day WHERE date < :dayBefore")
     void deleteOldDays(long dayBefore);
 
+    @Query("INSERT INTO day (date, sleep, dream) VALUES (:date, :sleep, :dream)")
+    void insertDay(int date, String sleep, String dream);
+
+    @Query("DELETE FROM day")
+    void deleteAllDays();
+
     // Shop Query
     @Query("SELECT * FROM product WHERE type=:type")
     List<Product> getProducts(String type);

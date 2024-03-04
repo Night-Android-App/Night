@@ -164,4 +164,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    public static MainActivity getInstance() {
+        return instance;
+    }
+
+    private static MainActivity instance;
+
+    public MainActivity() {
+        instance = this;
+    }
 }

@@ -8,25 +8,19 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ServiceRequest extends Request {
-    public void recovery(Callback Callback) {
+    public void recovery(String requestBody, Callback Callback) {
         new Thread(() -> {
-            // recovery all backup types
-            Map<String, Object> params = new HashMap<>() {{
-                put("sleep", true);
-                put("alarm", true);
-                put("dream", true);
-            }};
-
-            JSONObject response = connect("data" + parseURLParams(params), "GET")
+            JSONObject response = connect("recovery", "POST")
+                    .sendData(requestBody)
                     .getResponse();
 
             Callback.run(response);
-        });
+        }).start();
     }
 
     public void backup(String requestBody, Callback Callback) {
         new Thread(() -> {
-            JSONObject response = connect("data", "POST")
+            JSONObject response = connect("backup", "POST")
                     .sendData(requestBody)
                     .getResponse();
 

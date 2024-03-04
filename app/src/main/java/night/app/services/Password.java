@@ -9,18 +9,13 @@ import java.util.HashMap;
 public class Password {
     private static HashMap<String, String> checkLength(String text) {
         HashMap<String, String> returnObj = new HashMap<>();
-        returnObj.put("error", "Password should be at least 12 characters.");
 
-        if (text.length() < 12) {
-            returnObj.put("error", "Password should be at least 12 characters.");
-        }
-        else if (text.length() > 20) {
-            returnObj.put("error", "Password should be at most 20 characters.");
-        }
-        else {
-            returnObj.put("error", null);
+        if (text.length() < 8 || text.length() > 12) {
+            returnObj.put("error", "Password should be between 8 to 12 characters.");
+            return returnObj;
         }
 
+        returnObj.put("error", null);
         return returnObj;
     }
 
@@ -33,9 +28,6 @@ public class Password {
         }
         else if (!text.matches(".*\\d.*")) {
             returnObj.put("error", "Password should has at least one number.");
-        }
-        else if (!text.matches(".*[#?!@$%^&*-].*")) {
-            returnObj.put("error", "Password should has at least one symbol.");
         }
         else if (!text.matches(".*[a-z].*")) {
             returnObj.put("error", "Password should has at least one lowercase letter.");
