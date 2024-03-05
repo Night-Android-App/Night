@@ -50,9 +50,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical|end"
-                    android:text="No record"
+                    android:text="@{viewModel.lastBackupDate}"
                     android:textColor="@{theme.onSurface , default=`#000`}" />
-
             </LinearLayout>
 
         </LinearLayout>
@@ -138,7 +137,7 @@
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="Backup will be started after you woke up"
+                    android:text="It will start after you woke up"
                     android:textColor="@{theme.onSurface, default=`#000`}"
                     android:textSize="16sp" />
 

@@ -34,8 +34,16 @@ public class ConfirmDialog extends DialogFragment {
         binding.tvTitle.setText(dialogTitle);
         binding.tvDesc.setText(dialogDesc);
 
+        if (handleOnClickPositiveButton == null) {
+            binding.btnNegative.setVisibility(View.GONE);
+            binding.btnPositive.setText("OK");
+        }
+
         binding.btnPositive.setOnClickListener(v -> {
-            handleOnClickPositiveButton.run();
+            if (handleOnClickPositiveButton != null) {
+                handleOnClickPositiveButton.run();
+            }
+
             dismiss();
         });
 
@@ -50,7 +58,6 @@ public class ConfirmDialog extends DialogFragment {
     public ConfirmDialog(String title, String desc, Function fn) {
         dialogTitle = title;
         dialogDesc = desc;
-
         handleOnClickPositiveButton = fn;
     }
 }

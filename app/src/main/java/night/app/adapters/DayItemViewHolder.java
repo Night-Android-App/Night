@@ -7,12 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
-import org.json.JSONException;
-
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -20,8 +16,6 @@ import java.util.Locale;
 import night.app.R;
 import night.app.data.Day;
 import night.app.databinding.ItemDayRecordBinding;
-import night.app.fragments.AnalysisPageFragment;
-import night.app.fragments.analysis.DayRecordFragment;
 import night.app.services.SleepData;
 
 public class DayItemViewHolder extends RecyclerView.ViewHolder {
@@ -73,6 +67,8 @@ public class DayItemViewHolder extends RecyclerView.ViewHolder {
 
         SleepData sleepData = new SleepData(day.sleep);
         binding.tvSleepHrs.setText(SleepData.toHrMinString(sleepData.getTotalSleep()));
+
+        binding.tvSleepEfficiency.setText(Math.round(sleepData.getSleepEfficiency() * 100) + "%");
     }
 
     public DayItemViewHolder(DayItemAdapter adapter, ItemDayRecordBinding binding) {

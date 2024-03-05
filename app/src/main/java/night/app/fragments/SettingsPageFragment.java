@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
@@ -69,8 +68,12 @@ public class SettingsPageFragment extends Fragment {
         String desc = result.getString("desc");
 
         binding.tvSettAcctUid.setText(uid);
-        binding.tvSettAcctDesc.setText(desc);
-        binding.clSettAcct.setOnClickListener(null);
+        binding.tvSettAcctDesc.setText("You use our app since " + desc);
+        binding.clSettAcct.setOnClickListener((v) -> {
+            if (result.getBoolean("isOnClickLogout", false)) {
+                showLogoutModal();
+            }
+        });
 
         activity.dataStore.update(PreferencesKeys.stringKey("username"), uid);
         activity.dataStore.update(PreferencesKeys.stringKey("account_createdDate"), desc);
@@ -89,15 +92,22 @@ public class SettingsPageFragment extends Fragment {
         binding.clSettAcct.setOnClickListener(v -> showLoginModal());
         binding.tvSettAcctUid.setText("Press here to login");
         binding.tvSettAcctDesc.setText(">> Proceed");
+
+        activity.dataStore.update(PreferencesKeys.stringKey("sessionId"), null);
     }
 
     private void showLogoutModal() {
-        String title = "Logout Confirmation";
+        String title = "Logout";
         String desc = "You have to login again to use part of services.";
 
-        ConfirmDialog dialog = new ConfirmDialog(title, desc, this::setDefaultAccountStatus);
-
-        dialog.show(requireActivity().getSupportFragmentManager(), null);
+        new ConfirmDialog(title, desc, () -> {
+            setDefaultAccountStatus();
+            MainActivity activity = (MainActivity) requireActivity();
+            activity.dataStore.update(PreferencesKeys.stringKey("sessionId"), null);
+            activity.dataStore.update(PreferencesKeys.stringKey("username"), null);
+            activity.dataStore.update(PreferencesKeys.stringKey("account_createdDate"), null);
+        })
+            .show(requireActivity().getSupportFragmentManager(), null);
     }
 
 
@@ -110,7 +120,7 @@ public class SettingsPageFragment extends Fragment {
 
         if (username != null && accountCreatedDate != null) {
             binding.tvSettAcctUid.setText(username);
-            binding.tvSettAcctDesc.setText(accountCreatedDate);
+            binding.tvSettAcctDesc.setText("You use our app since " + accountCreatedDate);
 
             binding.clSettAcct.setOnClickListener(v -> showLogoutModal());
             return;

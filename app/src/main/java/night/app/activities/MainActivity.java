@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     public AppDatabase appDatabase;
     public DataStoreHelper dataStore = new DataStoreHelper(this);
     public Theme theme = new Theme();
-    AgreementDialog agreementDialog = null;
 
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
             registerForActivityResult(
@@ -143,13 +142,12 @@ public class MainActivity extends AppCompatActivity {
                     .build();
 
             if (dataStore.getPrefs().get(PreferencesKeys.stringKey("PolicyAgreedDate")) == null) {
-                if (getSupportFragmentManager().findFragmentByTag("agreementDialog") != null) {
-
-                }
-                else {
+                if (getSupportFragmentManager().findFragmentByTag("agreementDialog") == null) {
                     new AgreementDialog().show(getSupportFragmentManager(), "agreementDialog");
+
+                    dataStore.update(PreferencesKeys.booleanKey("backupAlarmList"), true);
+                    dataStore.update(PreferencesKeys.booleanKey("backupSleepRecord"), true);
                 }
-                    
             }
 
             String appliedTheme = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));

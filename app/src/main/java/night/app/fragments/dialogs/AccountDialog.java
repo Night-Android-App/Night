@@ -15,13 +15,11 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 
 import night.app.R;
@@ -56,9 +54,10 @@ public class AccountDialog extends DialogFragment {
         new AccountRequest().register(uidValue, Password.hash(pwdValue), res -> {
             try {
                 if (res != null && res.optInt("responseCode") == 200) {
-                    String sessionId = (String) ((JSONObject) res.get("response")).getString("sessionId");
-                    System.out.println(res.get("response"));
-                    ((MainActivity) requireActivity()).dataStore.update(PreferencesKeys.stringKey("sessionId"), sessionId);
+                    String sessionId = res.getJSONObject("response").getString("sessionId");
+
+                    MainActivity activity = (MainActivity) requireActivity();
+                    activity.dataStore.update(PreferencesKeys.stringKey("sessionId"), sessionId);
 
                     Bundle bundle = new Bundle();
                     bundle.putString("uid", uidValue);
@@ -67,13 +66,22 @@ public class AccountDialog extends DialogFragment {
                     ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.now(), zoneId);
 
                     bundle.putString("desc", DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(dateTime));
-
+                    bundle.putBoolean("isOnClickLogout", true);
 
                     getParentFragmentManager().setFragmentResult("accountStatus", bundle);
                     dismiss();
                     return;
                 }
 
+                String errorMsg = switch (res.optInt("responseCode")) {
+                    case 409 -> "Username is existed.";
+                    case 404 -> "Request path not found";
+                    case 500 -> "Internal server error";
+                    default  -> "Unexpected status code: " + res.getInt("responseCode");
+                };
+
+                new ConfirmDialog("Sign up Error", errorMsg, null)
+                        .show(requireActivity().getSupportFragmentManager(), null);
             }
             catch (JSONException e) {
                 System.out.println(res);
@@ -99,7 +107,7 @@ public class AccountDialog extends DialogFragment {
                     Bundle bundle = new Bundle();
                     bundle.putString("uid", uidValue);
                     bundle.putString("desc", date.substring(0, 10));
-
+                    bundle.putBoolean("isOnClickLogout", true);
 
                     getParentFragmentManager().setFragmentResult("accountStatus", bundle);
                     dismiss();
@@ -109,7 +117,14 @@ public class AccountDialog extends DialogFragment {
                 }
                 return;
             }
-            System.out.println("Failed");
+            String errorMsg = switch (res.optInt("responseCode")) {
+                case 404 -> "Username or password are incorrect.";
+                case 500 -> "Internal server error";
+                default  -> "Unexpected status code: " + res.optInt("responseCode");
+            };
+
+            new ConfirmDialog("Sign up Error", errorMsg, null)
+                    .show(requireActivity().getSupportFragmentManager(), null);
         });
     }
 
@@ -119,7 +134,6 @@ public class AccountDialog extends DialogFragment {
         for (TextView layout : new TextView[] {binding.etLoginUid, binding.etLoginPwd, binding.etLoginPwdConfirmed}) {
             layout.setText(null);
         }
-
     }
 
     private void handleOnClickPosButton(View view) {
