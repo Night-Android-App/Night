@@ -14,14 +14,50 @@ import night.app.activities.MainActivity;
 import night.app.databinding.DialogConfirmBinding;
 
 public class ConfirmDialog extends DialogFragment {
-    DialogConfirmBinding binding;
+    public DialogConfirmBinding binding;
 
     String dialogTitle;
     String dialogDesc;
     Function handleOnClickPositiveButton;
 
     public interface Function {
-        void run();
+        void run(ConfirmDialog dialog);
+    }
+
+    public void loadContent() {
+        binding.tvTitle.setText(dialogTitle);
+        binding.tvDesc.setText(dialogDesc);
+
+        if (handleOnClickPositiveButton == null) {
+            binding.btnNegative.setVisibility(View.GONE);
+            binding.btnPositive.setText("OK");
+            binding.btnPositive.setOnClickListener(v -> dismiss());
+        }
+
+        binding.btnPositive.setOnClickListener(v -> {
+            if (handleOnClickPositiveButton == null) {
+                dismiss();
+                return;
+            }
+            handleOnClickPositiveButton.run(this);
+        });
+    }
+
+    public void showLoading() {
+        binding.llConfirm.setVisibility(View.GONE);
+        binding.pbLoading.setVisibility(View.VISIBLE);
+    }
+
+    public void showMessage() {
+        binding.llConfirm.setVisibility(View.VISIBLE);
+        binding.pbLoading.setVisibility(View.GONE);
+    }
+
+    public void replaceContent(String title, String desc, Function fn) {
+        dialogTitle = title;
+        dialogDesc = desc;
+        handleOnClickPositiveButton = fn;
+        loadContent();
     }
 
     @Override
@@ -31,22 +67,7 @@ public class ConfirmDialog extends DialogFragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_confirm, container, false);
         binding.setTheme(activity.theme);
 
-        binding.tvTitle.setText(dialogTitle);
-        binding.tvDesc.setText(dialogDesc);
-
-        if (handleOnClickPositiveButton == null) {
-            binding.btnNegative.setVisibility(View.GONE);
-            binding.btnPositive.setText("OK");
-        }
-
-        binding.btnPositive.setOnClickListener(v -> {
-            if (handleOnClickPositiveButton != null) {
-                handleOnClickPositiveButton.run();
-            }
-
-            dismiss();
-        });
-
+        loadContent();
         return binding.getRoot();
     }
 

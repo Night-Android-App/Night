@@ -67,10 +67,10 @@ public class DayRecordFragment extends Fragment {
         );
 
         binding.tvInBed.setText(SleepData.toHrMinString(sleepData.getTotalSleep()));
-        binding.tvAnalDream.setText(day.dream);
+        binding.tvAnalDream.setText(day.dream == null ? "No record" : day.dream);
 
         Integer[] data = sleepData.getConfidences();
-        new ChartBuilder<LineChart>(binding.lineChartDayRecord, SleepData.toHrMinString(sleepData.getTimelines()), data)
+        new ChartBuilder(binding.lineChartDayRecord, SleepData.toHrMinString(sleepData.getTimelines()), data)
                 .setTheme(binding.getTheme())
                 .invalidate();
     }

@@ -100,12 +100,13 @@ public class SettingsPageFragment extends Fragment {
         String title = "Logout";
         String desc = "You have to login again to use part of services.";
 
-        new ConfirmDialog(title, desc, () -> {
+        new ConfirmDialog(title, desc, (dialog) -> {
             setDefaultAccountStatus();
             MainActivity activity = (MainActivity) requireActivity();
             activity.dataStore.update(PreferencesKeys.stringKey("sessionId"), null);
             activity.dataStore.update(PreferencesKeys.stringKey("username"), null);
             activity.dataStore.update(PreferencesKeys.stringKey("account_createdDate"), null);
+            dialog.dismiss();
         })
             .show(requireActivity().getSupportFragmentManager(), null);
     }

@@ -20,7 +20,7 @@ import night.app.fragments.dialogs.ShopDialog;
 public class GardenPageFragment extends Fragment {
     public FragmentGardenPageBinding binding;
 
-    private void openShopMenu() {
+    private void showShopMenu() {
         new ShopDialog().show(requireActivity().getSupportFragmentManager(), null);
     }
 
@@ -34,10 +34,10 @@ public class GardenPageFragment extends Fragment {
         binding.tvSalePrice.setText(salePrice == null ? "N/A" : String.valueOf(salePrice));
 
         Integer coinOwned = prefs.get(PreferencesKeys.intKey("coinOwned"));
-        binding.tvCoinsOwned.setText(coinOwned == null ? "N/A" : String.valueOf(coinOwned));
+        binding.tvCoinsOwned.setText(coinOwned == null ? "0" : String.valueOf(coinOwned));
 
         Integer totalEarned = prefs.get(PreferencesKeys.intKey("totalEarned"));
-        binding.tvTotalEarned.setText(totalEarned == null ? "N/A" : String.valueOf(totalEarned));
+        binding.tvTotalEarned.setText(totalEarned == null ? "0" : String.valueOf(totalEarned));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class GardenPageFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_garden_page, container, false);
         binding.setTheme(activity.theme);
 
-        binding.btnGardenShop.setOnClickListener(v -> openShopMenu());
+        binding.btnGardenShop.setOnClickListener(v -> showShopMenu());
         loadData();
 
         return binding.getRoot();
