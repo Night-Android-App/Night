@@ -20,7 +20,7 @@ import night.app.services.RingtonePlayer;
 public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public List<Product> productList;
     public final MainActivity activity;
-    public RingtonePlayer ringtonePlayer;
+    final public RingtonePlayer ringtonePlayer;
     public List<RingtoneViewHolder> viewHolders = new ArrayList<>();
 
     @Override
@@ -50,5 +50,7 @@ public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RingtoneAdapter(MainActivity mainActivity, List<Product> productList) {
         activity = mainActivity;
         this.productList = productList;
+
+        ringtonePlayer = new RingtonePlayer(activity);
     }
 }

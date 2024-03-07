@@ -19,10 +19,7 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
     String name;
 
     private void stopRingtone() {
-        if (adapter.ringtonePlayer != null) {
-            adapter.ringtonePlayer.release();
-            adapter.ringtonePlayer = null;
-        }
+        if (adapter.ringtonePlayer != null) adapter.ringtonePlayer.release();
 
         binding.llItemRingtone
                 .setBackgroundTintList(ColorStateList.valueOf(binding.getTheme().getSurface()));
@@ -33,11 +30,9 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
     private void playRingtone() {
         binding.llItemRingtone.setBackgroundTintList(ColorStateList.valueOf(binding.getTheme().getSurfaceVariant()));
 
-        if (adapter.ringtonePlayer != null) {
-            adapter.viewHolders.get(adapter.ringtonePlayer.playerOwner).stopRingtone();
-        }
+        adapter.viewHolders.get(adapter.ringtonePlayer.playerOwner).stopRingtone();
 
-        adapter.ringtonePlayer = new RingtonePlayer(adapter.activity, name, getAdapterPosition());
+        adapter.ringtonePlayer.replaceRingtone(name, getAdapterPosition());
         adapter.ringtonePlayer.run();
 
         binding.llItemRingtone.setOnClickListener(v -> stopRingtone());

@@ -12,36 +12,46 @@ public class RingtonePlayer {
     private String ringtoneName;
 
     public void release() {
-        mediaPlayer.release();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
     }
 
     public void run() {
         new Thread(() -> {
-            try {
-                String path = activity.appDatabase.dao().getRingtone(ringtoneName).get(0).path;
+            String path = activity.appDatabase.dao().getRingtone(ringtoneName).get(0).path;
+            activity.runOnUiThread(() -> {
+                try {
+                    if (mediaPlayer != null) mediaPlayer.release();
 
-                mediaPlayer = new MediaPlayer();
+                    mediaPlayer =  new MediaPlayer();
+                    if (path.startsWith("file://android_asset/")) {
+                        AssetFileDescriptor afd =
+                                activity.getAssets().openFd(path.replace("file://android_asset/", ""));
 
-                if (path.startsWith("file://android_asset/")) {
-                    AssetFileDescriptor afd =
-                            activity.getAssets().openFd(path.replace("file://android_asset/", ""));
+                        mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 
-                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
 
-                    afd.close();
+                        afd.close();
+                    }
                 }
-            }
-            catch (Exception e) {
-                System.err.println(e.toString());
-            }
+                catch (Exception e) {
+                    System.err.println(e);
+                }
+            });
         }).start();
     }
 
-    public RingtonePlayer(MainActivity activity, String ringtoneName, int playerOwner) {
-        this.activity = activity;
+    public void replaceRingtone(String ringtoneName, int playerOwner) {
+        if (mediaPlayer != null) mediaPlayer.release();
+
         this.ringtoneName = ringtoneName;
         this.playerOwner = playerOwner;
+    }
+
+    public RingtonePlayer(MainActivity activity) {
+        this.activity = activity;
     }
 }
