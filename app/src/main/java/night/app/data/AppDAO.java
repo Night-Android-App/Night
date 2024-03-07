@@ -58,6 +58,9 @@ public interface AppDAO {
     @Query("SELECT * FROM ringtone WHERE ring_name in (SELECT ring_name FROM product WHERE isBought=1)")
     List<Ringtone> getAllOwnedRingtones();
 
+    @Query("UPDATE product SET isBought=1 WHERE prod_id=:id ")
+    void updateProductStatus(int id);
+
     @Query("INSERT INTO ringtone (ring_name, path) VALUES (:ringName, :path)")
     void insertRingtone(String ringName, String path);
 

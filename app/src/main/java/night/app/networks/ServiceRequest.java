@@ -1,5 +1,7 @@
 package night.app.networks;
 
+import android.telecom.Call;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,6 +23,16 @@ public class ServiceRequest extends Request {
     public void backup(String requestBody, Callback Callback) {
         new Thread(() -> {
             JSONObject response = connect("backup", "POST")
+                    .sendData(requestBody)
+                    .getResponse();
+
+            Callback.run(response);
+        }).start();
+    }
+
+    public void purchase(String requestBody, Callback Callback) {
+        new Thread(() -> {
+            JSONObject response = connect("purchase", "POST")
                     .sendData(requestBody)
                     .getResponse();
 

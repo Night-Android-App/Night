@@ -8,12 +8,17 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.DialogFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.databinding.DialogPurchaseBinding;
+import night.app.networks.ServiceRequest;
 
 public class PurchaseDialog extends DialogFragment {
     DialogPurchaseBinding binding;
@@ -51,7 +56,50 @@ public class PurchaseDialog extends DialogFragment {
             binding.btnPositive.setEnabled(false);
         }
         else {
-            // purchase operation
+            binding.btnPositive.setOnClickListener(v -> {
+                MainActivity activity = (MainActivity) requireActivity();
+                Preferences prefs = activity.dataStore.getPrefs();
+
+                try {
+                    JSONObject request = new JSONObject();
+                    request.put("sid", prefs.get(PreferencesKeys.stringKey("sessionId")));
+                    request.put("uid", prefs.get(PreferencesKeys.stringKey("username")));
+
+                    request.put("productId", requireArguments().get("productId"));
+                    ConfirmDialog dialog = new ConfirmDialog("Purchase", "", null);
+                    dialog.show(getParentFragmentManager(), null);
+                    dialog.showLoading();
+
+                    new ServiceRequest().purchase(request.toString(), res -> {
+                        int status = res.optInt("responseCode");
+
+                        if (status == 200) {
+                            dialog.replaceContent("Purchase Success", "You can apply the item now.", null);
+                            activity.appDatabase.dao();
+
+                            dismiss();
+                            return;
+                        }
+
+                        String errorMsg = switch (res.optInt("responseCode")) {
+                            case 400 -> "Product not found.";
+                            case 401 -> "Unauthorized user.";
+                            case 404 -> "API path not found.";
+                            case 406 -> "You have not enough money.";
+                            case 500 -> "Server error.";
+                            default  -> "Unexpected status code: " + res.optInt("responseCode");
+                        };
+
+                        dialog.replaceContent("Purchase failed", errorMsg, null);
+                        dialog.showMessage();
+                        dismiss();
+
+                    });
+                }
+                catch (JSONException e) {
+
+                }
+            });
         }
 
         binding.btnNegative.setOnClickListener(v -> dismiss());

@@ -27,4 +27,6 @@ public class Alarm {
     public Integer isAlarmEnabled;
 
     public Integer isDNDEnabled;
+
+    public String repeat;
 }

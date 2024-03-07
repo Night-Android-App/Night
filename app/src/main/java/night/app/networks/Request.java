@@ -28,45 +28,15 @@ public abstract class Request {
         void run(@Nullable JSONObject res);
     }
 
-    protected Request setCookie() {
-        Map<String, List<String>> headerFields = connection.getHeaderFields();
-        if (headerFields == null) return this;
-
-        List<String> cookies = headerFields.get("Cookie");
-        if (cookies == null) return this;
-
-        CookieManager cookieManager = CookieManager.getInstance();
-        for (String cookie : cookies) {
-            cookieManager.setCookie("Cookie", cookie);
-        }
-
-        return this;
-    }
-
-    private String getCookie() {
-        CookieManager cookieManager = CookieManager.getInstance();
-        return cookieManager.getCookie("cookie");
-    }
-
-    protected String parseURLParams(Map<String, Object> map) {
-        ArrayList<String> result = new ArrayList<>();
-
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            result.add(entry.getKey() + "=" + entry.getValue().toString());
-        }
-
-        return "?" + String.join("&", result);
-    }
-
     public Request sendData(String writeData) {
-
         try {
             OutputStream out = connection.getOutputStream();
 
             out.write(writeData.getBytes(StandardCharsets.UTF_8));
             out.flush();
             out.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println(e);
         }
 
