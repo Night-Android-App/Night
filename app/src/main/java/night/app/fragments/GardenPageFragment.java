@@ -33,7 +33,7 @@ public class GardenPageFragment extends Fragment {
         Integer salePrice = prefs.get(PreferencesKeys.intKey("salePrice"));
         binding.tvSalePrice.setText(salePrice == null ? "N/A" : String.valueOf(salePrice));
 
-        Integer coinOwned = prefs.get(PreferencesKeys.intKey("coinOwned"));
+        Integer coinOwned = prefs.get(PreferencesKeys.intKey("coins"));
         binding.tvCoinsOwned.setText(coinOwned == null ? "0" : String.valueOf(coinOwned));
 
         Integer totalEarned = prefs.get(PreferencesKeys.intKey("totalEarned"));

@@ -11,17 +11,29 @@ import androidx.databinding.DataBindingUtil;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import night.app.R;
 import night.app.activities.MainActivity;
+import night.app.adapters.RingtoneViewHolder;
+import night.app.adapters.ThemeViewHolder;
 import night.app.databinding.DialogPurchaseBinding;
+import night.app.fragments.GardenPageFragment;
 import night.app.networks.ServiceRequest;
 
-public class PurchaseDialog extends DialogFragment {
+public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extends DialogFragment {
     DialogPurchaseBinding binding;
+
+    ViewHolder holder;
+
+    private void refreshGardenPage() {
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .add(R.id.fr_app_page, GardenPageFragment.class, null)
+                .commit();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,38 +74,73 @@ public class PurchaseDialog extends DialogFragment {
 
                 try {
                     JSONObject request = new JSONObject();
-                    request.put("sid", prefs.get(PreferencesKeys.stringKey("sessionId")));
-                    request.put("uid", prefs.get(PreferencesKeys.stringKey("username")));
+                    String sid = prefs.get(PreferencesKeys.stringKey("sessionId"));
+                    String uid = prefs.get(PreferencesKeys.stringKey("username"));
 
-                    request.put("productId", requireArguments().get("productId"));
+
+                    request.put("sid", sid);
+                    request.put("uid", uid);
+
                     ConfirmDialog dialog = new ConfirmDialog("Purchase", "", null);
-                    dialog.show(getParentFragmentManager(), null);
+                    dialog.showNow(getParentFragmentManager(), null);
+
+                    if (sid == null || uid == null) {
+                        dialog.replaceContent("Purchase failed", "You need to login to use this service.", null);
+                        dismiss();
+                        return;
+                    }
+
+                    request.put("prodId", requireArguments().get("prodId"));
                     dialog.showLoading();
 
                     new ServiceRequest().purchase(request.toString(), res -> {
                         int status = res.optInt("responseCode");
 
                         if (status == 200) {
-                            dialog.replaceContent("Purchase Success", "You can apply the item now.", null);
-                            activity.appDatabase.dao();
+                            activity.appDatabase.dao().updateProductStatus(requireArguments().getInt("prodId"));
 
-                            dismiss();
+                            activity.runOnUiThread(() -> {
+                                dialog.replaceContent("Purchase Success", "You can apply the item now.", null);
+                                dialog.showMessage();
+
+                                try {
+                                    activity.dataStore.update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
+                                    refreshGardenPage();
+                                    if (holder instanceof RingtoneViewHolder) {
+                                        ((RingtoneViewHolder) holder).setOwned();
+                                    }
+                                    else if (holder instanceof ThemeViewHolder) {
+                                        ((ThemeViewHolder) holder).setThemeApplied();
+                                    }
+                                }
+                                catch (JSONException e) { }
+
+                                dismiss();
+                            });
                             return;
                         }
+                        activity.runOnUiThread(() -> {
+                            String errorMsg = switch (res.optInt("responseCode")) {
+                                case 400 -> "Invalid packet structures.";
+                                case 401 -> "Unauthorized user.";
+                                case 404 -> "API path not found.";
+                                case 406 -> {
+                                    try {
+                                        activity.dataStore.update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
+                                        refreshGardenPage();
+                                    }
+                                    catch (JSONException e) { }
 
-                        String errorMsg = switch (res.optInt("responseCode")) {
-                            case 400 -> "Product not found.";
-                            case 401 -> "Unauthorized user.";
-                            case 404 -> "API path not found.";
-                            case 406 -> "You have not enough money.";
-                            case 500 -> "Server error.";
-                            default  -> "Unexpected status code: " + res.optInt("responseCode");
-                        };
+                                    yield "You have not enough money.";
+                                }
+                                case 500 -> "Server error.";
+                                default  -> "Unexpected status code: " + res.optInt("responseCode");
+                            };
 
-                        dialog.replaceContent("Purchase failed", errorMsg, null);
-                        dialog.showMessage();
-                        dismiss();
-
+                            dialog.replaceContent("Purchase failed", errorMsg, null);
+                            dialog.showMessage();
+                            dismiss();
+                        });
                     });
                 }
                 catch (JSONException e) {
@@ -105,6 +152,10 @@ public class PurchaseDialog extends DialogFragment {
         binding.btnNegative.setOnClickListener(v -> dismiss());
 
         return binding.getRoot();
+    }
+
+    public PurchaseDialog(ViewHolder holder) {
+        this.holder = holder;
     }
 }
 

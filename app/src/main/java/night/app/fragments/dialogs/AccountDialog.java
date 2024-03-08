@@ -116,6 +116,8 @@ public class AccountDialog extends DialogFragment {
                 try {
                     MainActivity activity = (MainActivity) requireActivity();
 
+                    activity.dataStore.update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
+
                     String sid = res.getJSONObject("response").getString("sessionId");
                     activity.dataStore.update(PreferencesKeys.stringKey("sessionId"), sid);
 

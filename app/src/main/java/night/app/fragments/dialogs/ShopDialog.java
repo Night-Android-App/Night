@@ -52,7 +52,7 @@ public class ShopDialog extends DialogFragment {
         requireDialog().getWindow().setNavigationBarColor(theme.getSecondary());
     }
 
-    private void loadItemList(String type) {
+    private void loadItemList(Integer type) {
         MainActivity activity = (MainActivity) requireActivity();
         binding.rvShopItems.removeAllViewsInLayout();
 
@@ -60,7 +60,7 @@ public class ShopDialog extends DialogFragment {
             List<Product> productList = activity.appDatabase.dao().getProducts(type);
 
             activity.runOnUiThread(() -> {
-                if (Objects.equals(type, "theme")) {
+                if (type == 1) {
                     binding.rvShopItems.setAdapter(new ThemeAdapter(activity, productList));
                     return;
                 }
@@ -76,7 +76,7 @@ public class ShopDialog extends DialogFragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 releaseRingtonePlayer();
 
-                loadItemList(tab.getPosition() == 0 ? "theme" :"ringtone");
+                loadItemList(tab.getPosition() == 0 ? 1 : 2);
             }
 
             @Override
@@ -105,7 +105,7 @@ public class ShopDialog extends DialogFragment {
         binding.btnShopClose.setOnClickListener(v -> dismiss());
 
         binding.rvShopItems.setLayoutManager(new LinearLayoutManager(activity));
-        loadItemList("theme");
+        loadItemList(1);
 
         getParentFragmentManager()
                 .setFragmentResultListener("switchTheme", this, this::switchTheme);

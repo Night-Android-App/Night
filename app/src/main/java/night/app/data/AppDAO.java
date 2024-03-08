@@ -47,7 +47,7 @@ public interface AppDAO {
 
     // Shop Query
     @Query("SELECT * FROM product WHERE type=:type")
-    List<Product> getProducts(String type);
+    List<Product> getProducts(Integer type);
 
     @Query("SELECT * FROM theme WHERE theme_name=:themeName LIMIT 1")
     List<Theme> getTheme(String themeName);

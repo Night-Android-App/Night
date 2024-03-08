@@ -38,6 +38,12 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
         binding.llItemRingtone.setOnClickListener(v -> stopRingtone());
     }
 
+    public void setOwned() {
+        binding.button2.setText("OWNED");
+        binding.button2.setEnabled(false);
+        binding.button2.setBackgroundColor(binding.getTheme().getOnPrimaryVariant() & 0x00FFFFFF | 0x40000000);
+    }
+
     public void loadData(Product itemData) {
         binding.tvRingtoneName.setText(itemData.prodName);
         binding.tvShopItemPrice.setText(itemData.price + " coins");
@@ -58,15 +64,10 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
                 binding.llItemRingtone.setOnClickListener(v -> playRingtone());
 
 
-                if (itemData.isBought == 1) {
-                    binding.button2.setText("OWNED");
-                    binding.button2.setEnabled(false);
-                    binding.button2.setBackgroundColor(binding.getTheme().getOnPrimaryVariant() & 0x00FFFFFF | 0x40000000);
-                    return;
-                }
+                if (itemData.isBought == 1) setOwned();
 
                 binding.button2.setOnClickListener(v -> {
-                    PurchaseDialog dialog = new PurchaseDialog();
+                    PurchaseDialog dialog = new PurchaseDialog(this);
 
                     Bundle bundle = new Bundle();
                     bundle.putString("name", itemData.prodName);

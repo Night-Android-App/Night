@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
             if (dataStore.getPrefs().get(PreferencesKeys.stringKey("PolicyAgreedDate")) == null) {
                 if (getSupportFragmentManager().findFragmentByTag("agreementDialog") == null) {
                     new AgreementDialog().show(getSupportFragmentManager(), "agreementDialog");
-
+                    
                     dataStore.update(PreferencesKeys.booleanKey("backupAlarmList"), true);
                     dataStore.update(PreferencesKeys.booleanKey("backupSleepRecord"), true);
                 }

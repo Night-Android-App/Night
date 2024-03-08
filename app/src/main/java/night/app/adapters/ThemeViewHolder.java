@@ -30,6 +30,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
     public void setThemeApplied() {
         binding.btnShopItemPurchase.setEnabled(false);
         binding.btnShopItemPurchase.setText("APPLIED");
+        binding.tvShopItemPrice.setVisibility(View.GONE);
         binding.btnShopItemPurchase.setBackgroundColor(binding.getTheme().getOnPrimaryVariant() & 0x00FFFFFF | 0x40000000);
     }
 
@@ -129,11 +130,12 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
         binding.btnShopItemPurchase.setBackgroundColor(binding.getTheme().getAccent());
 
         binding.btnShopItemPurchase.setOnClickListener(v -> {
-            PurchaseDialog dialog = new PurchaseDialog();
+            PurchaseDialog dialog = new PurchaseDialog(this);
 
             Bundle bundle = new Bundle();
             bundle.putString("name", itemData.prodName);
             bundle.putString("price", String.valueOf(itemData.price));
+            bundle.putInt("prodId", itemData.prodId);
 
             dialog.setArguments(bundle);
             dialog.show(activity.getSupportFragmentManager(), null);
