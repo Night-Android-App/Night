@@ -51,10 +51,10 @@ public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extend
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_purchase, container, false);
-        binding.setTheme(((MainActivity) requireActivity()).theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         Integer price = Integer.parseInt(requireArguments().getString("price", "No value"));
-        Integer coins = ((MainActivity) requireActivity()).dataStore.getPrefs().get(PreferencesKeys.intKey("coins"));
+        Integer coins = MainActivity.getDataStore().getPrefs().get(PreferencesKeys.intKey("coins"));
 
         binding.tvPurchaseItemPrice.setText(String.valueOf(price));
         binding.tvPurchaseCoins.setText(String.valueOf(coins == null ? coins = 0 : coins));
@@ -70,13 +70,12 @@ public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extend
         else {
             binding.btnPositive.setOnClickListener(v -> {
                 MainActivity activity = (MainActivity) requireActivity();
-                Preferences prefs = activity.dataStore.getPrefs();
+                Preferences prefs = MainActivity.getDataStore().getPrefs();
 
                 try {
                     JSONObject request = new JSONObject();
                     String sid = prefs.get(PreferencesKeys.stringKey("sessionId"));
                     String uid = prefs.get(PreferencesKeys.stringKey("username"));
-
 
                     request.put("sid", sid);
                     request.put("uid", uid);
@@ -97,14 +96,14 @@ public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extend
                         int status = res.optInt("responseCode");
 
                         if (status == 200) {
-                            activity.appDatabase.dao().updateProductStatus(requireArguments().getInt("prodId"));
+                            MainActivity.getDatabase().dao().updateProductStatus(requireArguments().getInt("prodId"));
 
                             activity.runOnUiThread(() -> {
                                 dialog.replaceContent("Purchase Success", "You can apply the item now.", null);
                                 dialog.showMessage();
 
                                 try {
-                                    activity.dataStore.update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
+                                    MainActivity.getDataStore().update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
                                     refreshGardenPage();
                                     if (holder instanceof RingtoneViewHolder) {
                                         ((RingtoneViewHolder) holder).setOwned();
@@ -126,7 +125,7 @@ public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extend
                                 case 404 -> "API path not found.";
                                 case 406 -> {
                                     try {
-                                        activity.dataStore.update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
+                                        MainActivity.getDataStore().update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
                                         refreshGardenPage();
                                     }
                                     catch (JSONException e) { }

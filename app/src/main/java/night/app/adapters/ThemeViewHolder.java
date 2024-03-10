@@ -44,13 +44,13 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
 
             // temporarily store for referencing
             // activity theme object will be updated later
-            String originalTheme = activity.theme.name;
+            String originalTheme = MainActivity.getAppliedTheme().name;
 
             new Thread(() -> {
-                activity.theme = theme;
-                activity.binding.setTheme(activity.theme);
+                MainActivity.setTheme(theme);
+                activity.binding.setTheme(MainActivity.getAppliedTheme());
 
-                activity.dataStore
+                MainActivity.getDataStore()
                         .update(PreferencesKeys.stringKey("theme"), itemData.prodName);
 
                 activity.runOnUiThread(() -> {
@@ -58,7 +58,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                     // update items directly, rather than updating them from the adapter
                     for (int i=0; i < adapter.viewHolders.size(); i++) {
                         ThemeViewHolder holder = adapter.viewHolders.get(i);
-                        holder.binding.setTheme(activity.theme);
+                        holder.binding.setTheme(MainActivity.getAppliedTheme());
 
                         Product product = adapter.productList.get(i);
                         if (originalTheme.equals(product.prodName)) {
@@ -72,8 +72,8 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                     activity.getSupportFragmentManager()
                             .setFragmentResult("switchTheme", new Bundle());
 
-                    activity.getWindow().setStatusBarColor(activity.theme.getPrimary());
-                    activity.getWindow().setNavigationBarColor(activity.theme.getPrimary());
+                    activity.getWindow().setStatusBarColor(MainActivity.getAppliedTheme().getPrimary());
+                    activity.getWindow().setNavigationBarColor(MainActivity.getAppliedTheme().getPrimary());
 
                     // refresh the garden page for switching theme
                     activity.getSupportFragmentManager().beginTransaction()
@@ -91,10 +91,10 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                     ImageView navItemIcon = (ImageView) navItemComponent.getChildAt(0);
                     // shop page is opened from Garden (the first navbar item), it uses active color
                     if (nth == 0) {
-                        navItemIcon.setColorFilter(activity.theme.getOnPrimary());
+                        navItemIcon.setColorFilter(MainActivity.getAppliedTheme().getOnPrimary());
                         continue;
                     }
-                    navItemIcon.setColorFilter(activity.theme.getOnPrimaryVariant());
+                    navItemIcon.setColorFilter(MainActivity.getAppliedTheme().getOnPrimaryVariant());
                 }
             }).start();
         });
@@ -110,13 +110,13 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
         binding.tvShopItemName.setText(itemData.prodName);
 
         new Thread(() -> {
-            List<Theme> themeList = activity.appDatabase.dao().getTheme(itemData.prodName);
+            List<Theme> themeList = MainActivity.getDatabase().dao().getTheme(itemData.prodName);
             theme = themeList.size() > 0 ? themeList.get(0) : new Theme();
 
             binding.setPreview(theme);
         }).start();
 
-        if (Objects.equals(activity.theme.name, itemData.prodName)) {
+        if (Objects.equals(MainActivity.getAppliedTheme().name, itemData.prodName)) {
             setThemeApplied();
             return;
         }

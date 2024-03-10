@@ -30,11 +30,9 @@ public class AgreementDialog extends DialogFragment {
     DialogAgreementBinding binding;
 
     private void loadFileContent(String path) {
-        MainActivity activity = (MainActivity) requireActivity();
-
         BufferedReader reader = null;
         try {
-            InputStream inputStream = activity.getAssets().open(path);
+            InputStream inputStream = requireActivity().getAssets().open(path);
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             StringBuilder policyContent = new StringBuilder();
@@ -60,16 +58,6 @@ public class AgreementDialog extends DialogFragment {
         }
     }
 
-    private void setOnBackKeyListener() {
-        requireDialog().setOnKeyListener((dialog, keyCode, event) -> {
-            if (keyCode == KeyEvent.KEYCODE_BACK) {
-                System.exit(0);
-                return true;
-            }
-            return false;
-        });
-    }
-
     private void setOnTabSelectListener() {
         binding.tabAgree.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -92,10 +80,8 @@ public class AgreementDialog extends DialogFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        MainActivity activity = (MainActivity) requireActivity();
-
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_agreement, container, false);
-        binding.setTheme(activity.theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         requireDialog().getWindow().setStatusBarColor(binding.getTheme().getPrimary());
         requireDialog().getWindow().setNavigationBarColor(binding.getTheme().getSecondary());
@@ -104,7 +90,7 @@ public class AgreementDialog extends DialogFragment {
         setOnTabSelectListener();
 
 
-        String agreedDate = activity.dataStore.getPrefs().get(PreferencesKeys.stringKey("PolicyAgreedDate"));
+        String agreedDate = MainActivity.getDataStore().getPrefs().get(PreferencesKeys.stringKey("PolicyAgreedDate"));
 
         if (agreedDate != null) {
             binding.cbAgree.setEnabled(false);
@@ -115,8 +101,6 @@ public class AgreementDialog extends DialogFragment {
 
             return binding.getRoot();
         }
-
-        setOnBackKeyListener();
 
         binding.btnPos.setOnClickListener(v -> {
             if (!binding.cbAgree.isChecked()) {
@@ -130,12 +114,12 @@ public class AgreementDialog extends DialogFragment {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             String formattedDateTime = formatter.format(zonedDateTime);
 
-            activity.dataStore.update(
+            MainActivity.getDataStore().update(
                     PreferencesKeys.stringKey("PolicyAgreedDate"),
                     formattedDateTime
             );
 
-            activity.dataStore.update(
+            MainActivity.getDataStore().update(
                     PreferencesKeys.booleanKey("isFirstVisited"),
                     true
             );

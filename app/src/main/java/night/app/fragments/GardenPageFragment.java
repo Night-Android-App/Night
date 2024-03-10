@@ -25,7 +25,7 @@ public class GardenPageFragment extends Fragment {
     }
 
     private void loadData() {
-        Preferences prefs = ((MainActivity) requireActivity()).dataStore.getPrefs();
+        Preferences prefs = MainActivity.getDataStore().getPrefs();
 
         Integer preyCaught = prefs.get(PreferencesKeys.intKey("preyCaught"));
         binding.tvCoinsOwned.setText(preyCaught == null ? "N/A" : String.valueOf(preyCaught));
@@ -45,7 +45,7 @@ public class GardenPageFragment extends Fragment {
         MainActivity activity = (MainActivity) requireActivity();
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_garden_page, container, false);
-        binding.setTheme(activity.theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         binding.btnGardenShop.setOnClickListener(v -> showShopMenu());
         loadData();

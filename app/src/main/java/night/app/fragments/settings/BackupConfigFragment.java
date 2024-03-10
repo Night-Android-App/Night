@@ -75,12 +75,12 @@ public class BackupConfigFragment extends Fragment {
         dialog.binding.pbLoading.setVisibility(View.GONE);
 
         MainActivity activity = (MainActivity) requireActivity();
-        Preferences prefs = activity.dataStore.getPrefs();
+        Preferences prefs = MainActivity.getDataStore().getPrefs();
 
         JSONObject requestBody = new JSONObject();
         new Thread(() -> {
-            List<Day> days = activity.appDatabase.dao().getAllDay();
-            List<Alarm> alarms = activity.appDatabase.dao().getAllAlarms();
+            List<Day> days = MainActivity.getDatabase().dao().getAllDay();
+            List<Alarm> alarms = MainActivity.getDatabase().dao().getAllAlarms();
 
             activity.runOnUiThread(() -> {
                 try {
@@ -111,7 +111,7 @@ public class BackupConfigFragment extends Fragment {
                                 df.setTimeZone(TimeZone.getDefault());
 
                                 binding.tvSettBackupLastDate.setText(df.format(new Date()));
-                                activity.dataStore.update(
+                                MainActivity.getDataStore().update(
                                     PreferencesKeys.stringKey("lastBackupDate"),
                                     df.format(new Date())
                                 );
@@ -140,7 +140,7 @@ public class BackupConfigFragment extends Fragment {
     }
 
     private void recoverySleepData(String data) throws JSONException {
-        AppDAO dao = ((MainActivity) requireActivity()).appDatabase.dao();
+        AppDAO dao = MainActivity.getDatabase().dao();
 
         JSONObject sleepData = new JSONObject(data);
         Iterator<String> keys = sleepData.keys();
@@ -158,7 +158,7 @@ public class BackupConfigFragment extends Fragment {
     }
 
     private void recoveryAlarmList(String data) throws JSONException {
-        AppDAO dao = ((MainActivity) requireActivity()).appDatabase.dao();
+        AppDAO dao = MainActivity.getDatabase().dao();
 
         JSONObject alarmList = new JSONObject(data);
         Iterator<String> keys = alarmList.keys();
@@ -178,7 +178,7 @@ public class BackupConfigFragment extends Fragment {
 
     private void recoveryCallBack(JSONObject res) {
         try {
-            AppDAO dao = ((MainActivity) requireActivity()).appDatabase.dao();
+            AppDAO dao = MainActivity.getDatabase().dao();
             dao.deleteAllDays();
 
             JSONObject responseBody = res.getJSONObject("response");
@@ -196,7 +196,7 @@ public class BackupConfigFragment extends Fragment {
             MainActivity activity = (MainActivity) requireActivity();
             JSONObject requestBody = new JSONObject();
 
-            Preferences prefs = activity.dataStore.getPrefs();
+            Preferences prefs = MainActivity.getDataStore().getPrefs();
 
             String sid = prefs.get(PreferencesKeys.stringKey("sessionId"));
             String uid = prefs.get(PreferencesKeys.stringKey("username"));
@@ -243,7 +243,7 @@ public class BackupConfigFragment extends Fragment {
         MainActivity activity = (MainActivity) requireActivity();
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_backup_config, container, false);
 
-        binding.setTheme(activity.theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
         binding.setViewModel(new ViewModelProvider(activity).get(PreferenceViewModel.class));
 
         binding.btnSettBackupActUpload.setOnClickListener(v -> {

@@ -31,15 +31,14 @@ public class OthersConfigFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_others_config, container, false);
-        binding.setTheme(((MainActivity) requireActivity()).theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         binding.btnPermission.setOnClickListener(v -> requestPermission());
         binding.btnOpenPolicy.setOnClickListener(v -> {
             new AgreementDialog().show(getParentFragmentManager(), null);
         });
 
-        MainActivity activity = (MainActivity) requireActivity();
-        Preferences prefs = activity.dataStore.getPrefs();
+        Preferences prefs = MainActivity.getDataStore().getPrefs();
 
         String agreedDate = prefs.get(PreferencesKeys.stringKey("PolicyAgreedDate"));
         binding.tvPolicyAgreedDate.setText(agreedDate);

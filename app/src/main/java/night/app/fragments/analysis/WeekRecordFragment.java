@@ -38,7 +38,7 @@ public class WeekRecordFragment extends Fragment {
     }
 
     private List<Day> getWeekRecord(long todayDate) {
-        AppDAO dao = ((MainActivity) requireActivity()).appDatabase.dao();
+        AppDAO dao = MainActivity.getDatabase().dao();
 
         List<Day> dayList = dao.getDayRange(todayDate-6*24*60*60, todayDate);
         return dayList;
@@ -91,7 +91,7 @@ public class WeekRecordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_week_record, container, false);
-        binding.setTheme(((MainActivity) requireActivity()).theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         new Thread(() -> {
             long today = Instant.now().toEpochMilli() / 1000;

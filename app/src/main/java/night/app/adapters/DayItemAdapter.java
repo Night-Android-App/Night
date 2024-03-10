@@ -31,7 +31,7 @@ public class DayItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         ItemDayRecordBinding binding =
                 DataBindingUtil.inflate(inflater, R.layout.item_day_record, viewGroup, false);
 
-        binding.setTheme(activity.theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
 
         return new DayItemViewHolder(this, binding);

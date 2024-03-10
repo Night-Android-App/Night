@@ -25,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import night.app.R;
+import night.app.activities.InitialActivity;
 import night.app.activities.MainActivity;
 import night.app.databinding.DialogAccountBinding;
 import night.app.networks.AccountRequest;
@@ -63,8 +64,7 @@ public class AccountDialog extends DialogFragment {
                 if (res != null && res.optInt("responseCode") == 200) {
                     String sessionId = res.getJSONObject("response").getString("sessionId");
 
-                    MainActivity activity = (MainActivity) requireActivity();
-                    activity.dataStore.update(PreferencesKeys.stringKey("sessionId"), sessionId);
+                    MainActivity.getDataStore().update(PreferencesKeys.stringKey("sessionId"), sessionId);
 
                     Bundle bundle = new Bundle();
                     bundle.putString("uid", uidValue);
@@ -78,6 +78,8 @@ public class AccountDialog extends DialogFragment {
                     getParentFragmentManager().setFragmentResult("accountStatus", bundle);
                     dialog.dismiss();
                     dismiss();
+
+                    if (requireActivity() instanceof InitialActivity) requireActivity().finish();
                     return;
                 }
 
@@ -114,12 +116,10 @@ public class AccountDialog extends DialogFragment {
         new AccountRequest().login(uidValue, Password.hash(pwdValue), res -> {
             if (res != null && res.optInt("responseCode") == 200) {
                 try {
-                    MainActivity activity = (MainActivity) requireActivity();
-
-                    activity.dataStore.update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
+                    MainActivity.getDataStore().update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
 
                     String sid = res.getJSONObject("response").getString("sessionId");
-                    activity.dataStore.update(PreferencesKeys.stringKey("sessionId"), sid);
+                    MainActivity.getDataStore().update(PreferencesKeys.stringKey("sessionId"), sid);
 
 
                     Bundle bundle = new Bundle();
@@ -133,6 +133,8 @@ public class AccountDialog extends DialogFragment {
                     getParentFragmentManager().setFragmentResult("accountStatus", bundle);
                     dialog.dismiss();
                     dismiss();
+
+                    if (requireActivity() instanceof InitialActivity) requireActivity().finish();
                 }
                 catch (JSONException e) {
                     requireActivity().runOnUiThread(() -> {
@@ -188,7 +190,7 @@ public class AccountDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_account, container, false);
 
-        binding.setTheme(((MainActivity) requireActivity()).theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
         requireDialog().getWindow().setStatusBarColor(binding.getTheme().getSecondary());
         requireDialog().getWindow().setNavigationBarColor(binding.getTheme().getSecondary());
 

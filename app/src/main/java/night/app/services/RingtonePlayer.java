@@ -19,7 +19,7 @@ public class RingtonePlayer {
 
     public void run() {
         new Thread(() -> {
-            String path = activity.appDatabase.dao().getRingtone(ringtoneName).get(0).path;
+            String path = MainActivity.getDatabase().dao().getRingtone(ringtoneName).get(0).path;
             activity.runOnUiThread(() -> {
                 try {
                     if (mediaPlayer != null) mediaPlayer.release();

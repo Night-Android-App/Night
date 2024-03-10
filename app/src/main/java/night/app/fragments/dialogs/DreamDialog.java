@@ -24,7 +24,7 @@ public class DreamDialog extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_dream, container, false);
-        binding.setTheme(((MainActivity) requireActivity()).theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         binding.btnClose.setOnClickListener(v -> dismiss());
 

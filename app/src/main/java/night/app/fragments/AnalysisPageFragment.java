@@ -27,12 +27,10 @@ public class AnalysisPageFragment extends Fragment {
 
     private void deleteOldRecords() {
         new Thread(() -> {
-            MainActivity activity = (MainActivity) requireActivity();
-
             long endDate = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
             long startDate = endDate - 29*24*60*60;
 
-            activity.appDatabase.dao().deleteOldDays(startDate);
+            MainActivity.getDatabase().dao().deleteOldDays(startDate);
         }).start();
     }
 
@@ -97,7 +95,7 @@ public class AnalysisPageFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_analysis_page, container, false);
-        binding.setTheme(((MainActivity) requireActivity()).theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         initTabLayout();
         setUpperPanelResultListener();

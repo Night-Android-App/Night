@@ -9,12 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
-import java.util.Objects;
 
 import night.app.R;
 import night.app.activities.MainActivity;
@@ -42,7 +40,7 @@ public class ShopDialog extends DialogFragment {
     }
 
     private void switchTheme() {
-        Theme theme = ((MainActivity) requireActivity()).theme;
+        Theme theme = MainActivity.getAppliedTheme();
         binding.setTheme(theme);
 
         binding.tabShop.setSelectedTabIndicatorColor(theme.getOnPrimary());
@@ -57,7 +55,7 @@ public class ShopDialog extends DialogFragment {
         binding.rvShopItems.removeAllViewsInLayout();
 
         new Thread(() -> {
-            List<Product> productList = activity.appDatabase.dao().getProducts(type);
+            List<Product> productList = MainActivity.getDatabase().dao().getProducts(type);
 
             activity.runOnUiThread(() -> {
                 if (type == 1) {
@@ -96,7 +94,6 @@ public class ShopDialog extends DialogFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        MainActivity activity = (MainActivity) requireActivity();
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_shop, container, false);
 
         switchTheme();
@@ -104,7 +101,7 @@ public class ShopDialog extends DialogFragment {
 
         binding.btnShopClose.setOnClickListener(v -> dismiss());
 
-        binding.rvShopItems.setLayoutManager(new LinearLayoutManager(activity));
+        binding.rvShopItems.setLayoutManager(new LinearLayoutManager(requireActivity()));
         loadItemList(1);
 
         getParentFragmentManager()

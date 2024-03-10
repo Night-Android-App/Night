@@ -35,7 +35,7 @@ public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ItemRingtoneBinding binding =
                 DataBindingUtil.inflate(inflater, R.layout.item_ringtone, viewGroup, false);
 
-        binding.setTheme(activity.theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         return new RingtoneViewHolder(this, binding);
     }

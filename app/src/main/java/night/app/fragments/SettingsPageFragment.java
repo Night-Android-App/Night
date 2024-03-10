@@ -32,7 +32,7 @@ public class SettingsPageFragment extends Fragment {
         new ViewModelProvider(requireActivity(), new ViewModelProvider.Factory() {
             @NonNull @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new PreferenceViewModel(((MainActivity) requireActivity()).dataStore);
+                return (T) new PreferenceViewModel(MainActivity.getDataStore());
             }
         }).get(PreferenceViewModel.class);
     }
@@ -75,8 +75,8 @@ public class SettingsPageFragment extends Fragment {
             }
         });
 
-        activity.dataStore.update(PreferencesKeys.stringKey("username"), uid);
-        activity.dataStore.update(PreferencesKeys.stringKey("account_createdDate"), desc);
+        MainActivity.getDataStore().update(PreferencesKeys.stringKey("username"), uid);
+        MainActivity.getDataStore().update(PreferencesKeys.stringKey("account_createdDate"), desc);
     }
 
     private void showLoginModal() {
@@ -84,16 +84,14 @@ public class SettingsPageFragment extends Fragment {
     }
 
     private void setDefaultAccountStatus() {
-        MainActivity activity = (MainActivity) requireActivity();
-
-        activity.dataStore.update(PreferencesKeys.stringKey("username"), null);
-        activity.dataStore.update(PreferencesKeys.stringKey("account_createdDate"), null);
+        MainActivity.getDataStore().update(PreferencesKeys.stringKey("username"), null);
+        MainActivity.getDataStore().update(PreferencesKeys.stringKey("account_createdDate"), null);
 
         binding.clSettAcct.setOnClickListener(v -> showLoginModal());
         binding.tvSettAcctUid.setText("Press here to login");
         binding.tvSettAcctDesc.setText(">> Proceed");
 
-        activity.dataStore.update(PreferencesKeys.stringKey("sessionId"), null);
+        MainActivity.getDataStore().update(PreferencesKeys.stringKey("sessionId"), null);
     }
 
     private void showLogoutModal() {
@@ -102,10 +100,9 @@ public class SettingsPageFragment extends Fragment {
 
         new ConfirmDialog(title, desc, (dialog) -> {
             setDefaultAccountStatus();
-            MainActivity activity = (MainActivity) requireActivity();
-            activity.dataStore.update(PreferencesKeys.stringKey("sessionId"), null);
-            activity.dataStore.update(PreferencesKeys.stringKey("username"), null);
-            activity.dataStore.update(PreferencesKeys.stringKey("account_createdDate"), null);
+            MainActivity.getDataStore().update(PreferencesKeys.stringKey("sessionId"), null);
+            MainActivity.getDataStore().update(PreferencesKeys.stringKey("username"), null);
+            MainActivity.getDataStore().update(PreferencesKeys.stringKey("account_createdDate"), null);
             dialog.dismiss();
         })
             .show(requireActivity().getSupportFragmentManager(), null);
@@ -113,8 +110,7 @@ public class SettingsPageFragment extends Fragment {
 
 
     private void initDataFromDataStore() {
-        MainActivity activity = (MainActivity) requireActivity();
-        Preferences prefs = activity.dataStore.getPrefs();
+        Preferences prefs = MainActivity.getDataStore().getPrefs();
 
         String username = prefs.get(PreferencesKeys.stringKey("username"));
         String accountCreatedDate = prefs.get(PreferencesKeys.stringKey("account_createdDate"));
@@ -132,7 +128,7 @@ public class SettingsPageFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings_page, container, false);
-        binding.setTheme(((MainActivity) requireActivity()).theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         setOnTabSelectListener();
         createViewModel();

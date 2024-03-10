@@ -65,7 +65,7 @@ public class ConfirmDialog extends DialogFragment {
         MainActivity activity = (MainActivity) requireActivity();
 
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_confirm, container, false);
-        binding.setTheme(activity.theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         loadContent();
         return binding.getRoot();

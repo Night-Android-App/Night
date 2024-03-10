@@ -5,20 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONException;
-
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import night.app.R;
 import night.app.activities.MainActivity;
@@ -42,7 +33,7 @@ public class MonthRecordFragment extends Fragment {
     private void loadData() {
         MainActivity activity = (MainActivity) requireActivity();
 
-        List<Day> dayList = activity.appDatabase.dao().getAllDay();
+        List<Day> dayList = MainActivity.getDatabase().dao().getAllDay();
 
         requireActivity().runOnUiThread(() -> {
             long today = dayList.size() == 0 ? new Day().date : System.currentTimeMillis()/ 1000;

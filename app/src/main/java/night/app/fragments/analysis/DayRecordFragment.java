@@ -10,8 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import com.github.mikephil.charting.charts.LineChart;
-
 import java.util.List;
 
 import night.app.R;
@@ -42,7 +40,7 @@ public class DayRecordFragment extends Fragment {
         MainActivity activity = (MainActivity) requireActivity();
 
         new Thread(() -> {
-            AppDAO dao = activity.appDatabase.dao();
+            AppDAO dao = MainActivity.getDatabase().dao();
             List<Day> dayList = date == null ? dao.getRecentDay() : dao.getDayByDate(date);
 
             activity.runOnUiThread(() -> loadDay(dayList));
@@ -84,10 +82,8 @@ public class DayRecordFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        MainActivity activity = (MainActivity) requireActivity();
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_day_record, container, false);
-        binding.setTheme(activity.theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         setLoadDayResultListener();
         loadDay((Integer) null);

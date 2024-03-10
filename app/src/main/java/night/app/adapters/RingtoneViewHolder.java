@@ -7,11 +7,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalTime;
 
+import night.app.activities.MainActivity;
 import night.app.data.Product;
 import night.app.data.Ringtone;
 import night.app.databinding.ItemRingtoneBinding;
 import night.app.fragments.dialogs.PurchaseDialog;
-import night.app.services.RingtonePlayer;
 
 public class RingtoneViewHolder extends RecyclerView.ViewHolder {
     RingtoneAdapter adapter;
@@ -53,7 +53,7 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
         name = itemData.prodName;
 
         new Thread(() -> {
-            Ringtone ringtone = adapter.activity.appDatabase.dao()
+            Ringtone ringtone = MainActivity.getDatabase().dao()
                     .getRingtone(itemData.prodName).get(0);
 
             adapter.activity.runOnUiThread(() -> {

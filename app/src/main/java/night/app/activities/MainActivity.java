@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +33,27 @@ import night.app.fragments.dialogs.AgreementDialog;
 public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
 
-    public AppDatabase appDatabase;
-    public DataStoreHelper dataStore = new DataStoreHelper(this);
-    public Theme theme = new Theme();
+    private static AppDatabase database;
+
+    private static DataStoreHelper dataStore;
+    private static Theme theme = new Theme();
+
+    public static void setTheme(Theme theme) {
+        MainActivity.theme = theme;
+    }
+    public static Theme getAppliedTheme() { return MainActivity.theme; }
+
+    private static void setDatabase(AppDatabase database) {
+        MainActivity.database = database;
+    }
+    public static AppDatabase getDatabase() { return MainActivity.database; }
+
+    private static void setDataStore(DataStoreHelper dataStore) {
+        MainActivity.dataStore = dataStore;
+    }
+    public static DataStoreHelper getDataStore() {
+        return MainActivity.dataStore;
+    }
 
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
             registerForActivityResult(
@@ -122,9 +141,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setDataStore(new DataStoreHelper(this));
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
 
         binding.setTheme(new Theme());
         getWindow().setStatusBarColor(theme.getPrimary());
@@ -137,27 +157,31 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
 
         new Thread(() -> {
-            appDatabase = Room.databaseBuilder(this, AppDatabase.class, "app")
-                    .createFromAsset("app.db")
-                    .build();
+            setDatabase(
+                    Room.databaseBuilder(this, AppDatabase.class, "app")
+                            .createFromAsset("app.db")
+                            .build()
+            );
 
-            if (dataStore.getPrefs().get(PreferencesKeys.stringKey("PolicyAgreedDate")) == null) {
+            Boolean isServiceStarted = dataStore.getPrefs().get(PreferencesKeys.booleanKey("isServiceStarted"));
+            if (isServiceStarted == null || !isServiceStarted) {
                 if (getSupportFragmentManager().findFragmentByTag("agreementDialog") == null) {
-                    new AgreementDialog().show(getSupportFragmentManager(), "agreementDialog");
-                    
                     dataStore.update(PreferencesKeys.booleanKey("backupAlarmList"), true);
                     dataStore.update(PreferencesKeys.booleanKey("backupSleepRecord"), true);
+
+                    Intent intent = new Intent(this, InitialActivity.class);
+                    startActivity(intent);
                 }
             }
 
             String appliedTheme = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));
             if (theme != null) {
-                List<Theme> themeList = appDatabase.dao().getTheme(appliedTheme);
+                List<Theme> themeList = database.dao().getTheme(appliedTheme);
 
                 if (themeList.size() > 0) {
                     runOnUiThread(() -> {
-                        theme = themeList.get(0);
-                        binding.setTheme(theme);
+                        MainActivity.setTheme(themeList.get(0));
+                        binding.setTheme(MainActivity.getAppliedTheme());
 
                         Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
                         if (fr instanceof GardenPageFragment) {
