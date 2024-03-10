@@ -21,39 +21,14 @@
             android:paddingBottom="16dp">
 
             <TextView
+                android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Agreements"
                 android:textColor="@{theme.onPrimary, default=`#fff`}"
-                android:textSize="21sp" />
+                android:textSize="21sp"
+                tools:text="Terms of Service" />
         </LinearLayout>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_agree"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@{theme.primary, default=`#212529`}"
-            app:tabIndicatorColor="#FFFFFF"
-            app:tabRippleColor="#A2A2A2"
-            app:tabSelectedTextColor="#FFFFFF"
-            app:tabTextColor="#A2A2A2"
-            app:tabUnboundedRipple="false">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Terms of Service"
-                android:textAlignment="gravity" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="16dp"
-                android:text="@string/privacy_policy"
-                android:textAlignment="gravity" />
-
-        </com.google.android.material.tabs.TabLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,31 +49,14 @@
                     android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}" />
             </ScrollView>
 
-            <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="24dp"
-                android:background="@{theme.primary, default=`#212529`}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_purchase_name" />
-
-            <CheckBox
-                android:id="@+id/cb_agree"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginVertical="16dp"
-                android:text="I have read and agree the agreements above"
-                android:textColor="@{theme.onSurface, default=`#000`}" />
-
             <Button
                 android:id="@+id/btn_pos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
+                android:layout_marginTop="24dp"
                 android:backgroundTint="@{theme.accent, default=`#441E9F`}"
-                android:text="PROCEED" />
+                android:text="CLOSE" />
         </LinearLayout>
 
     </LinearLayout>

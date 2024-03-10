@@ -88,7 +88,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="9.6dp"
                     android:gravity="center"
-                    android:text="15 November 2023"
+                    android:text="01 Jan 1970"
                     android:textAlignment="center"
                     android:textColor="@{preview.onPrimary, default=`#fff`}"
                     android:textSize="7sp" />
@@ -114,7 +114,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="-5dp"
                             android:gravity="bottom|center_horizontal"
-                            android:text="80"
+                            android:text="90"
                             android:textColor="@{preview.onPrimary, default=`#fff`}"
                             android:textSize="25sp" />
 
@@ -139,30 +139,30 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="23:49"
+                            android:text="28m"
                             android:textColor="@{preview.onPrimary, default=`#fff`}"
                             android:textSize="7sp" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="12dp"
-                            android:text="@string/sleep_start"
+                            android:text="FELL ASLEEP"
                             android:textColor="@{preview.onPrimaryVariant, default=`#5e6a75`}"
                             android:textSize="4sp" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="06:38"
+                            android:text="94%"
                             android:textColor="@{preview.onPrimary, default=`#fff`}"
                             android:textSize="7sp" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="12dp"
-                            android:text="@string/sleep_end"
+                            android:text="SLEEP EFFICIENCY"
                             android:textColor="@{preview.onPrimaryVariant, default=`#5e6a75`}"
-                            android:textSize="4sp" />
+                            android:textSize="3sp" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -179,7 +179,7 @@
                 android:gravity="center_vertical"
                 android:text="Sleep Confidence"
                 android:textColor="@{preview.onPrimaryVariant, default=`#5e6a75`}"
-                android:textSize="8.4dp" />
+                android:textSize="6dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -198,9 +198,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="15dp"
                         android:gravity="center"
-                        android:text="@string/not_applicable"
+                        android:text="3h 50m"
                         android:textColor="@{preview.onSurface, default=`#000`}"
-                        android:textSize="8sp"
+                        android:textSize="6sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -209,7 +209,7 @@
                         android:gravity="center_horizontal|top"
                         android:text="FELL ASLEEP"
                         android:textColor="@{preview.onPrimaryVariant, default=`#5e6a75`}"
-                        android:textSize="5sp" />
+                        android:textSize="4sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -223,9 +223,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="15dp"
                         android:gravity="center"
-                        android:text="@string/not_applicable"
+                        android:text="3h 0m"
                         android:textColor="@{preview.onSurface, default=`#000`}"
-                        android:textSize="8sp"
+                        android:textSize="6sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -234,7 +234,7 @@
                         android:gravity="center_horizontal|top"
                         android:text="DEEP SLEEP"
                         android:textColor="@{preview.onPrimaryVariant, default=`#5e6a75`}"
-                        android:textSize="5sp" />
+                        android:textSize="4sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -248,9 +248,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="15dp"
                         android:gravity="center"
-                        android:text="@string/not_applicable"
+                        android:text="7h 18m"
                         android:textColor="@{preview.onSurface, default=`#000`}"
-                        android:textSize="8sp"
+                        android:textSize="6sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -259,7 +259,7 @@
                         android:gravity="center_horizontal|top"
                         android:text="IN BED"
                         android:textColor="@{preview.onPrimaryVariant, default=`#5e6a75`}"
-                        android:textSize="5sp" />
+                        android:textSize="4sp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -274,7 +274,7 @@
                 android:gravity="center_vertical"
                 android:text="Statistics"
                 android:textColor="@{preview.onPrimaryVariant, default=`#5e6a75`}"
-                android:textSize="8.4dp" />
+                android:textSize="6dp" />
 
         </LinearLayout>
 

@@ -27,7 +27,10 @@ import night.app.activities.MainActivity;
 import night.app.databinding.DialogAgreementBinding;
 
 public class AgreementDialog extends DialogFragment {
-    DialogAgreementBinding binding;
+    final public static int TYPE_TERMS = 0;
+    final public static int TYPE_PRIVACY = 1;
+
+    private DialogAgreementBinding binding;
 
     private void loadFileContent(String path) {
         BufferedReader reader = null;
@@ -58,26 +61,6 @@ public class AgreementDialog extends DialogFragment {
         }
     }
 
-    private void setOnTabSelectListener() {
-        binding.tabAgree.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    loadFileContent("terms_of_service.txt");
-                    return;
-                }
-                loadFileContent("privacy_policy.txt");
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) { }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) { }
-        });
-
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_agreement, container, false);
@@ -86,48 +69,16 @@ public class AgreementDialog extends DialogFragment {
         requireDialog().getWindow().setStatusBarColor(binding.getTheme().getPrimary());
         requireDialog().getWindow().setNavigationBarColor(binding.getTheme().getSecondary());
 
-        loadFileContent("terms_of_service.txt");
-        setOnTabSelectListener();
-
-
-        String agreedDate = MainActivity.getDataStore().getPrefs().get(PreferencesKeys.stringKey("PolicyAgreedDate"));
-
-        if (agreedDate != null) {
-            binding.cbAgree.setEnabled(false);
-            binding.cbAgree.setChecked(true);
-            binding.cbAgree.setText("You agreed to the agreements above.");
-            binding.btnPos.setOnClickListener(v -> dismiss());
-            binding.btnPos.setText("CLOSE");
-
-            return binding.getRoot();
+        if (requireArguments().getInt("type") == TYPE_TERMS) {
+            loadFileContent("terms_of_service.txt");
+            binding.tvTitle.setText("Terms of Service");
+        }
+        else if (requireArguments().getInt("type") == TYPE_PRIVACY) {
+            loadFileContent("privacy_policy.txt");
+            binding.tvTitle.setText("Privacy policy");
         }
 
-        binding.btnPos.setOnClickListener(v -> {
-            if (!binding.cbAgree.isChecked()) {
-                binding.cbAgree.setError("You need to agree for using our services.");
-                return;
-            }
-
-            ZoneId zoneId = ZoneId.systemDefault();
-            ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(Instant.now(), zoneId);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            String formattedDateTime = formatter.format(zonedDateTime);
-
-            MainActivity.getDataStore().update(
-                    PreferencesKeys.stringKey("PolicyAgreedDate"),
-                    formattedDateTime
-            );
-
-            MainActivity.getDataStore().update(
-                    PreferencesKeys.booleanKey("isFirstVisited"),
-                    true
-            );
-
-            dismiss();
-            ((MainActivity) requireActivity()).requestPermissions();
-        });
-
+        binding.btnPos.setOnClickListener(v -> dismiss());
 
         return binding.getRoot();
     }

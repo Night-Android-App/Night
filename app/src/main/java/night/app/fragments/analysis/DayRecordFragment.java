@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import night.app.R;
@@ -29,30 +31,53 @@ public class DayRecordFragment extends Fragment {
         bundle.putInt("type", 0);
         bundle.putString("date", date);
 
-        bundle.putInt("score", Math.round(sleepData.getScore()));
-        bundle.putDouble("info1", sleepData.getFellAsleepTime());
-        bundle.putDouble("info2", sleepData.getSleepEfficiency());
+        if (sleepData != null) {
+            bundle.putInt("score", Math.round(sleepData.getScore()));
+            bundle.putDouble("info1", sleepData.getFellAsleepTime());
+            bundle.putDouble("info2", sleepData.getSleepEfficiency());
+        }
+        else {
+            bundle.putInt("score", 0);
+            bundle.putDouble("info1", 0);
+            bundle.putDouble("info2", 0);
+        }
 
         getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
     }
 
     private void loadDay(@Nullable Integer date) {
-        MainActivity activity = (MainActivity) requireActivity();
-
         new Thread(() -> {
             AppDAO dao = MainActivity.getDatabase().dao();
             List<Day> dayList = date == null ? dao.getRecentDay() : dao.getDayByDate(date);
 
-            activity.runOnUiThread(() -> loadDay(dayList));
+            requireActivity().runOnUiThread(() -> loadDay(dayList));
         }).start();
     }
 
     private void loadDay(List<Day> dayList) {
-        Day day = dayList.size() > 0 ? dayList.get(0) : new Day();
+        Day day;
+        if (dayList.size() > 0) {
+            day = dayList.get(0);
+        }
+        else {
+            day = new Day();
+            day.date = (int) (System.currentTimeMillis()/ 1000);
+        }
 
-        SleepData sleepData = new SleepData(day.sleep);
-
+        SleepData sleepData = day.sleep == null ? null : new SleepData(day.sleep);
         setUpperPanelResult(SleepData.toDateString(day.date, true), sleepData);
+
+
+        if (day.sleep == null) {
+            binding.tvLightSleep.setText("0m");
+            binding.tvDeepSleep.setText("0m");
+            binding.tvInBed.setText("0m");
+
+            new ChartBuilder(binding.lineChartDayRecord, null, null)
+                    .setTheme(binding.getTheme())
+                    .invalidate();
+            return;
+        };
 
         int totalLightSleep = sleepData.getTotalSecondsByConfidence(50, 75);
         binding.tvLightSleep.setText(

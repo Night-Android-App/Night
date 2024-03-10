@@ -36,10 +36,13 @@ public class MonthRecordFragment extends Fragment {
         List<Day> dayList = MainActivity.getDatabase().dao().getAllDay();
 
         requireActivity().runOnUiThread(() -> {
-            long today = dayList.size() == 0 ? new Day().date : System.currentTimeMillis()/ 1000;
+            long today = System.currentTimeMillis()/ 1000;
             long aMonthBefore = today - 29*24*60*60;
 
-            if (dayList.size() == 0) dayList.add(new Day());
+            if (dayList.size() == 0) {
+                setUpperPanelResult(SleepData.toDateString(aMonthBefore, today), 0, 0, 0);
+                return;
+            }
 
             double sleepScore = 0, sleepSeconds = 0, sleepEfficiency = 0;
 

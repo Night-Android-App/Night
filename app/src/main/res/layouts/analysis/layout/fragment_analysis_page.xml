@@ -49,17 +49,48 @@
                     android:text="Month" />
             </com.google.android.material.tabs.TabLayout>
 
-            <TextView
-                android:id="@+id/tv_anal_date"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:textAlignment="center"
-                android:textColor="@{theme.onPrimary, default=`#fff`}"
-                android:textSize="16sp"
-                tools:text="15 November 2023" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_left"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="10dp"
+                    android:rotation="180"
+                    android:tint="#EFECEC"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_anal_date"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    app:srcCompat="@drawable/ic_chevron_right" />
+
+                <ImageView
+                    android:id="@+id/iv_right"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="10dp"
+                    android:tint="#EFECEC"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_anal_date"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_chevron_right" />
+
+                <TextView
+                    android:id="@+id/tv_anal_date"
+                    android:layout_width="150dp"
+                    android:layout_height="48dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="@{theme.onPrimary, default=`#fff`}"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="15 Nov 2023" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/ll_analysis_summary"

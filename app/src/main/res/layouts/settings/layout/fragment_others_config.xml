@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="29dp"
             android:layout_marginBottom="5dp"
-            android:text="TERMS OF SERVICE &amp; PRIVACY POLICY"
+            android:text="AGREEMENTS"
             android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
             android:textSize="11sp" />
 
@@ -66,12 +66,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="Documentation"
+                android:text="Terms of Service"
                 android:textColor="@{theme.onSurface, default=`#000`}"
                 android:textSize="16sp" />
 
             <Button
-                android:id="@+id/btn_open_policy"
+                android:id="@+id/btn_open_term"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_gravity="right"
@@ -83,7 +83,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
             android:layout_marginStart="5dp"
             android:orientation="horizontal">
@@ -93,18 +93,18 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="Date of agreement"
+                android:text="Privacy policy"
                 android:textColor="@{theme.onSurface, default=`#000`}"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/tv_policy_agreed_date"
+            <Button
+                android:id="@+id/btn_open_policy"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginRight="8dp"
-                android:gravity="right|center_vertical"
-                android:textColor="@{theme.onSurface, default=`#000`}"
-                tools:text="11/02/2024 19:44" />
+                android:layout_height="48dp"
+                android:layout_gravity="right"
+                android:backgroundTint="@{theme.accent, default=`#441E9F`}"
+                android:gravity="center"
+                android:text="READ" />
 
         </LinearLayout>
 

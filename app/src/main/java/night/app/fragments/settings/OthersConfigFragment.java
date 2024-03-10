@@ -28,20 +28,28 @@ public class OthersConfigFragment extends Fragment {
         startActivity(intent);
     }
 
+    private void showAgreements(int type) {
+        AgreementDialog dialog = new AgreementDialog();
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", type);
+
+        dialog.setArguments(bundle);
+        dialog.show(getParentFragmentManager(), null);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_others_config, container, false);
         binding.setTheme(MainActivity.getAppliedTheme());
 
         binding.btnPermission.setOnClickListener(v -> requestPermission());
-        binding.btnOpenPolicy.setOnClickListener(v -> {
-            new AgreementDialog().show(getParentFragmentManager(), null);
-        });
 
-        Preferences prefs = MainActivity.getDataStore().getPrefs();
+        binding.btnOpenTerm
+                .setOnClickListener(v -> showAgreements(AgreementDialog.TYPE_TERMS));
 
-        String agreedDate = prefs.get(PreferencesKeys.stringKey("PolicyAgreedDate"));
-        binding.tvPolicyAgreedDate.setText(agreedDate);
+        binding.btnOpenPolicy
+                .setOnClickListener(v -> showAgreements(AgreementDialog.TYPE_PRIVACY));
 
         return binding.getRoot();
     }

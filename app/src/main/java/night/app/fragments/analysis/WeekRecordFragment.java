@@ -46,6 +46,15 @@ public class WeekRecordFragment extends Fragment {
 
     private void loadBarChart(long startDate, long endDate, List<Day> dayList) {
         requireActivity().runOnUiThread(() -> {
+            if (dayList.size() == 0) {
+                setUpperPanelResult(SleepData.toDateString(startDate, endDate), 0, 0, 0);
+
+                new ChartBuilder(binding.barChartWeekRecord, new Integer[] {})
+                        .setTheme(binding.getTheme())
+                        .invalidate();
+                return;
+            }
+
             SleepData[] sleepData = SleepData.dayListToSleepDataArray(dayList);
 
             int score = Arrays.stream(sleepData).mapToInt(SleepData::getScore).sum();
@@ -72,7 +81,7 @@ public class WeekRecordFragment extends Fragment {
                 sleepHrs[dayOfWeek == 7 ? 0 : dayOfWeek+1] = sleepData[i].getTotalSleep() / 60;
             }
 
-            new ChartBuilder<BarChart>(binding.barChartWeekRecord, sleepHrs)
+            new ChartBuilder(binding.barChartWeekRecord, sleepHrs)
                     .setTheme(binding.getTheme())
                     .invalidate();
 
@@ -97,13 +106,8 @@ public class WeekRecordFragment extends Fragment {
             long today = Instant.now().toEpochMilli() / 1000;
 
             List<Day> dayList = getWeekRecord(today);
-            if (dayList.size() == 0) {
-                dayList.add(new Day());
-                today = dayList.get(0).date;
-            }
 
             long sixDayBefore = today - 6*24*60*60;
-
             loadBarChart(sixDayBefore, today, dayList);
         }).start();
 

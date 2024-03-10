@@ -108,6 +108,9 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
 
         initStyle();
 
+        if (xLabel == null) xLabel = new String[] {};
+        if (data == null) data = new Integer[] {};
+
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xLabel));
 
         YAxis yAxis = chart.getAxisLeft();
