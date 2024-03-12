@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -23,7 +24,11 @@ import night.app.fragments.analysis.WeekRecordFragment;
 import night.app.services.SleepData;
 
 public class AnalysisPageFragment extends Fragment {
-    FragmentAnalysisPageBinding binding;
+    private FragmentAnalysisPageBinding binding;
+
+    public static final int STATUS_NORMAL = 0;
+    public static final int STATUS_SAMPLE = 1;
+    private int status = STATUS_NORMAL;
 
     private void deleteOldRecords() {
         new Thread(() -> {
@@ -83,8 +88,10 @@ public class AnalysisPageFragment extends Fragment {
                     default -> MonthRecordFragment.class;
                 };
 
+                Bundle bundle = new Bundle();
+                bundle.putInt("status", status);
                 getParentFragmentManager().beginTransaction()
-                        .replace(R.id.fr_anal_details, fragmentClass, null)
+                        .replace(R.id.fr_anal_details, fragmentClass, bundle)
                         .commit();
             }
 
@@ -107,8 +114,39 @@ public class AnalysisPageFragment extends Fragment {
 
         deleteOldRecords();
 
+        new Thread(() -> {
+            if (MainActivity.getDatabase().dao().getRecentDay().size() > 0) {
+                binding.llTips.setVisibility(View.GONE);
+            }
+        }).start();
+
+        binding.llTips.setOnClickListener(v -> {
+            if (status == STATUS_NORMAL) {
+                status = 1;
+                binding.tvTips.setText("Exit the sample mode");
+                binding.ivTips.setImageResource(R.drawable.ic_exits);
+            }
+            else if (status == STATUS_SAMPLE) {
+                status = 0;
+                binding.tvTips.setText("You don't have any data. See with a sample");
+                binding.ivTips.setImageResource(R.drawable.ic_chevron_right);
+            }
+
+            Bundle bundle = new Bundle();
+            bundle.putInt("status", status);
+
+            Class<? extends Fragment> fr = getParentFragmentManager()
+                    .findFragmentById(R.id.fr_anal_details).getClass();
+
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fr_anal_details, fr, bundle)
+                    .commit();
+        });
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("status", status);
         requireActivity().getSupportFragmentManager().beginTransaction()
-                .add(R.id.fr_anal_details, DayRecordFragment.class, null)
+                .add(R.id.fr_anal_details, DayRecordFragment.class, bundle)
                 .commit();
 
         return binding.getRoot();

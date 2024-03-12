@@ -22,6 +22,14 @@ public class SleepData {
     public Integer[] getTimelines() { return timelines; }
     public Integer[] getConfidences() { return confidences; }
 
+    public static Day getSampleDay() {
+        Day day = new Day();
+        day.date = 0;
+        day.sleep = "{\"1422\": 0, \"10\": 52, \"60\": 90, \"120\": 86,  \"240\": 54, \"410\": 51,  \"420\": 0}";
+        day.dream = "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing";
+        return day;
+    }
+
     private boolean isInRange(int data, int start, int end) {
         return data >= start && data <= end;
     }

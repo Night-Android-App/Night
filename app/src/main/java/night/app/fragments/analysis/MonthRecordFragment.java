@@ -9,12 +9,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.adapters.DayItemAdapter;
 import night.app.data.Day;
+import night.app.fragments.AnalysisPageFragment;
 import night.app.services.SleepData;
 
 public class MonthRecordFragment extends Fragment {
@@ -32,15 +34,29 @@ public class MonthRecordFragment extends Fragment {
 
     private void loadData() {
         MainActivity activity = (MainActivity) requireActivity();
+        List<Day> dayList;
 
-        List<Day> dayList = MainActivity.getDatabase().dao().getAllDay();
+        long startedDate;
+        long endDate;
+
+        if (requireArguments().getInt("status", -1) == AnalysisPageFragment.STATUS_SAMPLE) {
+            List<Day> days = new ArrayList<>();
+            days.add(SleepData.getSampleDay());
+            dayList = days;
+            endDate = 0;
+            startedDate = endDate - 29*24*60*60;
+        }
+        else {
+            dayList = MainActivity.getDatabase().dao().getAllDay();
+            endDate = System.currentTimeMillis() / 1000;
+            startedDate = endDate - 29*24*60*60;
+        }
+
 
         requireActivity().runOnUiThread(() -> {
-            long today = System.currentTimeMillis()/ 1000;
-            long aMonthBefore = today - 29*24*60*60;
 
             if (dayList.size() == 0) {
-                setUpperPanelResult(SleepData.toDateString(aMonthBefore, today), 0, 0, 0);
+                setUpperPanelResult(SleepData.toDateString(startedDate, endDate), 0, 0, 0);
                 return;
             }
 
@@ -61,7 +77,7 @@ public class MonthRecordFragment extends Fragment {
 
             int availableDay = dayList.size() == 0 ? 1 : dayList.size();
             setUpperPanelResult(
-                    SleepData.toDateString(aMonthBefore, today),
+                    SleepData.toDateString(startedDate, endDate),
                     (int) sleepScore / availableDay,
                     sleepSeconds / availableDay,
                     sleepEfficiency / availableDay

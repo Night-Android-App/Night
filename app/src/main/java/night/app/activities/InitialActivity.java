@@ -83,66 +83,6 @@ public class InitialActivity extends AppCompatActivity {
             AgreementDialog dialog = new AgreementDialog();
 
             Bundle bundle = new Bundle();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
             bundle.putInt("type", AgreementDialog.TYPE_PRIVACY);
 
             dialog.setArguments(bundle);

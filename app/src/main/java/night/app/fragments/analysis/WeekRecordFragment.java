@@ -23,6 +23,7 @@ import night.app.activities.MainActivity;
 import night.app.data.AppDAO;
 import night.app.data.Day;
 import night.app.databinding.FragmentWeekRecordBinding;
+import night.app.fragments.AnalysisPageFragment;
 import night.app.services.ChartBuilder;
 import night.app.services.SleepData;
 
@@ -42,66 +43,64 @@ public class WeekRecordFragment extends Fragment {
         getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
     }
 
-    private List<Day> getWeekRecord(long startDate, long endDate) {
-        AppDAO dao = MainActivity.getDatabase().dao();
-
-        List<Day> dayList = dao.getDayRange(startDate, endDate);
-        return dayList;
-    }
-
     private void loadBarChart(long startDate, long endDate) {
         new Thread(() -> {
             List<Day> dayList = MainActivity.getDatabase().dao().getDayRange(startDate, endDate);
-            requireActivity().runOnUiThread(() -> {
-                if (dayList == null || dayList.size() == 0) {
-                    setUpperPanelResult(SleepData.toDateString(startDate, endDate), 0, 0, 0);
+            loadBarChart(dayList);
+        }).start();
+    }
 
-                    new ChartBuilder(binding.barChartWeekRecord, new Integer[] {})
-                            .setTheme(binding.getTheme())
-                            .invalidate();
-                    return;
-                }
+    private void loadBarChart(List<Day> dayList) {
+        requireActivity().runOnUiThread(() -> {
+            if (dayList == null || dayList.size() == 0) {
+                setUpperPanelResult(SleepData.toDateString(startDate, endDate), 0, 0, 0);
 
-                SleepData[] sleepData = SleepData.dayListToSleepDataArray(dayList);
-
-                int score = Arrays.stream(sleepData).mapToInt(SleepData::getScore).sum();
-
-                int sleepSeconds = 0;
-                double sleepEfficiency = 0d;
-
-                for (SleepData data : sleepData) {
-                    double efficiency = data.getSleepEfficiency();
-                    if (efficiency >= 0) sleepEfficiency += efficiency;
-
-                    int totalSleep = data.getTotalSleep();
-                    if (totalSleep >= 0) sleepSeconds += totalSleep;
-                }
-
-                Integer[] sleepHrs = new Integer[7];
-                Arrays.fill(sleepHrs, 0);
-
-                for (int i=0; i < dayList.size(); i++) {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(dayList.get(i).date * 1000);
-
-                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                    sleepHrs[dayOfWeek == 7 ? 0 : dayOfWeek+1] = sleepData[i].getTotalSleep() / 60;
-                }
-
-                new ChartBuilder(binding.barChartWeekRecord, sleepHrs)
+                new ChartBuilder(binding.barChartWeekRecord, new Integer[] {})
                         .setTheme(binding.getTheme())
                         .invalidate();
+                return;
+            }
 
 
-                int availableDay = dayList.size() == 0 ? 1 : dayList.size();
-                setUpperPanelResult(
-                        SleepData.toDateString(startDate, endDate),
-                        score / availableDay,
-                        sleepSeconds / availableDay,
-                        sleepEfficiency / availableDay
-                );
-            });
-        }).start();
+            SleepData[] sleepData = SleepData.dayListToSleepDataArray(dayList);
+
+            int score = Arrays.stream(sleepData).mapToInt(SleepData::getScore).sum();
+
+            int sleepSeconds = 0;
+            double sleepEfficiency = 0d;
+
+            for (SleepData data : sleepData) {
+                double efficiency = data.getSleepEfficiency();
+                if (efficiency >= 0) sleepEfficiency += efficiency;
+
+                int totalSleep = data.getTotalSleep();
+                if (totalSleep >= 0) sleepSeconds += totalSleep;
+            }
+
+            Integer[] sleepHrs = new Integer[7];
+            Arrays.fill(sleepHrs, 0);
+
+            for (int i=0; i < dayList.size(); i++) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(dayList.get(i).date * 1000);
+
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                sleepHrs[dayOfWeek == 7 ? 0 : dayOfWeek+1] = sleepData[i].getTotalSleep() / 60;
+            }
+
+            new ChartBuilder(binding.barChartWeekRecord, sleepHrs)
+                    .setTheme(binding.getTheme())
+                    .invalidate();
+
+
+            int availableDay = dayList.size() == 0 ? 1 : dayList.size();
+            setUpperPanelResult(
+                    SleepData.toDateString(startDate, endDate),
+                    score / availableDay,
+                    sleepSeconds / availableDay,
+                    sleepEfficiency / availableDay
+            );
+        });
     }
 
     private void toPreviousWeek() {
@@ -151,10 +150,24 @@ public class WeekRecordFragment extends Fragment {
         binding.setTheme(MainActivity.getAppliedTheme());
 
         ImageView ivLeft = requireActivity().findViewById(R.id.iv_left);
+        ImageView ivRight = requireActivity().findViewById(R.id.iv_right);
+
+        if (requireArguments().getInt("status", 0) == AnalysisPageFragment.STATUS_SAMPLE) {
+            List<Day> days = new ArrayList<>();
+            days.add(SleepData.getSampleDay());
+            startDate = -7*24*60*60;
+            endDate = 0;
+
+            loadBarChart(days);
+
+            ivLeft.setVisibility(View.GONE);
+            ivRight.setVisibility(View.GONE);
+            return binding.getRoot();
+        }
+
         ivLeft.setVisibility(View.VISIBLE);
         ivLeft.setOnClickListener(v -> toPreviousWeek());
 
-        ImageView ivRight = requireActivity().findViewById(R.id.iv_right);
         ivRight.setVisibility(View.GONE);
         ivRight.setOnClickListener(v -> toNextWeek());
 

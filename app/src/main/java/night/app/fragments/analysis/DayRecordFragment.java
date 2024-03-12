@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,7 @@ import night.app.activities.MainActivity;
 import night.app.data.AppDAO;
 import night.app.data.Day;
 import night.app.databinding.FragmentDayRecordBinding;
+import night.app.fragments.AnalysisPageFragment;
 import night.app.services.ChartBuilder;
 import night.app.services.SleepData;
 
@@ -37,11 +39,6 @@ public class DayRecordFragment extends Fragment {
             bundle.putInt("score", Math.round(sleepData.getScore()));
             bundle.putDouble("info1", sleepData.getFellAsleepTime());
             bundle.putDouble("info2", sleepData.getSleepEfficiency());
-        }
-        else {
-            bundle.putInt("score", 0);
-            bundle.putDouble("info1", 0);
-            bundle.putDouble("info2", 0);
         }
 
         getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
@@ -93,10 +90,28 @@ public class DayRecordFragment extends Fragment {
                 .invalidate();
     }
 
+    private void loadSampleDay() {
+        List<Day> days = new ArrayList<>();
+        days.add(SleepData.getSampleDay());
+        loadDay(days);
+    }
+
+    private void loadToday() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        date = calendar.getTimeInMillis() / 1000;
+        loadDay(date);
+    }
+
     private void setLoadDayResultListener() {
         getParentFragmentManager()
                 .setFragmentResultListener("loadDay", this, (String key, Bundle bundle) -> {
                     int destDate = bundle.getInt("date", 0);
+
+                    if (destDate == 0) {
+                        loadSampleDay();
+                        return;
+                    }
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -149,18 +164,23 @@ public class DayRecordFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_day_record, container, false);
         binding.setTheme(MainActivity.getAppliedTheme());
 
+        ImageView ivLeft = requireActivity().findViewById(R.id.iv_left);
+        ImageView ivRight = requireActivity().findViewById(R.id.iv_right);
+
+        if (requireArguments().getInt("status", 0) == AnalysisPageFragment.STATUS_SAMPLE) {
+            loadSampleDay();
+            ivLeft.setVisibility(View.GONE);
+            ivRight.setVisibility(View.GONE);
+            return binding.getRoot();
+        }
+
         setLoadDayResultListener();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        date = calendar.getTimeInMillis() / 1000;
-        loadDay(date);
+        loadToday();
 
-        ImageView ivLeft = requireActivity().findViewById(R.id.iv_left);
         ivLeft.setVisibility(View.VISIBLE);
         ivLeft.setOnClickListener(v -> toPreviousDay());
 
-        ImageView ivRight = requireActivity().findViewById(R.id.iv_right);
         ivRight.setVisibility(View.GONE);
         ivRight.setOnClickListener(v -> toNextDay());
 
