@@ -39,14 +39,19 @@ public class AnalysisPageFragment extends Fragment {
 
         binding.tvAnalDate.setText(date);
 
-        String scoreString = score >= 0 ? String.valueOf(Math.round(score)) : "N/A";
-        binding.tvAnalMainScoreData.setText(scoreString);
+        if (score > 0) {
+            binding.tvAnalMainScoreData.setTextSize(60);
+            binding.tvAnalMainScoreData.setText(String.valueOf(Math.round(score)));
+        }
+        else {
+            binding.tvAnalMainScoreData.setTextSize(40);
+            binding.tvAnalMainScoreData.setText("N/A");
+        }
 
-
-        String info1String = info1 >= 0 ? SleepData.toHrMinString((int) Math.round(info1)) : "N/A";
+        String info1String = info1 > 0 ? SleepData.toHrMinString((int) Math.round(info1)) : "N/A";
         binding.tvAnalMainInfoData1.setText(info1String);
 
-        String info2String = info2 >= 0 ? Math.round(info2 * 100) + "%" : "N/A";
+        String info2String = info2 > 0 ? Math.round(info2 * 100) + "%" : "N/A";
         binding.tvAnalMainInfoData2.setText(info2String);
     }
 

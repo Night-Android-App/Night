@@ -70,11 +70,83 @@ public class InitialActivity extends AppCompatActivity {
         SpannableString spanString = new SpannableString(binding.tvAgreements.getText());
 
         spanString.setSpan(getHyperLinkSpan(v -> {
-            new AgreementDialog().show(getSupportFragmentManager(), null);
+            AgreementDialog dialog = new AgreementDialog();
+
+            Bundle bundle = new Bundle();
+            bundle.putInt("type", AgreementDialog.TYPE_TERMS);
+
+            dialog.setArguments(bundle);
+            dialog.show(getSupportFragmentManager(), null);
         }), 42, 58, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         spanString.setSpan(getHyperLinkSpan(v -> {
-            new AgreementDialog().show(getSupportFragmentManager(), null);
+            AgreementDialog dialog = new AgreementDialog();
+
+            Bundle bundle = new Bundle();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            bundle.putInt("type", AgreementDialog.TYPE_PRIVACY);
+
+            dialog.setArguments(bundle);
+            dialog.show(getSupportFragmentManager(), null);
         }), 63, 77, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         binding.tvAgreements.setText(spanString);

@@ -4,13 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -24,7 +27,9 @@ import night.app.services.ChartBuilder;
 import night.app.services.SleepData;
 
 public class WeekRecordFragment extends Fragment {
-    FragmentWeekRecordBinding binding;
+    private FragmentWeekRecordBinding binding;
+    private long startDate;
+    private long endDate;
 
     private void setUpperPanelResult(String date, int score, double info1, double info2) {
         Bundle bundle = new Bundle();
@@ -37,79 +42,131 @@ public class WeekRecordFragment extends Fragment {
         getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
     }
 
-    private List<Day> getWeekRecord(long todayDate) {
+    private List<Day> getWeekRecord(long startDate, long endDate) {
         AppDAO dao = MainActivity.getDatabase().dao();
 
-        List<Day> dayList = dao.getDayRange(todayDate-6*24*60*60, todayDate);
+        List<Day> dayList = dao.getDayRange(startDate, endDate);
         return dayList;
     }
 
-    private void loadBarChart(long startDate, long endDate, List<Day> dayList) {
-        requireActivity().runOnUiThread(() -> {
-            if (dayList.size() == 0) {
-                setUpperPanelResult(SleepData.toDateString(startDate, endDate), 0, 0, 0);
+    private void loadBarChart(long startDate, long endDate) {
+        new Thread(() -> {
+            List<Day> dayList = MainActivity.getDatabase().dao().getDayRange(startDate, endDate);
+            requireActivity().runOnUiThread(() -> {
+                if (dayList == null || dayList.size() == 0) {
+                    setUpperPanelResult(SleepData.toDateString(startDate, endDate), 0, 0, 0);
 
-                new ChartBuilder(binding.barChartWeekRecord, new Integer[] {})
+                    new ChartBuilder(binding.barChartWeekRecord, new Integer[] {})
+                            .setTheme(binding.getTheme())
+                            .invalidate();
+                    return;
+                }
+
+                SleepData[] sleepData = SleepData.dayListToSleepDataArray(dayList);
+
+                int score = Arrays.stream(sleepData).mapToInt(SleepData::getScore).sum();
+
+                int sleepSeconds = 0;
+                double sleepEfficiency = 0d;
+
+                for (SleepData data : sleepData) {
+                    double efficiency = data.getSleepEfficiency();
+                    if (efficiency >= 0) sleepEfficiency += efficiency;
+
+                    int totalSleep = data.getTotalSleep();
+                    if (totalSleep >= 0) sleepSeconds += totalSleep;
+                }
+
+                Integer[] sleepHrs = new Integer[7];
+                Arrays.fill(sleepHrs, 0);
+
+                for (int i=0; i < dayList.size(); i++) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(dayList.get(i).date * 1000);
+
+                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                    sleepHrs[dayOfWeek == 7 ? 0 : dayOfWeek+1] = sleepData[i].getTotalSleep() / 60;
+                }
+
+                new ChartBuilder(binding.barChartWeekRecord, sleepHrs)
                         .setTheme(binding.getTheme())
                         .invalidate();
-                return;
-            }
-
-            SleepData[] sleepData = SleepData.dayListToSleepDataArray(dayList);
-
-            int score = Arrays.stream(sleepData).mapToInt(SleepData::getScore).sum();
-
-            int sleepSeconds = 0;
-            double sleepEfficiency = 0d;
-
-            for (SleepData data : sleepData) {
-                double efficiency = data.getSleepEfficiency();
-                if (efficiency >= 0) sleepEfficiency += efficiency;
-
-                int totalSleep = data.getTotalSleep();
-                if (totalSleep >= 0) sleepSeconds += totalSleep;
-            }
-
-            Integer[] sleepHrs = new Integer[7];
-            Arrays.fill(sleepHrs, 0);
-
-            for (int i=0; i < dayList.size(); i++) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(dayList.get(i).date * 1000);
-
-                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                sleepHrs[dayOfWeek == 7 ? 0 : dayOfWeek+1] = sleepData[i].getTotalSleep() / 60;
-            }
-
-            new ChartBuilder(binding.barChartWeekRecord, sleepHrs)
-                    .setTheme(binding.getTheme())
-                    .invalidate();
 
 
-            int availableDay = dayList.size() == 0 ? 1 : dayList.size();
-            setUpperPanelResult(
-                    SleepData.toDateString(startDate, endDate),
-                    score / availableDay,
-                    sleepSeconds / availableDay,
-                    sleepEfficiency / availableDay
-            );
-        });
+                int availableDay = dayList.size() == 0 ? 1 : dayList.size();
+                setUpperPanelResult(
+                        SleepData.toDateString(startDate, endDate),
+                        score / availableDay,
+                        sleepSeconds / availableDay,
+                        sleepEfficiency / availableDay
+                );
+            });
+        }).start();
     }
 
+    private void toPreviousWeek() {
+        endDate = startDate - 24*60*60;
+        startDate -= 7*24*60*60;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+        if (startDate < calendar.getTimeInMillis() / 1000 - 29*24*60*60) {
+            startDate = calendar.getTimeInMillis() / 1000 - 29*24*60*60;
+        }
+
+        loadBarChart(startDate, endDate);
+        requireActivity().findViewById(R.id.iv_right).setVisibility(View.VISIBLE);
+
+        if (endDate - 7*24*60*60 < (calendar.getTimeInMillis() / 1000 - 30*24*60*60)) {
+            requireActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
+        }
+        else {
+            requireActivity().findViewById(R.id.iv_right).setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void toNextWeek() {
+        startDate = endDate + 24*60*60;
+        endDate = endDate + 7*24*60*60;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+        long todayInMillis = calendar.getTimeInMillis() / 1000;
+        if (endDate > todayInMillis) endDate = todayInMillis;
+
+        loadBarChart(startDate, endDate);
+
+        if (startDate + 7*24*60*60 > todayInMillis) {
+            requireActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
+            return;
+        }
+        requireActivity().findViewById(R.id.iv_left).setVisibility(View.VISIBLE);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_week_record, container, false);
         binding.setTheme(MainActivity.getAppliedTheme());
 
-        new Thread(() -> {
-            long today = Instant.now().toEpochMilli() / 1000;
+        ImageView ivLeft = requireActivity().findViewById(R.id.iv_left);
+        ivLeft.setVisibility(View.VISIBLE);
+        ivLeft.setOnClickListener(v -> toPreviousWeek());
 
-            List<Day> dayList = getWeekRecord(today);
+        ImageView ivRight = requireActivity().findViewById(R.id.iv_right);
+        ivRight.setVisibility(View.GONE);
+        ivRight.setOnClickListener(v -> toNextWeek());
 
-            long sixDayBefore = today - 6*24*60*60;
-            loadBarChart(sixDayBefore, today, dayList);
-        }).start();
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        endDate = calendar.getTimeInMillis() / 1000;
+
+        calendar.add(Calendar.DATE, -calendar.get(Calendar.DAY_OF_WEEK)+1);
+        startDate = calendar.getTimeInMillis() / 1000;
+
+        loadBarChart(startDate, endDate);
 
         return binding.getRoot();
     }

@@ -80,6 +80,9 @@ public class MonthRecordFragment extends Fragment {
 
         new Thread(this::loadData).start();
 
+        requireActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
+        requireActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
+
         return view;
     }
 }

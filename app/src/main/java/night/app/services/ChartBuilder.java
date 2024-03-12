@@ -45,8 +45,17 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
     private void setBarData(Integer[] data) {
         ArrayList<BarEntry> dataEntries = new ArrayList<>();
 
-        for (int i=0; i < data.length; i++) {
-            if (data[i] == null) continue;
+        for (int i=0; i < 7; i++) {
+            if (i >= data.length) {
+                dataEntries.add(new BarEntry(i, 0));
+                continue;
+            }
+
+            if (data[i] == null) {
+                dataEntries.add(new BarEntry(i, 0));
+                continue;
+            }
+
             dataEntries.add(new BarEntry(i, data[i]));
         }
 

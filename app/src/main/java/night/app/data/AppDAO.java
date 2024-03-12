@@ -25,7 +25,7 @@ public interface AppDAO {
 
     // Analysis Query
     @Query("SELECT * FROM day WHERE date=:date LIMIT 1")
-    List<Day> getDayByDate(int date);
+    List<Day> getDayByDate(long date);
 
     @Query("SELECT * FROM day ORDER BY date DESC LIMIT 1")
     List<Day> getRecentDay();

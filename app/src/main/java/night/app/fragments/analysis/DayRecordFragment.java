@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +24,8 @@ import night.app.services.ChartBuilder;
 import night.app.services.SleepData;
 
 public class DayRecordFragment extends Fragment {
-    FragmentDayRecordBinding binding;
+    private FragmentDayRecordBinding binding;
+    private long date;
 
     private void setUpperPanelResult(String date, SleepData sleepData) {
         Bundle bundle = new Bundle();
@@ -45,39 +47,32 @@ public class DayRecordFragment extends Fragment {
         getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
     }
 
-    private void loadDay(@Nullable Integer date) {
+    private void loadDay(long date) {
         new Thread(() -> {
             AppDAO dao = MainActivity.getDatabase().dao();
-            List<Day> dayList = date == null ? dao.getRecentDay() : dao.getDayByDate(date);
+            List<Day> dayList = dao.getDayByDate(date);
 
             requireActivity().runOnUiThread(() -> loadDay(dayList));
         }).start();
     }
 
     private void loadDay(List<Day> dayList) {
-        Day day;
-        if (dayList.size() > 0) {
-            day = dayList.get(0);
-        }
-        else {
-            day = new Day();
-            day.date = (int) (System.currentTimeMillis()/ 1000);
-        }
-
-        SleepData sleepData = day.sleep == null ? null : new SleepData(day.sleep);
-        setUpperPanelResult(SleepData.toDateString(day.date, true), sleepData);
-
-
-        if (day.sleep == null) {
-            binding.tvLightSleep.setText("0m");
-            binding.tvDeepSleep.setText("0m");
-            binding.tvInBed.setText("0m");
+        if (dayList.size() == 0) {
+            binding.tvLightSleep.setText("N/A");
+            binding.tvDeepSleep.setText("N/A");
+            binding.tvInBed.setText("N/A");
 
             new ChartBuilder(binding.lineChartDayRecord, null, null)
                     .setTheme(binding.getTheme())
                     .invalidate();
+
+            setUpperPanelResult(SleepData.toDateString(date, true), null);
             return;
-        };
+        }
+
+        Day day = dayList.get(0);
+        SleepData sleepData = day.sleep == null ? null : new SleepData(day.sleep);
+        setUpperPanelResult(SleepData.toDateString(day.date, true), sleepData);
 
         int totalLightSleep = sleepData.getTotalSecondsByConfidence(50, 75);
         binding.tvLightSleep.setText(
@@ -101,8 +96,52 @@ public class DayRecordFragment extends Fragment {
     private void setLoadDayResultListener() {
         getParentFragmentManager()
                 .setFragmentResultListener("loadDay", this, (String key, Bundle bundle) -> {
-                    loadDay(bundle.getInt("date"));
+                    int destDate = bundle.getInt("date", 0);
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+                    if (destDate == calendar.getTimeInMillis() / 1000) {
+                        requireActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
+                    }
+                    else if (destDate == calendar.getTimeInMillis() / 1000 - 29*24*60*60) {
+                        requireActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
+                    }
+
+                    loadDay(destDate);
                 });
+    }
+
+    private void toPreviousDay() {
+        date -= 24*60*60;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        loadDay(date);
+
+        requireActivity().findViewById(R.id.iv_right).setVisibility(View.VISIBLE);
+
+        if (date - 24*60*60 < (calendar.getTimeInMillis() / 1000 - 30*24*60*60)) {
+            requireActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
+            return;
+        }
+        requireActivity().findViewById(R.id.iv_right).setVisibility(View.VISIBLE);
+    }
+
+    private void toNextDay() {
+        date += 24*60*60;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        loadDay(date);
+
+        requireActivity().findViewById(R.id.iv_left).setVisibility(View.VISIBLE);
+
+        if (date + 24*60*60 > calendar.getTimeInMillis() / 1000) {
+            requireActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
+            return;
+        }
+        requireActivity().findViewById(R.id.iv_right).setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -111,7 +150,19 @@ public class DayRecordFragment extends Fragment {
         binding.setTheme(MainActivity.getAppliedTheme());
 
         setLoadDayResultListener();
-        loadDay((Integer) null);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        date = calendar.getTimeInMillis() / 1000;
+        loadDay(date);
+
+        ImageView ivLeft = requireActivity().findViewById(R.id.iv_left);
+        ivLeft.setVisibility(View.VISIBLE);
+        ivLeft.setOnClickListener(v -> toPreviousDay());
+
+        ImageView ivRight = requireActivity().findViewById(R.id.iv_right);
+        ivRight.setVisibility(View.GONE);
+        ivRight.setOnClickListener(v -> toNextDay());
 
         return binding.getRoot();
     }
