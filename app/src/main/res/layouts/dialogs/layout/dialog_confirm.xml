@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/view_rect_r10"
         android:backgroundTint="@{theme.secondary}"
+        android:minWidth="580dp"
         android:minHeight="150dp"
         android:orientation="vertical"
         android:padding="24dp"
