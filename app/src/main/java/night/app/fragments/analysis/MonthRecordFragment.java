@@ -29,7 +29,9 @@ public class MonthRecordFragment extends Fragment {
         bundle.putDouble("info1", info1);
         bundle.putDouble("info2", info2);
 
-        getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
+        if (isAdded()) {
+            getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
+        }
     }
 
     private void loadData() {
@@ -83,8 +85,10 @@ public class MonthRecordFragment extends Fragment {
                     sleepEfficiency / availableDay
             );
 
-            RecyclerView view = (RecyclerView) requireView();
-            view.setAdapter(new DayItemAdapter(activity, dayList));
+            if (getView() != null) {
+                RecyclerView view = (RecyclerView) getView();
+                view.setAdapter(new DayItemAdapter(activity, dayList));
+            }
         });
     }
 

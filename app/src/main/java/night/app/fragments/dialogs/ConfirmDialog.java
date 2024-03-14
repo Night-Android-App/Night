@@ -62,12 +62,11 @@ public class ConfirmDialog extends DialogFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        MainActivity activity = (MainActivity) requireActivity();
-
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_confirm, container, false);
         binding.setTheme(MainActivity.getAppliedTheme());
 
         loadContent();
+        binding.btnNegative.setOnClickListener(v -> dismiss());
         return binding.getRoot();
     }
 

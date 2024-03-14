@@ -40,7 +40,9 @@ public class WeekRecordFragment extends Fragment {
         bundle.putDouble("info1", info1);
         bundle.putDouble("info2", info2);
 
-        getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
+        if (isAdded()) {
+            getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
+        }
     }
 
     private void loadBarChart(long startDate, long endDate) {

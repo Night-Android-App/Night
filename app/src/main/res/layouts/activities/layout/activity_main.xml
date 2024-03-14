@@ -47,7 +47,6 @@
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:onClick="switchPage"
                 android:orientation="vertical"
                 tools:ignore="TouchTargetSizeCheck">
 
@@ -75,7 +74,6 @@
                 android:layout_marginHorizontal="6dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:onClick="switchPage"
                 android:orientation="vertical"
                 tools:ignore="TouchTargetSizeCheck">
 
@@ -83,8 +81,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="24dp"
                     android:padding="2dp"
-                    app:srcCompat="@drawable/ic_tab_clock"
-                    android:tint="@{theme.onPrimaryVariant, default=`#61666a`}" />
+                    android:tint="@{theme.onPrimaryVariant, default=`#61666a`}"
+                    app:srcCompat="@drawable/ic_tab_clock" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -102,7 +100,6 @@
                 android:layout_marginHorizontal="6dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:onClick="switchPage"
                 android:orientation="vertical"
                 tools:ignore="TouchTargetSizeCheck">
 
@@ -110,8 +107,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="24dp"
                     android:padding="2dp"
-                    app:srcCompat="@drawable/ic_tab_analysis"
-                    android:tint="@{theme.onPrimaryVariant, default=`#61666a`}" />
+                    android:tint="@{theme.onPrimaryVariant, default=`#61666a`}"
+                    app:srcCompat="@drawable/ic_tab_analysis" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -131,7 +128,6 @@
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:onClick="switchPage"
                 android:orientation="vertical"
                 tools:ignore="TouchTargetSizeCheck">
 
@@ -139,8 +135,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="24dp"
                     android:padding="2dp"
-                    app:srcCompat="@drawable/ic_tab_settings"
-                    android:tint="@{theme.onPrimaryVariant, default=`#61666a`}" />
+                    android:tint="@{theme.onPrimaryVariant, default=`#61666a`}"
+                    app:srcCompat="@drawable/ic_tab_settings" />
 
                 <TextView
                     android:layout_width="match_parent"

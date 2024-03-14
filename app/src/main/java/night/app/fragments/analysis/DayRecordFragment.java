@@ -41,7 +41,9 @@ public class DayRecordFragment extends Fragment {
             bundle.putDouble("info2", sleepData.getSleepEfficiency());
         }
 
-        getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
+        if (isAdded()) {
+            getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
+        }
     }
 
     private void loadDay(long date) {

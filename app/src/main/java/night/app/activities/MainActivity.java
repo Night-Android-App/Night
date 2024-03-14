@@ -4,11 +4,13 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,35 +86,21 @@ public class MainActivity extends AppCompatActivity {
         textView.setLayoutParams(params);
     }
 
-    // applied for event handler, which can only pass View as argument
-    public void switchPage(View view) {
-        switchPage(view.getId());
-    }
-
-    public void switchPage(int id) {
-        HashMap<Integer, Class<? extends  Fragment>> pageMap = new HashMap<>() {{
-            put(R.id.btn_page_garden, GardenPageFragment.class);
-            put(R.id.btn_page_analysis, AnalysisPageFragment.class);
-            put(R.id.btn_page_settings, SettingsPageFragment.class);
-        }};
-
-        Class<? extends Fragment> fragmentClass = pageMap.get(id);
-        if (fragmentClass == null) return;
-
-        // get the instance of the display fragment
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
-
-        for (Map.Entry<Integer, Class<? extends Fragment>> entry : pageMap.entrySet()) {
-            if (entry.getValue().isInstance(fragment)) {
-                setNavItemStyle(entry.getKey(), 0, theme.getOnPrimaryVariant());
+    public void switchPage(int destId, Class<? extends Fragment> destFragment) {
+        for (int id : new int[] {R.id.btn_page_garden, R.id.btn_page_clock, R.id.btn_page_analysis, R.id.btn_page_settings}) {
+            if (id == destId) {
+                setNavItemStyle(id, LinearLayout.LayoutParams.WRAP_CONTENT, theme.getOnPrimary());
+                continue;
             }
+            setNavItemStyle(id, 0, theme.getOnPrimaryVariant());
         }
 
-        setNavItemStyle(id, LinearLayout.LayoutParams.WRAP_CONTENT, theme.getOnPrimary());
+        Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
+        if (fr != null && fr.getClass() == destFragment) return;
 
         getSupportFragmentManager().beginTransaction()
-            .replace(R.id.fr_app_page, fragmentClass, null)
-            .commit();
+                .replace(R.id.fr_app_page, destFragment, null)
+                .commit();
     }
 
     private void setOnBackPressedListener() {
@@ -122,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
 
                 if (fragment instanceof GardenPageFragment) System.exit(0);
-                switchPage(R.id.btn_page_garden);
+                switchPage(R.id.btn_page_garden, GardenPageFragment.class);
             }
         });
     }
@@ -150,6 +138,15 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(theme.getPrimary());
         getWindow().setNavigationBarColor(theme.getPrimary());
 
+        binding.btnPageGarden
+                .setOnClickListener(v -> switchPage(v.getId(), GardenPageFragment.class));
+        // binding.btnPageClock
+        //        .setOnClickListener(v -> switchPage(v.getId(), null));
+        binding.btnPageAnalysis
+                .setOnClickListener(v -> switchPage(v.getId(), AnalysisPageFragment.class));
+        binding.btnPageSettings
+                .setOnClickListener(v -> switchPage(v.getId(), SettingsPageFragment.class));
+
         setOnBackPressedListener();
 
         getSupportFragmentManager().beginTransaction()
@@ -175,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             String appliedTheme = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));
-            if (theme != null) {
+            if (appliedTheme != null) {
                 List<Theme> themeList = database.dao().getTheme(appliedTheme);
 
                 if (themeList.size() > 0) {

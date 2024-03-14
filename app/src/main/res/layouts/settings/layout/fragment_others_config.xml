@@ -20,30 +20,19 @@
             android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
             android:textSize="11sp" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/btn_permission"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginVertical="5dp"
-            android:layout_marginStart="5dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="Manual configuration"
-                android:textColor="@{theme.onSurface, default=`#000`}"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/btn_permission"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:backgroundTint="@{theme.accent, default=`#441E9F`}"
-                android:gravity="center"
-                android:text="PROCEED" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_chevron_right"
+            android:gravity="left|center_vertical"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="12dp"
+            android:text="Manual configuration"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -54,59 +43,35 @@
             android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
             android:textSize="11sp" />
 
-        <LinearLayout
+
+        <Button
+            android:id="@+id/btn_open_term"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
-            android:layout_marginStart="5dp"
-            android:orientation="horizontal">
+            android:drawableRight="@drawable/ic_chevron_right"
+            android:gravity="left|center_vertical"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="12dp"
+            android:text="Terms of Service"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="Terms of Service"
-                android:textColor="@{theme.onSurface, default=`#000`}"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/btn_open_term"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_gravity="right"
-                android:backgroundTint="@{theme.accent, default=`#441E9F`}"
-                android:gravity="center"
-                android:text="READ" />
-
-        </LinearLayout>
-
-        <LinearLayout
+        <Button
+            android:id="@+id/btn_open_policy"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
-            android:layout_marginStart="5dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="Privacy policy"
-                android:textColor="@{theme.onSurface, default=`#000`}"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/btn_open_policy"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_gravity="right"
-                android:backgroundTint="@{theme.accent, default=`#441E9F`}"
-                android:gravity="center"
-                android:text="READ" />
-
-        </LinearLayout>
+            android:layout_marginTop="4dp"
+            android:drawableRight="@drawable/ic_chevron_right"
+            android:gravity="left|center_vertical"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="12dp"
+            android:text="Privacy Policy"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
     </LinearLayout>
 </layout>

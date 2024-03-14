@@ -147,12 +147,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="10dp"
-            android:padding="12dp"
+            android:layout_marginBottom="24dp"
             android:background="@drawable/view_rect_r10"
             android:backgroundTint="@{theme.surface, default=`#fff`}"
-            android:textColor="@{theme.onSurface, default=`#000`}"
-            android:text="No record." />
+            android:minHeight="150dp"
+            android:padding="12dp"
+            android:text="No record."
+            android:textColor="@{theme.onSurface, default=`#000`}" />
 
     </LinearLayout>
 </layout>
