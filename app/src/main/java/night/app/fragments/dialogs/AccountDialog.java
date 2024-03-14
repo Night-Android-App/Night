@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -27,6 +26,7 @@ import java.util.Locale;
 import night.app.R;
 import night.app.activities.InitialActivity;
 import night.app.activities.MainActivity;
+import night.app.data.DataStoreHelper;
 import night.app.databinding.DialogAccountBinding;
 import night.app.networks.AccountRequest;
 import night.app.services.Password;
@@ -64,7 +64,7 @@ public class AccountDialog extends DialogFragment {
                 if (res != null && res.optInt("responseCode") == 200) {
                     String sessionId = res.getJSONObject("response").getString("sessionId");
 
-                    MainActivity.getDataStore().update(PreferencesKeys.stringKey("sessionId"), sessionId);
+                    MainActivity.getDataStore().update(DataStoreHelper.KEY_SESSION, sessionId);
 
                     Bundle bundle = new Bundle();
                     bundle.putString("uid", uidValue);
@@ -116,10 +116,10 @@ public class AccountDialog extends DialogFragment {
         new AccountRequest().login(uidValue, Password.hash(pwdValue), res -> {
             if (res != null && res.optInt("responseCode") == 200) {
                 try {
-                    MainActivity.getDataStore().update(PreferencesKeys.intKey("coins"), res.getJSONObject("response").getInt("coins"));
+                    MainActivity.getDataStore().update(DataStoreHelper.KEY_COINS, res.getJSONObject("response").getInt("coins"));
 
                     String sid = res.getJSONObject("response").getString("sessionId");
-                    MainActivity.getDataStore().update(PreferencesKeys.stringKey("sessionId"), sid);
+                    MainActivity.getDataStore().update(DataStoreHelper.KEY_SESSION, sid);
 
 
                     Bundle bundle = new Bundle();

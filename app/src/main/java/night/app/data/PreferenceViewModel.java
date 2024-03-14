@@ -26,7 +26,7 @@ public class PreferenceViewModel extends ViewModel implements Observable {
     @Bindable
     public String getLastBackupDate() {
         if (lastBackupDate == null) {
-            lastBackupDate = prefs.get(PreferencesKeys.stringKey("lastBackupDate"));
+            lastBackupDate = prefs.get(DataStoreHelper.KEY_BACKUP_DATE);
         }
         if (lastBackupDate == null || lastBackupDate.equals("")) return "No record";
         return lastBackupDate;
@@ -35,13 +35,13 @@ public class PreferenceViewModel extends ViewModel implements Observable {
     public void setLastBackupDate(String value) {
         if (lastBackupDate.equals(value)) return;
         lastBackupDate = value;
-        dataStore.update(PreferencesKeys.stringKey("lastBackupDate"), value);
+        dataStore.update(DataStoreHelper.KEY_BACKUP_DATE, value);
     }
 
     @Bindable
     public Boolean getIsBackupSleep() {
         if (isBackupSleep == null) {
-            isBackupSleep = prefs.get(PreferencesKeys.booleanKey("backupSleepRecord"));
+            isBackupSleep = prefs.get(DataStoreHelper.KEY_BACKUP_SLEEP);
         }
         return isBackupSleep;
     }
@@ -50,13 +50,13 @@ public class PreferenceViewModel extends ViewModel implements Observable {
         if (isBackupSleep == value) return;
 
         isBackupSleep = value;
-        dataStore.update(PreferencesKeys.booleanKey("backupSleepRecord"), value);
+        dataStore.update(DataStoreHelper.KEY_BACKUP_SLEEP, value);
     }
 
     @Bindable
     public Boolean getIsBackupAlarm() {
         if (isBackupAlarm == null) {
-            isBackupAlarm = prefs.get(PreferencesKeys.booleanKey("backupAlarmList"));
+            isBackupAlarm = prefs.get(DataStoreHelper.KEY_BACKUP_ALARM);
         }
         return isBackupAlarm;
     }
@@ -65,13 +65,13 @@ public class PreferenceViewModel extends ViewModel implements Observable {
         if (isBackupAlarm == value) return;
 
         isBackupAlarm = value;
-        dataStore.update(PreferencesKeys.booleanKey("backupAlarmList"), value);
+        dataStore.update(DataStoreHelper.KEY_BACKUP_ALARM, value);
     }
 
     @Bindable
     public Boolean getIsBackupDream() {
         if (isBackupDream == null) {
-            isBackupDream = prefs.get(PreferencesKeys.booleanKey("backupDreamRecord"));
+            isBackupDream = prefs.get(DataStoreHelper.KEY_BACKUP_DREAM);
         }
         return isBackupDream;
     }
@@ -80,7 +80,7 @@ public class PreferenceViewModel extends ViewModel implements Observable {
         if (isBackupDream == value) return;
 
         isBackupDream = value;
-        dataStore.update(PreferencesKeys.booleanKey("backupDreamRecord"), value);
+        dataStore.update(DataStoreHelper.KEY_BACKUP_DREAM, value);
     }
 
     public PreferenceViewModel(DataStoreHelper dataStoreHelper) {

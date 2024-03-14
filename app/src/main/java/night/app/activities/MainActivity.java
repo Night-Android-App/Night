@@ -160,18 +160,16 @@ public class MainActivity extends AppCompatActivity {
                             .build()
             );
 
-            Boolean isServiceStarted = dataStore.getPrefs().get(PreferencesKeys.booleanKey("isServiceStarted"));
+            Boolean isServiceStarted = dataStore.getPrefs().get(DataStoreHelper.KEY_SERVICE_STARTED);
             if (isServiceStarted == null || !isServiceStarted) {
-                if (getSupportFragmentManager().findFragmentByTag("agreementDialog") == null) {
-                    dataStore.update(PreferencesKeys.booleanKey("backupAlarmList"), true);
-                    dataStore.update(PreferencesKeys.booleanKey("backupSleepRecord"), true);
+                dataStore.update(DataStoreHelper.KEY_BACKUP_ALARM, true);
+                dataStore.update(DataStoreHelper.KEY_BACKUP_SLEEP, true);
 
-                    Intent intent = new Intent(this, InitialActivity.class);
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(this, InitialActivity.class);
+                startActivity(intent);
             }
 
-            String appliedTheme = dataStore.getPrefs().get(PreferencesKeys.stringKey("theme"));
+            String appliedTheme = dataStore.getPrefs().get(DataStoreHelper.KEY_THEME);
             if (appliedTheme != null) {
                 List<Theme> themeList = database.dao().getTheme(appliedTheme);
 

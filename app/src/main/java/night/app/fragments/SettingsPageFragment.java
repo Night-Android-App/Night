@@ -17,6 +17,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import night.app.R;
 import night.app.activities.MainActivity;
+import night.app.data.DataStoreHelper;
 import night.app.data.PreferenceViewModel;
 import night.app.databinding.FragmentSettingsPageBinding;
 import night.app.fragments.dialogs.AccountDialog;
@@ -62,8 +63,6 @@ public class SettingsPageFragment extends Fragment {
     }
 
     private void setAccountStatusResult(String key, Bundle result) {
-        MainActivity activity = (MainActivity) requireActivity();
-
         String uid = result.getString("uid");
         String desc = result.getString("desc");
 
@@ -75,8 +74,8 @@ public class SettingsPageFragment extends Fragment {
             }
         });
 
-        MainActivity.getDataStore().update(PreferencesKeys.stringKey("username"), uid);
-        MainActivity.getDataStore().update(PreferencesKeys.stringKey("account_createdDate"), desc);
+        MainActivity.getDataStore().update(DataStoreHelper.KEY_UID, uid);
+        MainActivity.getDataStore().update(DataStoreHelper.KEY_ACCOUNT_CREATED, desc);
     }
 
     private void showLoginModal() {
@@ -84,12 +83,12 @@ public class SettingsPageFragment extends Fragment {
     }
 
     private void setDefaultAccountStatus() {
-        MainActivity.getDataStore().update(PreferencesKeys.stringKey("username"), null);
-        MainActivity.getDataStore().update(PreferencesKeys.stringKey("account_createdDate"), null);
+        MainActivity.getDataStore().update(DataStoreHelper.KEY_UID, null);
+        MainActivity.getDataStore().update(DataStoreHelper.KEY_ACCOUNT_CREATED, null);
 
         binding.clSettAcct.setOnClickListener(v -> showLoginModal());
-        binding.tvSettAcctUid.setText("Press here to login");
-        binding.tvSettAcctDesc.setText(">> Proceed");
+        binding.tvSettAcctUid.setText("Guest");
+        binding.tvSettAcctDesc.setText("Press here to login");
 
         MainActivity.getDataStore().update(PreferencesKeys.stringKey("sessionId"), null);
     }
@@ -100,20 +99,22 @@ public class SettingsPageFragment extends Fragment {
 
         new ConfirmDialog(title, desc, (dialog) -> {
             setDefaultAccountStatus();
-            MainActivity.getDataStore().update(PreferencesKeys.stringKey("sessionId"), null);
-            MainActivity.getDataStore().update(PreferencesKeys.stringKey("username"), null);
-            MainActivity.getDataStore().update(PreferencesKeys.stringKey("account_createdDate"), null);
+            DataStoreHelper datastore = MainActivity.getDataStore();
+
+            datastore.update(DataStoreHelper.KEY_SESSION, null);
+            datastore.update(DataStoreHelper.KEY_UID, null);
+            datastore.update(DataStoreHelper.KEY_ACCOUNT_CREATED, null);
+
             dialog.dismiss();
-        })
-            .show(requireActivity().getSupportFragmentManager(), null);
+        }).show(requireActivity().getSupportFragmentManager(), null);
     }
 
 
     private void initDataFromDataStore() {
         Preferences prefs = MainActivity.getDataStore().getPrefs();
 
-        String username = prefs.get(PreferencesKeys.stringKey("username"));
-        String accountCreatedDate = prefs.get(PreferencesKeys.stringKey("account_createdDate"));
+        String username = prefs.get(DataStoreHelper.KEY_UID);
+        String accountCreatedDate = prefs.get(DataStoreHelper.KEY_ACCOUNT_CREATED);
 
         if (username != null && accountCreatedDate != null) {
             binding.tvSettAcctUid.setText(username);
