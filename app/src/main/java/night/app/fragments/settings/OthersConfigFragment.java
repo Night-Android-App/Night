@@ -1,6 +1,7 @@
 package night.app.fragments.settings;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -9,14 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.datastore.preferences.core.Preferences;
-import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 
 import night.app.R;
+import night.app.activities.AgreementActivity;
 import night.app.activities.MainActivity;
 import night.app.databinding.FragmentOthersConfigBinding;
-import night.app.fragments.dialogs.AgreementDialog;
 
 public class OthersConfigFragment extends Fragment {
     FragmentOthersConfigBinding binding;
@@ -29,13 +28,10 @@ public class OthersConfigFragment extends Fragment {
     }
 
     private void showAgreements(int type) {
-        AgreementDialog dialog = new AgreementDialog();
+        Intent intent = new Intent(requireActivity(), AgreementActivity.class);
 
-        Bundle bundle = new Bundle();
-        bundle.putInt("type", type);
-
-        dialog.setArguments(bundle);
-        dialog.show(getParentFragmentManager(), null);
+        intent.putExtra("type", type);
+        startActivity(intent);
     }
 
     @Override
@@ -46,10 +42,22 @@ public class OthersConfigFragment extends Fragment {
         binding.btnPermission.setOnClickListener(v -> requestPermission());
 
         binding.btnOpenTerm
-                .setOnClickListener(v -> showAgreements(AgreementDialog.TYPE_TERMS));
+                .setOnClickListener(v -> showAgreements(AgreementActivity.TYPE_TERMS));
 
         binding.btnOpenPolicy
-                .setOnClickListener(v -> showAgreements(AgreementDialog.TYPE_PRIVACY));
+                .setOnClickListener(v -> showAgreements(AgreementActivity.TYPE_POLICY));
+
+        binding.btnPermission.setCompoundDrawableTintList(
+                ColorStateList.valueOf(MainActivity.getAppliedTheme().getOnSurface())
+        );
+
+        binding.btnOpenTerm.setCompoundDrawableTintList(
+                ColorStateList.valueOf(MainActivity.getAppliedTheme().getOnSurface())
+        );
+
+        binding.btnOpenPolicy.setCompoundDrawableTintList(
+                ColorStateList.valueOf(MainActivity.getAppliedTheme().getOnSurface())
+        );
 
         return binding.getRoot();
     }

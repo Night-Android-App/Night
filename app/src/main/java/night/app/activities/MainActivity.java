@@ -4,23 +4,17 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import night.app.data.AppDatabase;
 import night.app.data.DataStoreHelper;
@@ -30,7 +24,6 @@ import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.GardenPageFragment;
 import night.app.fragments.SettingsPageFragment;
 import night.app.R;
-import night.app.fragments.dialogs.AgreementDialog;
 
 public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
@@ -119,10 +112,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         dataStore.dispose();
-
-        if (getSupportFragmentManager().findFragmentByTag("agreementDialog") != null) {
-            ((AgreementDialog) getSupportFragmentManager().findFragmentByTag("agreementDialog")).dismiss();
-        }
     }
 
     @Override

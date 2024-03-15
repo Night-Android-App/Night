@@ -45,11 +45,9 @@ public class AnalysisPageFragment extends Fragment {
         binding.tvAnalDate.setText(date);
 
         if (score > 0) {
-            binding.tvAnalMainScoreData.setTextSize(60);
             binding.tvAnalMainScoreData.setText(String.valueOf(Math.round(score)));
         }
         else {
-            binding.tvAnalMainScoreData.setTextSize(40);
             binding.tvAnalMainScoreData.setText("N/A");
         }
 

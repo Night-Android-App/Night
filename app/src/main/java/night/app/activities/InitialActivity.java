@@ -3,7 +3,6 @@ package night.app.activities;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.datastore.preferences.core.PreferencesKeys;
-import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,15 +14,9 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import night.app.R;
 import night.app.databinding.ActivityInitialBinding;
-import night.app.databinding.ActivityMainBinding;
-import night.app.fragments.GardenPageFragment;
 import night.app.fragments.dialogs.AccountDialog;
-import night.app.fragments.dialogs.AgreementDialog;
 
 public class InitialActivity extends AppCompatActivity {
     private ActivityInitialBinding binding;
@@ -70,24 +63,18 @@ public class InitialActivity extends AppCompatActivity {
         SpannableString spanString = new SpannableString(binding.tvAgreements.getText());
 
         spanString.setSpan(getHyperLinkSpan(v -> {
-            AgreementDialog dialog = new AgreementDialog();
+            Intent intent = new Intent(this, AgreementActivity.class);
+            intent.putExtra("type", AgreementActivity.TYPE_TERMS);
 
-            Bundle bundle = new Bundle();
-            bundle.putInt("type", AgreementDialog.TYPE_TERMS);
-
-            dialog.setArguments(bundle);
-            dialog.show(getSupportFragmentManager(), null);
-        }), 42, 58, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            startActivity(intent);
+        }), 42, 54, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         spanString.setSpan(getHyperLinkSpan(v -> {
-            AgreementDialog dialog = new AgreementDialog();
+            Intent intent = new Intent(this, AgreementActivity.class);
+            intent.putExtra("type", AgreementActivity.TYPE_POLICY);
 
-            Bundle bundle = new Bundle();
-            bundle.putInt("type", AgreementDialog.TYPE_PRIVACY);
-
-            dialog.setArguments(bundle);
-            dialog.show(getSupportFragmentManager(), null);
-        }), 63, 77, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            startActivity(intent);
+        }), 59, 73, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         binding.tvAgreements.setText(spanString);
         binding.tvAgreements.setMovementMethod(LinkMovementMethod.getInstance());
