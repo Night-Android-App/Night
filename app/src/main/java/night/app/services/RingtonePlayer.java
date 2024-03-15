@@ -2,14 +2,15 @@ package night.app.services;
 
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 
 import night.app.activities.MainActivity;
 
 public class RingtonePlayer {
     private MediaPlayer mediaPlayer;
-    public int playerOwner;
+    public Integer playerOwner;
     private MainActivity activity;
-    private String ringtoneName;
+    private int id;
 
     public void release() {
         if (mediaPlayer != null) {
@@ -19,7 +20,7 @@ public class RingtonePlayer {
 
     public void run() {
         new Thread(() -> {
-            String path = MainActivity.getDatabase().dao().getRingtone(ringtoneName).get(0).path;
+            String path = MainActivity.getDatabase().dao().getRingtone(id).get(0).path;
             activity.runOnUiThread(() -> {
                 try {
                     if (mediaPlayer != null) mediaPlayer.release();
@@ -36,6 +37,11 @@ public class RingtonePlayer {
 
                         afd.close();
                     }
+                    else {
+                        mediaPlayer.setDataSource(activity, Uri.parse(path));
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                    }
                 }
                 catch (Exception e) {
                     System.err.println(e);
@@ -44,10 +50,10 @@ public class RingtonePlayer {
         }).start();
     }
 
-    public void replaceRingtone(String ringtoneName, int playerOwner) {
+    public void replaceRingtone(int id, int playerOwner) {
         if (mediaPlayer != null) mediaPlayer.release();
 
-        this.ringtoneName = ringtoneName;
+        this.id = id;
         this.playerOwner = playerOwner;
     }
 

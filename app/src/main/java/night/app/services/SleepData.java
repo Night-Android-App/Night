@@ -3,17 +3,12 @@ package night.app.services;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.Instant;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import night.app.data.Day;
+import night.app.utils.TimeUtils;
 
 public class SleepData {
     private final Integer[] timelines;
@@ -21,14 +16,6 @@ public class SleepData {
 
     public Integer[] getTimelines() { return timelines; }
     public Integer[] getConfidences() { return confidences; }
-
-    public static Day getSampleDay() {
-        Day day = new Day();
-        day.date = 0;
-        day.sleep = "{\"1422\": 0, \"10\": 52, \"60\": 90, \"120\": 86,  \"240\": 54, \"410\": 51,  \"420\": 0}";
-        day.dream = "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing";
-        return day;
-    }
 
     private boolean isInRange(int data, int start, int end) {
         return data >= start && data <= end;
@@ -66,48 +53,9 @@ public class SleepData {
     public double getSleepEfficiency() {
         if (timelines.length == 0) return -1;
 
-        int inBedSeconds = getTimeDifference(timelines[0], timelines[timelines.length-1]);
+        int inBedSeconds = TimeUtils.timeDiff(timelines[0], timelines[timelines.length-1]);
         int sleepSeconds = getTotalSecondsByConfidence(50, 101);
         return (double) sleepSeconds / inBedSeconds;
-    }
-
-    public static String toDateString(long startTimestamp, long endTimestamp) {
-        return toDateString(startTimestamp, false) + " ~ " + toDateString(endTimestamp, false);
-    }
-
-    public static String toDateString(long timestamp, boolean year) {
-        ZoneId zoneId = ZoneId.systemDefault();
-        ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(timestamp), zoneId);
-
-        String pattern = year ? "dd MMM yyyy" : "dd MMM";
-        return DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH).format(dateTime);
-    }
-
-    public static String[] toHrMinString(Integer[] arrays) {
-        String[] returnArray = new String[arrays.length];
-
-        for (int i=0; i < arrays.length; i++) {
-            returnArray[i] = SleepData.toTimeString(arrays[i]);
-        }
-
-        return returnArray;
-    }
-
-    public static String toHrMinString(int seconds) {
-        int hours = (int) Math.floor(seconds/60f);
-        int minutes = seconds % 60;
-
-        if (hours <= 0) {
-            return minutes + "m";
-        }
-        return hours + "h " + minutes + "m";
-    }
-
-    public static String toTimeString(int seconds) {
-        int hours = (int) Math.floor(seconds/60f);
-        int minutes = seconds % 60;
-
-        return LocalTime.of(hours, minutes).toString();
     }
 
     public Integer getTotalSleep() {
@@ -136,16 +84,16 @@ public class SleepData {
 
         for (int i=0; i < confidences.length; i++) {
             if (confidences[i] >= 50) {
-                return getTimeDifference(timelines[0], timelines[i]);
+                return TimeUtils.timeDiff(timelines[0], timelines[i]);
             }
         }
-        return getTimeDifference(timelines[0], timelines[timelines.length-1]);
+        return TimeUtils.timeDiff(timelines[0], timelines[timelines.length-1]);
     }
 
     public int getEventDuration(int index) {
         if (index+1 >= timelines.length) return 0;
 
-        return getTimeDifference(timelines[index], timelines[index+1]);
+        return TimeUtils.timeDiff(timelines[index], timelines[index+1]);
     }
 
     public int getTotalSecondsByConfidence(int min, int max) {
@@ -155,13 +103,6 @@ public class SleepData {
             if (confidences[i] >= min && confidences[i] < max) seconds += getEventDuration(i);
         }
         return seconds;
-    }
-
-    public static int getTimeDifference(int earlier, int later) {
-        if (earlier > later) {
-            return later + (24*60 - earlier);
-        }
-        return later - earlier;
     }
 
     public SleepData(String str) {

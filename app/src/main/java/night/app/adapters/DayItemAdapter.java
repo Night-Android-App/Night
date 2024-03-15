@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,7 +16,7 @@ import night.app.data.Day;
 import night.app.databinding.ItemDayRecordBinding;
 
 public class DayItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    MainActivity activity;
+    AppCompatActivity activity;
     List<Day> days;
     public int currMonth = -1;
 
@@ -41,7 +42,7 @@ public class DayItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         ((DayItemViewHolder) viewHolder).loadData(days.get(position));
     }
 
-    public DayItemAdapter(MainActivity activity, List<Day> days) {
+    public DayItemAdapter(AppCompatActivity activity, List<Day> days) {
         this.activity = activity;
         this.days = days;
     }

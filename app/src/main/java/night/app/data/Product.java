@@ -6,21 +6,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = {
-        @ForeignKey(
-                entity = Theme.class,
-                parentColumns = "theme_name",
-                childColumns = "prod_name",
-                onUpdate = ForeignKey.CASCADE,
-                onDelete = ForeignKey.CASCADE
-        ),
-        @ForeignKey(
-                entity = Ringtone.class,
-                parentColumns = "ring_name",
-                childColumns = "prod_name",
-                onUpdate = ForeignKey.CASCADE,
-                onDelete = ForeignKey.CASCADE
-        ),
+@Entity(tableName = "product", foreignKeys = {
         @ForeignKey(
                 entity = ProductType.class,
                 parentColumns = "id",
@@ -32,23 +18,18 @@ import androidx.room.PrimaryKey;
 public class Product {
     @PrimaryKey
     @ColumnInfo(name = "prod_id")
-    public Integer prodId;
+    public Integer prodId = -1;
 
     @NonNull
     public Integer type;
-
-    @NonNull
-    @ColumnInfo(name = "prod_name")
-    public String prodName;
 
     @NonNull
     public Integer price;
 
     public Integer isBought;
 
-    public Product(@NonNull Integer type, @NonNull String prodName, @NonNull Integer price, Integer isBought) {
+    public Product(@NonNull Integer type, @NonNull Integer price, Integer isBought) {
         this.type = type;
-        this.prodName = prodName;
         this.price = price;
         this.isBought = isBought;
     }

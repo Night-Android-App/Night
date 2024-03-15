@@ -1,7 +1,6 @@
 package night.app.fragments.settings;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -47,17 +46,16 @@ public class OthersConfigFragment extends Fragment {
         binding.btnOpenPolicy
                 .setOnClickListener(v -> showAgreements(AgreementActivity.TYPE_POLICY));
 
-        binding.btnPermission.setCompoundDrawableTintList(
-                ColorStateList.valueOf(MainActivity.getAppliedTheme().getOnSurface())
-        );
 
-        binding.btnOpenTerm.setCompoundDrawableTintList(
-                ColorStateList.valueOf(MainActivity.getAppliedTheme().getOnSurface())
-        );
 
-        binding.btnOpenPolicy.setCompoundDrawableTintList(
-                ColorStateList.valueOf(MainActivity.getAppliedTheme().getOnSurface())
-        );
+        binding.btnPermission.getCompoundDrawables()[2]
+                .setTint(MainActivity.getAppliedTheme().getOnSurface());
+
+        binding.btnOpenTerm.getCompoundDrawables()[2]
+                .setTint(MainActivity.getAppliedTheme().getOnSurface());
+
+        binding.btnOpenPolicy.getCompoundDrawables()[2]
+                .setTint(MainActivity.getAppliedTheme().getOnSurface());
 
         return binding.getRoot();
     }

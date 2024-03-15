@@ -26,6 +26,7 @@ import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.Alarm;
 import night.app.data.AppDAO;
+import night.app.data.DataStoreHelper;
 import night.app.data.Day;
 import night.app.data.PreferenceViewModel;
 import night.app.databinding.FragmentBackupConfigBinding;
@@ -198,8 +199,8 @@ public class BackupConfigFragment extends Fragment {
 
             Preferences prefs = MainActivity.getDataStore().getPrefs();
 
-            String sid = prefs.get(PreferencesKeys.stringKey("sessionId"));
-            String uid = prefs.get(PreferencesKeys.stringKey("username"));
+            String sid = prefs.get(DataStoreHelper.KEY_SESSION);
+            String uid = prefs.get(DataStoreHelper.KEY_UID);
 
             if (sid == null || uid == null) {
                 dialog.replaceContent("Recovery Error", "You have to login to use this service.", null);

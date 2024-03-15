@@ -5,11 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import night.app.R;
@@ -17,9 +17,19 @@ import night.app.activities.MainActivity;
 import night.app.adapters.DayItemAdapter;
 import night.app.data.Day;
 import night.app.fragments.AnalysisPageFragment;
+import night.app.services.Sample;
 import night.app.services.SleepData;
+import night.app.utils.TimeUtils;
 
 public class MonthRecordFragment extends Fragment {
+    private void setAdapter(List<Day> dayList) {
+        if (getView() != null) {
+            RecyclerView view = (RecyclerView) getView();
+            if (getActivity() instanceof AppCompatActivity) {
+                view.setAdapter(new DayItemAdapter((AppCompatActivity) getActivity(), dayList));
+            }
+        }
+    }
 
     public void setUpperPanelResult(String date, int score, double info1, double info2) {
         Bundle bundle = new Bundle();
@@ -29,36 +39,31 @@ public class MonthRecordFragment extends Fragment {
         bundle.putDouble("info1", info1);
         bundle.putDouble("info2", info2);
 
-        if (isAdded()) {
-            getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
-        }
+        if (!isAdded()) return;
+        getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
     }
 
     private void loadData() {
-        MainActivity activity = (MainActivity) requireActivity();
+        if (getActivity() == null || getArguments() == null) return;
+
         List<Day> dayList;
+        int endDate;
 
-        long startedDate;
-        long endDate;
-
-        if (requireArguments().getInt("status", -1) == AnalysisPageFragment.STATUS_SAMPLE) {
-            List<Day> days = new ArrayList<>();
-            days.add(SleepData.getSampleDay());
-            dayList = days;
+        int mode = getArguments().getInt("mode", 0);
+        if (mode == AnalysisPageFragment.MODE_SAMPLE) {
+            dayList = Sample.getDay();
             endDate = 0;
-            startedDate = endDate - 29*24*60*60;
         }
         else {
             dayList = MainActivity.getDatabase().dao().getAllDay();
-            endDate = System.currentTimeMillis() / 1000;
-            startedDate = endDate - 29*24*60*60;
+            endDate = TimeUtils.getToday();
         }
 
+        int startedDate = TimeUtils.dayAdd(endDate, -29);
 
-        requireActivity().runOnUiThread(() -> {
-
+        getActivity().runOnUiThread(() -> {
             if (dayList.size() == 0) {
-                setUpperPanelResult(SleepData.toDateString(startedDate, endDate), 0, 0, 0);
+                setUpperPanelResult(TimeUtils.toDateString(startedDate, endDate), 0, 0, 0);
                 return;
             }
 
@@ -76,19 +81,14 @@ public class MonthRecordFragment extends Fragment {
                 if (totalSleep >= 0) sleepSeconds += totalSleep;
             }
 
-
-            int availableDay = dayList.size() == 0 ? 1 : dayList.size();
             setUpperPanelResult(
-                    SleepData.toDateString(startedDate, endDate),
-                    (int) sleepScore / availableDay,
-                    sleepSeconds / availableDay,
-                    sleepEfficiency / availableDay
+                    TimeUtils.toDateString(startedDate, endDate),
+                    (int) sleepScore / dayList.size(),
+                    sleepSeconds / dayList.size(),
+                    sleepEfficiency / dayList.size()
             );
 
-            if (getView() != null) {
-                RecyclerView view = (RecyclerView) getView();
-                view.setAdapter(new DayItemAdapter(activity, dayList));
-            }
+            setAdapter(dayList);
         });
     }
 
@@ -100,8 +100,10 @@ public class MonthRecordFragment extends Fragment {
 
         new Thread(this::loadData).start();
 
-        requireActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
-        requireActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
+        if (getActivity() != null) {
+            getActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
+            getActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
+        }
 
         return view;
     }

@@ -49,11 +49,11 @@ public interface AppDAO {
     @Query("SELECT * FROM product WHERE type=:type")
     List<Product> getProducts(Integer type);
 
-    @Query("SELECT * FROM theme WHERE theme_name=:themeName LIMIT 1")
-    List<Theme> getTheme(String themeName);
+    @Query("SELECT * FROM theme WHERE prod_id=:id LIMIT 1")
+    List<Theme> getTheme(int id);
 
-    @Query("SELECT * FROM ringtone WHERE ring_name=:ringName LIMIT 1")
-    List<Ringtone> getRingtone(String ringName);
+    @Query("SELECT * FROM ringtone WHERE prod_id=:id LIMIT 1")
+    List<Ringtone> getRingtone(int id);
 
     @Query("SELECT * FROM ringtone WHERE ring_name in (SELECT ring_name FROM product WHERE isBought=1)")
     List<Ringtone> getAllOwnedRingtones();

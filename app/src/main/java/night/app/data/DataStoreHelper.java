@@ -2,7 +2,6 @@ package night.app.data;
 
 import android.content.Context;
 
-import androidx.annotation.Nullable;
 import androidx.datastore.preferences.core.MutablePreferences;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
@@ -13,7 +12,7 @@ import io.reactivex.rxjava3.core.Single;
 
 public class DataStoreHelper {
     private final RxDataStore<Preferences> dataStore;
-    public final static Preferences.Key<String> KEY_THEME = PreferencesKeys.stringKey("theme");
+    public final static Preferences.Key<Integer> KEY_THEME = PreferencesKeys.intKey("theme");
     public final static Preferences.Key<Boolean>
             KEY_SERVICE_STARTED = PreferencesKeys.booleanKey("isServiceStarted");
     public final static Preferences.Key<String> KEY_UID = PreferencesKeys.stringKey("username");
@@ -29,6 +28,12 @@ public class DataStoreHelper {
             KEY_BACKUP_SLEEP = PreferencesKeys.booleanKey("backupSleepRecord");
     public final static Preferences.Key<Boolean>
             KEY_BACKUP_DREAM = PreferencesKeys.booleanKey("backupDreamRecord");
+    public final static Preferences.Key<Integer>
+            KEY_TOTAL_EARNED = PreferencesKeys.intKey("totalEarned");
+    public final static Preferences.Key<Integer>
+            KEY_PREY_CAUGHT = PreferencesKeys.intKey("preyCaught");
+    public final static Preferences.Key<Integer>
+            KEY_SALE_PRICE = PreferencesKeys.intKey("salePrice");
 
     public <T> void update(Preferences.Key<T> key, T value) {
         Single<Preferences> updateResult = dataStore.updateDataAsync(prefsIn -> {

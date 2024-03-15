@@ -26,6 +26,7 @@
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 app:tabRippleColor="@{theme.onPrimaryVariant}"
+                android:selectedTabIndicatorColor="@{theme.onPrimary}"
                 tools:tabIndicatorColor="#fff"
                 tools:tabRippleColor="#757a7f"
                 tools:tabSelectedTextColor="#fff"

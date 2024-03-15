@@ -17,6 +17,7 @@ import night.app.R;
 import night.app.data.Day;
 import night.app.databinding.ItemDayRecordBinding;
 import night.app.services.SleepData;
+import night.app.utils.TimeUtils;
 
 public class DayItemViewHolder extends RecyclerView.ViewHolder {
     DayItemAdapter adapter;
@@ -66,7 +67,7 @@ public class DayItemViewHolder extends RecyclerView.ViewHolder {
 
 
         SleepData sleepData = new SleepData(day.sleep);
-        binding.tvSleepHrs.setText(SleepData.toHrMinString(sleepData.getTotalSleep()));
+        binding.tvSleepHrs.setText(TimeUtils.toHrMinString(sleepData.getTotalSleep()));
 
         binding.tvSleepEfficiency.setText(Math.round(sleepData.getSleepEfficiency() * 100) + "%");
     }

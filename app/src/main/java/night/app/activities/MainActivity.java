@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
 
-            String appliedTheme = dataStore.getPrefs().get(DataStoreHelper.KEY_THEME);
+            Integer appliedTheme = dataStore.getPrefs().get(DataStoreHelper.KEY_THEME);
             if (appliedTheme != null) {
                 List<Theme> themeList = database.dao().getTheme(appliedTheme);
 

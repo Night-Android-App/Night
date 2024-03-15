@@ -30,7 +30,8 @@
                 android:id="@+id/tv_ringtone_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@{theme.onSurface, default=`#000`}"
+                android:textColor="@{theme.onSurface}"
+                tools:textColor="#000"
                 android:textSize="16sp"
                 tools:text="Ring" />
 
@@ -44,7 +45,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
+                    android:textColor="@{theme.onPrimaryVariant}"
+                    tools:textColor="#61666A"
                     android:textSize="11sp"
                     tools:text="00:40" />
 
@@ -53,7 +55,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:textColor="@{theme.onPrimaryVariant, default=`#61666A`}"
+                    android:textColor="@{theme.onPrimaryVariant}"
+                    tools:textColor="#61666A"
                     android:textSize="11sp"
                     tools:text="49 coins" />
             </LinearLayout>
@@ -65,6 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Purchase"
+            android:backgroundTintList="@{theme.buttonColors}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

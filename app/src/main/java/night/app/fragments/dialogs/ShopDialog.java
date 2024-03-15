@@ -10,8 +10,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.material.tabs.TabLayout;
-
 import java.util.List;
 
 import night.app.R;
@@ -21,6 +19,7 @@ import night.app.adapters.ThemeAdapter;
 import night.app.data.Product;
 import night.app.data.Theme;
 import night.app.databinding.DialogShopBinding;
+import night.app.utils.LayoutUtils;
 
 public class ShopDialog extends DialogFragment {
     DialogShopBinding binding;
@@ -68,22 +67,11 @@ public class ShopDialog extends DialogFragment {
         }).start();
     }
 
-    private void initTabLayout() {
-        binding.tabShop.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+    private void setOnTabSelectedListener() {
+        binding.tabShop.addOnTabSelectedListener(LayoutUtils.getOnTabSelectedListener((tab) -> {
                 releaseRingtonePlayer();
-
                 loadItemList(tab.getPosition() == 0 ? 1 : 2);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) { }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) { }
-        });
-
+        }));
     }
 
     @Override
@@ -97,7 +85,7 @@ public class ShopDialog extends DialogFragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_shop, container, false);
 
         switchTheme();
-        initTabLayout();
+        setOnTabSelectedListener();
 
         binding.btnShopClose.setOnClickListener(v -> dismiss());
 
