@@ -17,11 +17,17 @@ public interface AppDAO {
     @Query("SELECT * FROM alarm WHERE alarm_id=:id LIMIT 1")
     List<Alarm> getAlarmSettings(int id);
 
+    @Query("UPDATE alarm SET isAlarmEnabled=:isEnabled WHERE alarm_id=:id")
+    void updateAlarmEnabled(int id, int isEnabled);
+
     @Query("INSERT INTO alarm (end_time, isAlarmEnabled, isDNDEnabled, ring_name) VALUES (:time, :isAlarmEnabled, :isDNDEnabled, :ringName)")
     void createAlarm(int time, int isAlarmEnabled, int isDNDEnabled, String ringName);
 
     @Query("DELETE FROM alarm WHERE alarm_id=:id")
     void deleteAlarm(int id);
+
+    @Query("DELETE FROM alarm WHERE alarm_id IN (:id)")
+    void deleteAlarm(List<Integer> id);
 
     // Analysis Query
     @Query("SELECT * FROM day WHERE date=:date LIMIT 1")

@@ -39,7 +39,7 @@ android {
                 srcDirs 'src/main/java'
             }
             res {
-                srcDirs 'src\\main\\res', 'src\\main\\res\\layouts\\activities', 'src\\main\\res\\layouts\\dialogs', 'src\\main\\res\\layouts\\settings', 'src\\main\\res\\layouts\\analysis', 'src\\main\\res\\layouts\\garden', 'src\\main\\res\\layouts\\adapters'
+                srcDirs 'src\\main\\res', 'src\\main\\res\\layouts\\activities', 'src\\main\\res\\layouts\\dialogs', 'src\\main\\res\\layouts\\settings', 'src\\main\\res\\layouts\\analysis', 'src\\main\\res\\layouts\\garden', 'src\\main\\res\\layouts\\adapters', 'src\\main\\res\\layouts\\clocks'
             }
             assets {
                 srcDirs 'src\\main\\assets'

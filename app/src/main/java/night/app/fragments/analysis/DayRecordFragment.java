@@ -90,7 +90,7 @@ public class DayRecordFragment extends Fragment {
         Integer[] timelines = sleepData.getTimelines();
         String[] hrMin = new String[timelines.length];
         for (int i=0; i < timelines.length; i++) {
-            hrMin[i] = TimeUtils.toTimeNotation(timelines[i]);
+            hrMin[i] = TimeUtils.toTimeNotation(timelines[i]*60);
         }
 
         new ChartBuilder<>(binding.lineChartDayRecord, hrMin, data)

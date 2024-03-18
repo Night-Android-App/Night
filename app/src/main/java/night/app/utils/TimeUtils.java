@@ -30,18 +30,22 @@ public class TimeUtils {
     }
 
     public static String toTimeNotation(int seconds) {
-        int hours = (int) Math.floor(seconds/60f);
-        int minutes = seconds % 60;
+        int hours = (int) Math.floor(seconds/3600f) ;
+        int minutes = seconds / 60 - hours * 60;
 
         return LocalTime.of(hours, minutes).toString();
     }
 
     public static String toHrMinString(int seconds) {
-        int hours = (int) Math.floor(seconds/60f);
-        int minutes = seconds % 60;
+        int hours = seconds / 3600;
+        int minutes = seconds / 60 - hours * 60;
 
         if (hours <= 0) {
             return minutes + "m";
+        }
+
+        if (hours >0 && minutes <= 0) {
+            return hours + "h ";
         }
         return hours + "h " + minutes + "m";
     }

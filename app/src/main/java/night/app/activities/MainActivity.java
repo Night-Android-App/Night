@@ -21,6 +21,7 @@ import night.app.data.DataStoreHelper;
 import night.app.data.Theme;
 import night.app.databinding.ActivityMainBinding;
 import night.app.fragments.AnalysisPageFragment;
+import night.app.fragments.ClockPageFragment;
 import night.app.fragments.GardenPageFragment;
 import night.app.fragments.SettingsPageFragment;
 import night.app.R;
@@ -129,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding.btnPageGarden
                 .setOnClickListener(v -> switchPage(v.getId(), GardenPageFragment.class));
-        // binding.btnPageClock
-        //        .setOnClickListener(v -> switchPage(v.getId(), null));
+         binding.btnPageClock
+                .setOnClickListener(v -> switchPage(v.getId(), ClockPageFragment.class));
         binding.btnPageAnalysis
                 .setOnClickListener(v -> switchPage(v.getId(), AnalysisPageFragment.class));
         binding.btnPageSettings
