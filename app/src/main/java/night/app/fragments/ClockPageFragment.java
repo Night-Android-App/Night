@@ -37,6 +37,13 @@ public class ClockPageFragment extends Fragment {
             Class<? extends Fragment> fr =
                     tab.getPosition() == 0 ? AlarmFragment.class : NapFragment.class;
 
+            if (tab.getPosition() == 0) {
+                binding.ivSleep.setImageResource(R.drawable.ic_tab_analysis);
+            }
+            else {
+                binding.ivSleep.setImageResource(R.drawable.ic_snooze);
+            }
+
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fr_clock_details, fr, null)
                     .commit();

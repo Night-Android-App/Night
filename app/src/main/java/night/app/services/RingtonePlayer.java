@@ -4,13 +4,15 @@ import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import night.app.activities.MainActivity;
 
 public class RingtonePlayer {
     private MediaPlayer mediaPlayer;
     public Integer playerOwner;
-    private MainActivity activity;
-    private int id;
+    private AppCompatActivity activity;
+    private Integer id;
 
     public void release() {
         if (mediaPlayer != null) {
@@ -20,7 +22,13 @@ public class RingtonePlayer {
 
     public void run() {
         new Thread(() -> {
-            String path = MainActivity.getDatabase().dao().getRingtone(id).get(0).path;
+            String path;
+            if (id != null) {
+                path = MainActivity.getDatabase().dao().getRingtone(id).get(0).path;
+            }
+            else {
+                path = "content://settings/system/alarm_alert";
+            }
             activity.runOnUiThread(() -> {
                 try {
                     if (mediaPlayer != null) mediaPlayer.release();
@@ -57,7 +65,7 @@ public class RingtonePlayer {
         this.playerOwner = playerOwner;
     }
 
-    public RingtonePlayer(MainActivity activity) {
+    public RingtonePlayer(AppCompatActivity activity) {
         this.activity = activity;
     }
 }

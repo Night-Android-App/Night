@@ -27,10 +27,12 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/desc_avatar"
                 android:padding="4dp"
+                android:tint="@{theme.onPrimary}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_tab_analysis" />
+                app:srcCompat="@drawable/ic_tab_analysis"
+                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/upper_msg"

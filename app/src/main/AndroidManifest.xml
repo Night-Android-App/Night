@@ -22,6 +22,9 @@
         tools:ignore="LockedOrientationActivity"
         tools:targetApi="31">
         <activity
+            android:name=".activities.SleepActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.InitialActivity"
             android:exported="false" />
         <activity
