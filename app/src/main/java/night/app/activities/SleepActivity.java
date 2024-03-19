@@ -22,7 +22,8 @@ public class SleepActivity extends AppCompatActivity {
             while (remain >= 0) {
                 try {
                     Thread.sleep(1000);
-                    String text = "( " + remain + " )";
+
+                    String text = "(" + TimeUtils.toHrMinSec(remain) + ")";
                     runOnUiThread(() -> binding.tvCount.setText(text));
                     remain--;
                 }
@@ -32,6 +33,7 @@ public class SleepActivity extends AppCompatActivity {
             }
 
             player.run();
+            binding.tvCount.setText("End");
         }).start();
     }
 
@@ -39,17 +41,11 @@ public class SleepActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                Calendar calendar = Calendar.getInstance();
 
                 runOnUiThread(() -> {
-                    binding.tvCurrent.setText(
-                            TimeUtils.toTimeNotation(
-                                    calendar.get(Calendar.HOUR) * 60 * 60
-                                            + (calendar.get(Calendar.AM_PM) == Calendar.PM ? 12 : 0) * 60 * 60
-                                            + calendar.get(Calendar.MINUTE) * 60
-                            )
-                    );
+                    binding.tvCurrent.setText(TimeUtils.toTimeNotation(Calendar.getInstance()));
                 });
+
                 updateCurrentTime();
             }
             catch (InterruptedException e) {
@@ -58,10 +54,26 @@ public class SleepActivity extends AppCompatActivity {
         }).start();
     }
 
+    private void setWeekOfDay() {
+        String[] dayName = new String[] {
+                "Sunday", "Monday",
+                "Tuesday", "Wednesday",
+                "Thursday", "Friday",
+                "Saturday"
+        };
+
+        int dayNum = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+
+        if (dayNum < dayName.length) {
+            binding.tvWeekOfDay.setText(dayName[dayNum]);
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        player.release();
+
+        if (player != null) player.release();
     }
 
     @Override
@@ -80,32 +92,23 @@ public class SleepActivity extends AppCompatActivity {
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             int sleepMinutes = getIntent().getExtras().getInt("sleepMinutes");
+
             if (sleepMinutes >= 0) {
                 Calendar calendar = Calendar.getInstance();
-
-                binding.tvCurrent.setText(
-                        TimeUtils.toTimeNotation(
-                                calendar.get(Calendar.HOUR) * 60 * 60
-                                        + (calendar.get(Calendar.AM_PM) == Calendar.PM ? 12 : 0) * 60 * 60
-                                        + calendar.get(Calendar.MINUTE) * 60
-                        )
-                );
+                binding.tvCurrent.setText(TimeUtils.toTimeNotation(calendar));
                 
                 calendar.add(Calendar.MINUTE, sleepMinutes);
+                binding.tvWake.setText(TimeUtils.toTimeNotation(calendar));
 
-                binding.tvWake.setText(
-                        TimeUtils.toTimeNotation(
-                                calendar.get(Calendar.HOUR) * 60 * 60
-                                        + (calendar.get(Calendar.AM_PM) == Calendar.PM ? 12 : 0) * 60 * 60
-                                        + calendar.get(Calendar.MINUTE) * 60
-                        )
-                );
-
-                binding.tvCount.setText("( " + sleepMinutes*60 + " )");
 
                 updateCurrentTime();
-                countdown(sleepMinutes * 60);
+
+                String text = "(" + TimeUtils.toHrMinSec(sleepMinutes*60) + ")";
+                binding.tvCount.setText(text);
+                countdown(sleepMinutes * 60-1);
             }
+
+            setWeekOfDay();
         }
     }
 }

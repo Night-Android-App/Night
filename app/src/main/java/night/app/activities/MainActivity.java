@@ -28,7 +28,6 @@ import night.app.R;
 
 public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
-
     private static AppDatabase database;
 
     private static DataStoreHelper dataStore;
@@ -179,5 +178,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
+
+        requestPermissions();
     }
 }

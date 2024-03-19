@@ -181,6 +181,7 @@ public class BackupConfigFragment extends Fragment {
         try {
             AppDAO dao = MainActivity.getDatabase().dao();
             dao.deleteAllDays();
+            dao.deleteAllAlarms();
 
             JSONObject responseBody = res.getJSONObject("response");
 
@@ -246,6 +247,10 @@ public class BackupConfigFragment extends Fragment {
 
         binding.setTheme(MainActivity.getAppliedTheme());
         binding.setViewModel(new ViewModelProvider(activity).get(PreferenceViewModel.class));
+
+        binding.tvSettBackupLastDate.setText(
+                MainActivity.getDataStore().getPrefs().get(DataStoreHelper.KEY_BACKUP_DATE)
+        );
 
         binding.btnSettBackupActUpload.setOnClickListener(v -> {
             String title = "Backup";

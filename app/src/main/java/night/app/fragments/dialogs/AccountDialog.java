@@ -31,7 +31,7 @@ import night.app.databinding.DialogAccountBinding;
 import night.app.networks.AccountRequest;
 import night.app.services.Password;
 
-public class AccountDialog extends DialogFragment {
+public class  AccountDialog extends DialogFragment {
     DialogAccountBinding binding;
     private void register() {
         // get user inputs from the fields

@@ -26,6 +26,9 @@ public interface AppDAO {
     @Query("DELETE FROM alarm WHERE alarm_id=:id")
     void deleteAlarm(int id);
 
+    @Query("DELETE FROM alarm")
+    void deleteAllAlarms();
+
     @Query("DELETE FROM alarm WHERE alarm_id IN (:id)")
     void deleteAlarm(List<Integer> id);
 

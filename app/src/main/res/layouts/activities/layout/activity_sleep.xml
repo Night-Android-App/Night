@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="128dp"
-            android:text="TextView"
+            tools:text="TextView"
             android:textColor="@{theme.onPrimary}"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +33,7 @@
             android:id="@+id/tv_week_of_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            tools:text="TextView"
             android:textColor="@{theme.onPrimaryVariant}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
@@ -64,7 +64,7 @@
                 android:layout_height="48dp"
                 android:layout_marginBottom="36dp"
                 android:gravity="center"
-                android:text="TextView"
+                tools:text="TextView"
                 android:textColor="@{theme.onPrimary}" />
 
         </LinearLayout>
@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="TextView"
+            tools:text="TextView"
             android:textColor="@{theme.onPrimaryVariant}"
             app:layout_constraintBottom_toTopOf="@+id/btn_pos"
             app:layout_constraintEnd_toEndOf="@+id/btn_pos"

@@ -29,6 +29,14 @@ public class TimeUtils {
         return later - earlier;
     }
 
+    public static String toTimeNotation(Calendar calendar) {
+        return toTimeNotation(
+                calendar.get(Calendar.HOUR) * 60 * 60
+                + (calendar.get(Calendar.AM_PM) == Calendar.PM ? 12 : 0) * 60 * 60
+                + calendar.get(Calendar.MINUTE) * 60
+        );
+    }
+
     public static String toTimeNotation(int seconds) {
         int hours = (int) Math.floor(seconds/3600f) ;
         int minutes = seconds / 60 - hours * 60;
@@ -48,6 +56,23 @@ public class TimeUtils {
             return hours + "h ";
         }
         return hours + "h " + minutes + "m";
+    }
+
+    public static String toHrMinSec(int seconds) {
+        int hours = seconds / 3600;
+        int minutes = seconds / 60 - hours * 60;
+
+        if (hours <= 0) {
+            if (minutes == 0) {
+                return seconds - hours*3600 + "s";
+            }
+            return minutes + "m " + (seconds - hours*3600 - minutes*60) + "s";
+        }
+
+        if (hours >0 && minutes <= 0) {
+            return hours + "h ";
+        }
+        return hours + "h " + minutes + "m" + (seconds - hours*3600 - minutes*60) + "s";
     }
 
     public static String toDateString(long timestamp, boolean year) {

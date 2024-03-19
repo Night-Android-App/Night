@@ -1,6 +1,8 @@
 package night.app.activities;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.datastore.preferences.core.PreferencesKeys;
 
@@ -80,6 +82,14 @@ public class InitialActivity extends AppCompatActivity {
         binding.tvAgreements.setMovementMethod(LinkMovementMethod.getInstance());
         binding.tvAgreements.setHighlightColor(Color.TRANSPARENT);
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
