@@ -53,7 +53,7 @@ public class SettingsPageFragment extends Fragment {
                 fragmentClass = OthersConfigFragment.class;
             }
 
-            getParentFragmentManager().beginTransaction()
+            getChildFragmentManager().beginTransaction()
                     .replace(R.id.fr_sett_details, fragmentClass, null)
                     .commit();
         }));
@@ -120,10 +120,10 @@ public class SettingsPageFragment extends Fragment {
         createViewModel();
         loadDataFromDataStore();
 
-        getParentFragmentManager()
+        getChildFragmentManager()
                 .setFragmentResultListener("accountStatus", this, this::setAccountStatusResult);
 
-        getParentFragmentManager().beginTransaction()
+        getChildFragmentManager().beginTransaction()
                 .add(R.id.fr_sett_details, BackupConfigFragment.class, null)
                 .commit();
 

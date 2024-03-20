@@ -37,7 +37,7 @@ public class AnalysisPageFragment extends Fragment {
     }
 
     private void switchDetailsPage(Class<? extends Fragment> fr) {
-        getParentFragmentManager().beginTransaction()
+        getChildFragmentManager().beginTransaction()
                 .replace(R.id.fr_anal_details, fr, createBundleForMode())
                 .commit();
     }
@@ -71,7 +71,7 @@ public class AnalysisPageFragment extends Fragment {
     }
 
     private void setUpperPanelResultListener() {
-        getParentFragmentManager()
+        getChildFragmentManager()
                 .setFragmentResultListener("updateAnalytics", this, (String key, Bundle bundle) -> {
                     if (getActivity() == null) return;
 
@@ -120,7 +120,7 @@ public class AnalysisPageFragment extends Fragment {
             case MODE_SAMPLE -> setStyleForNormalMode();
         }
 
-        Fragment fr = getParentFragmentManager().findFragmentById(R.id.fr_anal_details);
+        Fragment fr = getChildFragmentManager().findFragmentById(R.id.fr_anal_details);
         if (fr != null) switchDetailsPage(fr.getClass());
     }
 
@@ -142,7 +142,9 @@ public class AnalysisPageFragment extends Fragment {
 
         binding.llTips.setOnClickListener(v -> toggleMode());
 
-        switchDetailsPage(DayRecordFragment.class);
+        getChildFragmentManager().beginTransaction()
+                .add(R.id.fr_anal_details, DayRecordFragment.class, createBundleForMode())
+                .commit();
 
         return binding.getRoot();
     }

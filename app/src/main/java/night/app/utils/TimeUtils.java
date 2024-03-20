@@ -72,7 +72,7 @@ public class TimeUtils {
         if (hours >0 && minutes <= 0) {
             return hours + "h ";
         }
-        return hours + "h " + minutes + "m" + (seconds - hours*3600 - minutes*60) + "s";
+        return hours + "h " + minutes + "m " + (seconds - hours*3600 - minutes*60) + "s";
     }
 
     public static String toDateString(long timestamp, boolean year) {

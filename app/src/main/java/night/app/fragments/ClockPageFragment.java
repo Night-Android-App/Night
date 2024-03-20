@@ -21,7 +21,7 @@ public class ClockPageFragment extends Fragment {
     private FragmentClockPageBinding binding;
 
     private void setSleepMsgResultListener() {
-        getParentFragmentManager().setFragmentResultListener("updateSleepInfo", this, (requestKey, bundle) -> {
+        getChildFragmentManager().setFragmentResultListener("updateSleepInfo", this, (requestKey, bundle) -> {
             String upperMsg = bundle.getString("upperMsg");
             String lowerMsg = bundle.getString("lowerMsg");
 
@@ -44,7 +44,7 @@ public class ClockPageFragment extends Fragment {
                 binding.ivSleep.setImageResource(R.drawable.ic_snooze);
             }
 
-            getParentFragmentManager().beginTransaction()
+            getChildFragmentManager().beginTransaction()
                     .replace(R.id.fr_clock_details, fr, null)
                     .commit();
         }));
@@ -58,7 +58,7 @@ public class ClockPageFragment extends Fragment {
         setOnTabSelectedListener();
         setSleepMsgResultListener();
 
-        getParentFragmentManager().beginTransaction()
+        getChildFragmentManager().beginTransaction()
                 .add(R.id.fr_clock_details, AlarmFragment.class, null)
                 .commit();
 
