@@ -6,6 +6,8 @@ import android.os.PersistableBundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import night.app.databinding.ActivityAgreementBinding;
 
@@ -38,5 +40,11 @@ public class AgreementActivity extends AppCompatActivity {
 
         getWindow().setStatusBarColor(Color.WHITE);
         getWindow().setNavigationBarColor(Color.WHITE);
+
+        WindowInsetsControllerCompat windowController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+        windowController.setAppearanceLightStatusBars(true);
+        windowController.setAppearanceLightNavigationBars(true);
     }
 }

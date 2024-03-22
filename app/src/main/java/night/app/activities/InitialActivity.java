@@ -4,11 +4,14 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.datastore.preferences.core.PreferencesKeys;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -16,6 +19,7 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
+import android.view.WindowManager;
 
 import night.app.databinding.ActivityInitialBinding;
 import night.app.fragments.dialogs.AccountDialog;
@@ -106,7 +110,14 @@ public class InitialActivity extends AppCompatActivity {
 
         setAgreementInfoTextStyle();
 
-        getWindow().setStatusBarColor(MainActivity.getAppliedTheme().getSurface());
-        getWindow().setNavigationBarColor(MainActivity.getAppliedTheme().getSurface());
+
+        getWindow().setStatusBarColor(Color.parseColor("#ffffff"));
+        getWindow().setNavigationBarColor(Color.parseColor("#ffffff"));
+
+        WindowInsetsControllerCompat windowController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+        windowController.setAppearanceLightStatusBars(true);
+        windowController.setAppearanceLightNavigationBars(true);
     }
 }

@@ -11,27 +11,52 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@{theme.primary, default=`#212529`}">
+            android:layout_height="wrap_content"
+            android:background="@{theme.primary, default=`#212529`}"
+            android:gravity="bottom|center_vertical"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btn_garden_shop"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:backgroundTint="@{theme.accent, default=`#441E9F`}"
-                android:drawableLeft="@drawable/ic_shop"
-                android:compoundDrawableTintList="@{theme.onPrimaryColorStateList}"
-                android:text="SHOP"
-                android:textColor="@{theme.onPrimary, default=`#fff`}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <Button
+                    android:id="@+id/btn_garden_shop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:backgroundTint="@{theme.accent, default=`#441E9F`}"
+                    android:compoundDrawableTintList="@{theme.onPrimaryColorStateList}"
+                    android:drawableLeft="@drawable/ic_shop"
+                    android:elevation="2dp"
+                    android:text="SHOP"
+                    android:textColor="@{theme.onPrimary, default=`#fff`}"
+                    android:translationZ="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="-12dp"
+                    android:layout_marginTop="-24dp"
+                    android:layout_marginEnd="16dp"
+                    android:scaleType="centerCrop"
+                    android:translationZ="-1dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/bg_owl_sleep" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"

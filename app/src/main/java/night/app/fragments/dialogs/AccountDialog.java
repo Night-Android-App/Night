@@ -10,6 +10,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 
@@ -193,6 +195,12 @@ public class  AccountDialog extends DialogFragment {
         binding.setTheme(MainActivity.getAppliedTheme());
         requireDialog().getWindow().setStatusBarColor(binding.getTheme().getSecondary());
         requireDialog().getWindow().setNavigationBarColor(binding.getTheme().getSecondary());
+
+        WindowInsetsControllerCompat windowController =
+                WindowCompat.getInsetsController(getDialog().getWindow(), getDialog().getWindow().getDecorView());
+
+        windowController.setAppearanceLightStatusBars(true);
+        windowController.setAppearanceLightNavigationBars(true);
 
         loadTextInputLayoutStyle();
 

@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -95,6 +97,10 @@ public class ShopDialog extends DialogFragment {
         getParentFragmentManager()
                 .setFragmentResultListener("switchTheme", this, this::switchTheme);
 
+        WindowInsetsControllerCompat windowController =
+                WindowCompat.getInsetsController(requireDialog().getWindow(), requireDialog().getWindow().getDecorView());
+
+        windowController.setAppearanceLightNavigationBars(true);
 
         return binding.getRoot();
     }
