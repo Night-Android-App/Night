@@ -21,7 +21,7 @@ import night.app.activities.MainActivity;
 import night.app.adapters.RingtoneViewHolder;
 import night.app.adapters.ThemeViewHolder;
 import night.app.databinding.DialogPurchaseBinding;
-import night.app.fragments.GardenPageFragment;
+import night.app.fragments.ClockPageFragment;
 import night.app.networks.ServiceRequest;
 
 public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extends DialogFragment {
@@ -31,7 +31,7 @@ public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extend
 
     private void refreshGardenPage() {
         requireActivity().getSupportFragmentManager().beginTransaction()
-                .add(R.id.fr_app_page, GardenPageFragment.class, null)
+                .add(R.id.fr_app_page, ClockPageFragment.class, null)
                 .commit();
     }
 

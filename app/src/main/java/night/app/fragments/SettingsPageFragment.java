@@ -1,9 +1,12 @@
 package night.app.fragments;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -11,6 +14,11 @@ import androidx.datastore.preferences.core.Preferences;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.tabs.TabLayout;
+
+import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
@@ -19,6 +27,7 @@ import night.app.data.PreferenceViewModel;
 import night.app.databinding.FragmentSettingsPageBinding;
 import night.app.fragments.dialogs.AccountDialog;
 import night.app.fragments.dialogs.ConfirmDialog;
+import night.app.fragments.dialogs.ShopDialog;
 import night.app.fragments.settings.BackupConfigFragment;
 import night.app.fragments.settings.OthersConfigFragment;
 import night.app.utils.LayoutUtils;
@@ -47,9 +56,15 @@ public class SettingsPageFragment extends Fragment {
 
     private void setOnTabSelectedListener() {
         binding.tabSett.addOnTabSelectedListener(LayoutUtils.getOnTabSelectedListener(tab -> {
+            if (tab.getPosition() == 0) {
+                new ShopDialog().show(requireActivity().getSupportFragmentManager(), null);
+                binding.tabSett.getTabAt(1).select();
+
+                return;
+            }
             Class<? extends Fragment> fragmentClass = BackupConfigFragment.class;
 
-            if (tab.getPosition() == 1) {
+            if (tab.getPosition() == 2) {
                 fragmentClass = OthersConfigFragment.class;
             }
 
@@ -110,6 +125,16 @@ public class SettingsPageFragment extends Fragment {
         setStylesForGuest();
     }
 
+    private void setTabWidth(int pos, float width) {
+        LinearLayout llTabItem0 = ((LinearLayout) ((LinearLayout) binding.tabSett.getChildAt(0)).getChildAt(pos));
+
+        LinearLayout.LayoutParams layoutParams =
+                (LinearLayout.LayoutParams) llTabItem0.getLayoutParams();
+
+        layoutParams.weight = width;
+        llTabItem0.setLayoutParams(layoutParams);
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings_page, container, false);
@@ -126,6 +151,13 @@ public class SettingsPageFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .add(R.id.fr_sett_details, BackupConfigFragment.class, null)
                 .commit();
+
+        binding.tabSett.getTabAt(0).setIcon(R.drawable.ic_shop);
+        binding.tabSett.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_IN);
+
+        binding.tabSett.getTabAt(1).select();
+
+        setTabWidth(0, 0.5f);
 
         return binding.getRoot();
     }

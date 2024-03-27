@@ -16,7 +16,7 @@ import night.app.data.DataStoreHelper;
 import night.app.data.Product;
 import night.app.data.Theme;
 import night.app.databinding.ItemShopThemeBinding;
-import night.app.fragments.GardenPageFragment;
+import night.app.fragments.ClockPageFragment;
 import night.app.fragments.dialogs.PurchaseDialog;
 
 public class ThemeViewHolder extends RecyclerView.ViewHolder {
@@ -67,7 +67,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
 
                     // refresh the garden page for switching theme
                     activity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fr_app_page, GardenPageFragment.class, null)
+                            .replace(R.id.fr_app_page, ClockPageFragment.class, null)
                             .commit();
 
                     setThemeApplied();

@@ -18,7 +18,7 @@ import night.app.fragments.clocks.NapFragment;
 import night.app.utils.LayoutUtils;
 
 public class ClockPageFragment extends Fragment {
-    private FragmentClockPageBinding binding;
+    public FragmentClockPageBinding binding;
 
     private void setSleepMsgResultListener() {
         getChildFragmentManager().setFragmentResultListener("updateSleepInfo", this, (requestKey, bundle) -> {

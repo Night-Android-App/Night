@@ -22,7 +22,6 @@ import night.app.data.Theme;
 import night.app.databinding.ActivityMainBinding;
 import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.ClockPageFragment;
-import night.app.fragments.GardenPageFragment;
 import night.app.fragments.SettingsPageFragment;
 import night.app.R;
 
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void switchPage(int destId, Class<? extends Fragment> destFragment) {
-        for (int id : new int[] {R.id.btn_page_garden, R.id.btn_page_clock, R.id.btn_page_analysis, R.id.btn_page_settings}) {
+        for (int id : new int[] {R.id.btn_page_clock, R.id.btn_page_analysis, R.id.btn_page_settings}) {
             if (id == destId) {
                 setNavItemStyle(id, LinearLayout.LayoutParams.WRAP_CONTENT, theme.getOnPrimary());
                 continue;
@@ -102,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
             public void handleOnBackPressed() {
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
 
-                if (fragment instanceof GardenPageFragment) System.exit(0);
-                switchPage(R.id.btn_page_garden, GardenPageFragment.class);
+                if (fragment instanceof ClockPageFragment) System.exit(0);
+                switchPage(R.id.btn_page_clock, ClockPageFragment.class);
             }
         });
     }
@@ -127,8 +126,6 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(theme.getPrimary());
         getWindow().setNavigationBarColor(theme.getPrimary());
 
-        binding.btnPageGarden
-                .setOnClickListener(v -> switchPage(v.getId(), GardenPageFragment.class));
          binding.btnPageClock
                 .setOnClickListener(v -> switchPage(v.getId(), ClockPageFragment.class));
         binding.btnPageAnalysis
@@ -139,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         setOnBackPressedListener();
 
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fr_app_page, GardenPageFragment.class, null)
+                .add(R.id.fr_app_page, ClockPageFragment.class, null)
                 .commit();
 
         new Thread(() -> {
@@ -168,8 +165,8 @@ public class MainActivity extends AppCompatActivity {
                         binding.setTheme(MainActivity.getAppliedTheme());
 
                         Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
-                        if (fr instanceof GardenPageFragment) {
-                            ((GardenPageFragment) fr).binding.setTheme(theme);
+                        if (fr instanceof ClockPageFragment) {
+                            ((ClockPageFragment) fr).binding.setTheme(theme);
                         }
 
                         getWindow().setStatusBarColor(theme.getPrimary());
