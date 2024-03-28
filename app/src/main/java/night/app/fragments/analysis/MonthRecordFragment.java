@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,17 +17,27 @@ import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.adapters.DayItemAdapter;
 import night.app.data.Day;
+import night.app.databinding.FragmentMonthRecordBinding;
 import night.app.fragments.AnalysisPageFragment;
 import night.app.services.Sample;
 import night.app.services.SleepData;
 import night.app.utils.TimeUtils;
 
 public class MonthRecordFragment extends Fragment {
+    private FragmentMonthRecordBinding binding;
+
     private void setAdapter(List<Day> dayList) {
         if (getView() != null) {
-            RecyclerView view = (RecyclerView) getView();
             if (getActivity() instanceof AppCompatActivity) {
-                view.setAdapter(new DayItemAdapter((AppCompatActivity) getActivity(), dayList));
+                binding.rvItems
+                        .setAdapter(new DayItemAdapter((AppCompatActivity) getActivity(), dayList));
+
+                if (dayList.size() > 0) {
+                    requireView().findViewById(R.id.ll_no_Data).setVisibility(View.INVISIBLE);
+                }
+                else {
+                    requireView().findViewById(R.id.ll_no_Data).setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -94,9 +105,10 @@ public class MonthRecordFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recycle_view, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_month_record, container, false);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
-        ((RecyclerView) view).setLayoutManager(new LinearLayoutManager(requireActivity()));
+        binding.rvItems.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
         new Thread(this::loadData).start();
 
@@ -105,6 +117,6 @@ public class MonthRecordFragment extends Fragment {
             getActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
         }
 
-        return view;
+        return binding.getRoot();
     }
 }

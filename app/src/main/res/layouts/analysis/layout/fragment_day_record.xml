@@ -4,10 +4,13 @@
     <data>
         <variable name="theme" type="night.app.data.Theme" />
     </data>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/sv_day_record"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@{theme.secondary}"
         tools:background="#f5f5f5">
@@ -18,11 +21,14 @@
             android:layout_height="48dp"
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_data"
+            android:drawablePadding="10dp"
+            android:compoundDrawableTintList="@{theme.onPrimaryVColorStateList}"
             android:gravity="center_vertical"
             android:text="STATISTICS"
             android:textColor="@{theme.onPrimaryVariant}"
-            tools:textColor="#757a7f"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            tools:textColor="#757a7f" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,7 +49,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
-                    android:textColor="@{theme.onSurface, default=`#000`}"
+                    android:textColor="@{theme.onSurface}"
+                    tools:textColor="#000"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     tools:text="@string/not_applicable" />
@@ -53,7 +60,8 @@
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal|top"
                     android:text="Light sleep"
-                    android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
+                    android:textColor="@{theme.onPrimaryVariant}"
+                    tools:textColor="#757a7f"
                     android:textSize="11sp" />
             </LinearLayout>
 
@@ -69,7 +77,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
-                    android:textColor="@{theme.onSurface, default=`#000`}"
+                    android:textColor="@{theme.onSurface}"
+                    tools:textColor="#fff"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     tools:text="@string/not_applicable" />
@@ -79,7 +88,8 @@
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal|top"
                     android:text="Deep sleep"
-                    android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
+                    android:textColor="@{theme.onPrimaryVariant}"
+                    tools:textColor="#757a7f"
                     android:textSize="11sp" />
             </LinearLayout>
 
@@ -95,7 +105,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:gravity="center"
-                    android:textColor="@{theme.onSurface, default=`#000`}"
+                    android:textColor="@{theme.onSurface}"
+                    tools:textColor="#000"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     tools:text="@string/not_applicable" />
@@ -105,7 +116,8 @@
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal|top"
                     android:text="In bed"
-                    android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
+                    android:textColor="@{theme.onPrimaryVariant}"
+                    tools:textColor="#757a7f"
                     android:textSize="11sp" />
             </LinearLayout>
 
@@ -118,8 +130,11 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
-            android:text="SLEEP CONFIDENCE"
-            android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
+            android:text="SLEEP STAGE"
+            android:drawableStart="@drawable/ic_query_stats"
+            android:drawablePadding="10dp"
+            android:compoundDrawableTintList="@{theme.onPrimaryVColorStateList}"
+            android:textColor="@{theme.onPrimaryVariant}"
             android:textSize="11sp" />
 
         <com.github.mikephil.charting.charts.LineChart
@@ -139,7 +154,11 @@
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
             android:text="DREAM RECORD"
-            android:textColor="@{theme.onPrimaryVariant, default=`#757a7f`}"
+            android:drawableStart="@drawable/ic_tab_analysis"
+            android:drawablePadding="10dp"
+            android:compoundDrawableTintList="@{theme.onPrimaryVColorStateList}"
+            android:textColor="@{theme.onPrimaryVariant}"
+            tools:textColor="#757a7f"
             android:textSize="11sp" />
 
         <TextView
@@ -149,11 +168,14 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="24dp"
             android:background="@drawable/view_rect_r10"
-            android:backgroundTint="@{theme.surface, default=`#fff`}"
+            android:backgroundTint="@{theme.surface}"
             android:minHeight="150dp"
             android:padding="12dp"
             android:text="No record."
-            android:textColor="@{theme.onSurface, default=`#000`}" />
+            android:textColor="@{theme.onSurface}"
+            android:textSize="12sp"
+            tools:backgroundTint="#fff" />
 
     </LinearLayout>
+    </ScrollView>
 </layout>

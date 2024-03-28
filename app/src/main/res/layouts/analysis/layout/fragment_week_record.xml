@@ -4,7 +4,9 @@
     <data>
         <variable name="theme" type="night.app.data.Theme" />
     </data>
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,6 +16,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:drawableStart="@drawable/ic_barchart"
+            android:drawablePadding="10dp"
+            android:compoundDrawableTintList="@{theme.onPrimaryVColorStateList}"
             android:gravity="center_vertical"
             android:text="TOTAL SLEEP"
             android:textSize="11sp"
@@ -23,6 +28,8 @@
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/barChart_week_record"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="200dp"
+            android:layout_marginBottom="24dp" />
     </LinearLayout>
+    </ScrollView>
 </layout>
