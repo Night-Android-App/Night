@@ -52,6 +52,8 @@ android {
 }
 
 dependencies {
+    implementation 'io.github.ShawnLin013:number-picker:2.4.13'
+
     // for sleep API
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 

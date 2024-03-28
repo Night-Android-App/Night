@@ -24,6 +24,8 @@ import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.ClockPageFragment;
 import night.app.fragments.SettingsPageFragment;
 import night.app.R;
+import night.app.fragments.clocks.AlarmFragment;
+import night.app.fragments.clocks.NapFragment;
 
 public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
@@ -167,6 +169,14 @@ public class MainActivity extends AppCompatActivity {
                         Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
                         if (fr instanceof ClockPageFragment) {
                             ((ClockPageFragment) fr).binding.setTheme(theme);
+
+                            Fragment innerFr = fr.getChildFragmentManager().findFragmentById(R.id.fr_clock_details);
+                            if (innerFr instanceof AlarmFragment) {
+                                ((AlarmFragment) innerFr).binding.setTheme(getAppliedTheme());
+                            }
+                            else if (innerFr instanceof NapFragment) {
+                                ((NapFragment) innerFr).binding.setTheme(theme);
+                            }
                         }
 
                         getWindow().setStatusBarColor(theme.getPrimary());

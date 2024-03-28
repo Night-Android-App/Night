@@ -21,7 +21,7 @@ import night.app.databinding.FragmentAlarmBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
 
 public class AlarmFragment extends Fragment {
-    private FragmentAlarmBinding binding;
+    public FragmentAlarmBinding binding;
 
     private void showSleepSettings() {
 
@@ -66,6 +66,7 @@ public class AlarmFragment extends Fragment {
     @Override @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         binding.rvAlarm.setLayoutManager(new LinearLayoutManager(requireActivity()));
         loadAlarmList();

@@ -1,26 +1,35 @@
 package night.app.fragments.clocks;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.NumberPicker;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.shawnlin.numberpicker.NumberPicker;
+
+import java.lang.reflect.Field;
 import java.util.Calendar;
 
 import night.app.R;
+import night.app.activities.MainActivity;
 import night.app.activities.SleepActivity;
 import night.app.databinding.FragmentNapBinding;
 import night.app.utils.TimeUtils;
 
 public class NapFragment extends Fragment {
-    private FragmentNapBinding binding;
+    public FragmentNapBinding binding;
 
     private int getNapMinutes() {
         return binding.npHrs.getValue() * 60 + binding.npMins.getValue();
@@ -41,12 +50,6 @@ public class NapFragment extends Fragment {
     }
 
     private void initNumberPicker() {
-        binding.npHrs.setMinValue(0);
-        binding.npHrs.setMaxValue(23);
-
-        binding.npMins.setMinValue(0);
-        binding.npMins.setMaxValue(59);
-
         binding.npHrs.setOnValueChangedListener(this::handlePickerValueChanged);
         binding.npMins.setOnValueChangedListener(this::handlePickerValueChanged);
     }
@@ -68,6 +71,7 @@ public class NapFragment extends Fragment {
     @Override @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_nap, container, false);
+        binding.setTheme(MainActivity.getAppliedTheme());
 
         initNumberPicker();
         updateSleepMsg("Nap with a one-time alarm", "Configure it below");

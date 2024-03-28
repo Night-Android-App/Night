@@ -94,15 +94,10 @@
 
         </com.google.android.material.tabs.TabLayout>
 
-        <ScrollView
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fr_clock_details"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fr_clock_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </ScrollView>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 </layout>
