@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,7 +21,7 @@ import night.app.data.Theme;
 import night.app.databinding.ActivityMainBinding;
 import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.ClockPageFragment;
-import night.app.fragments.SettingsPageFragment;
+import night.app.fragments.WidgetsPageFragment;
 import night.app.R;
 import night.app.fragments.clocks.AlarmFragment;
 import night.app.fragments.clocks.NapFragment;
@@ -128,12 +127,12 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(theme.getPrimary());
         getWindow().setNavigationBarColor(theme.getPrimary());
 
-         binding.btnPageClock
+        binding.btnPageClock
                 .setOnClickListener(v -> switchPage(v.getId(), ClockPageFragment.class));
         binding.btnPageAnalysis
                 .setOnClickListener(v -> switchPage(v.getId(), AnalysisPageFragment.class));
         binding.btnPageSettings
-                .setOnClickListener(v -> switchPage(v.getId(), SettingsPageFragment.class));
+                .setOnClickListener(v -> switchPage(v.getId(), WidgetsPageFragment.class));
 
         setOnBackPressedListener();
 
@@ -152,9 +151,6 @@ public class MainActivity extends AppCompatActivity {
             if (isServiceStarted == null || !isServiceStarted) {
                 dataStore.update(DataStoreHelper.KEY_BACKUP_ALARM, true);
                 dataStore.update(DataStoreHelper.KEY_BACKUP_SLEEP, true);
-
-                Intent intent = new Intent(this, InitialActivity.class);
-                startActivity(intent);
             }
 
             Integer appliedTheme = dataStore.getPrefs().get(DataStoreHelper.KEY_THEME);

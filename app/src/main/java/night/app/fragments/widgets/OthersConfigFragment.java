@@ -1,4 +1,4 @@
-package night.app.fragments.settings;
+package night.app.fragments.widgets;
 
 import android.content.Intent;
 import android.net.Uri;

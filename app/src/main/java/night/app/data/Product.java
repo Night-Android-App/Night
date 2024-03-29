@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "product", foreignKeys = {
+@Entity(tableName = "Products", foreignKeys = {
         @ForeignKey(
                 entity = ProductType.class,
                 parentColumns = "id",
@@ -17,7 +17,6 @@ import androidx.room.PrimaryKey;
 })
 public class Product {
     @PrimaryKey
-    @ColumnInfo(name = "prod_id")
     public Integer prodId = -1;
 
     @NonNull

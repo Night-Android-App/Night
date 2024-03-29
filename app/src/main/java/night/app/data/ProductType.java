@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName="productType")
+@Entity(tableName="ProductTypes")
 public class ProductType {
     @PrimaryKey(autoGenerate = true)
     Integer id;

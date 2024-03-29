@@ -17,6 +17,7 @@ import night.app.data.Product;
 import night.app.data.Theme;
 import night.app.databinding.ItemShopThemeBinding;
 import night.app.fragments.ClockPageFragment;
+import night.app.fragments.WidgetsPageFragment;
 import night.app.fragments.dialogs.PurchaseDialog;
 
 public class ThemeViewHolder extends RecyclerView.ViewHolder {
@@ -67,7 +68,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
 
                     // refresh the garden page for switching theme
                     activity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fr_app_page, ClockPageFragment.class, null)
+                            .replace(R.id.fr_app_page, WidgetsPageFragment.class, null)
                             .commit();
 
                     setThemeApplied();
@@ -85,7 +86,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
 
             ImageView navItemIcon = (ImageView) navItemComponent.getChildAt(0);
             // shop page is opened from Garden (the first navbar item), it uses active color
-            if (nth == 0) {
+            if (nth == 2) {
                 navItemIcon.setColorFilter(theme.getOnPrimary());
                 continue;
             }

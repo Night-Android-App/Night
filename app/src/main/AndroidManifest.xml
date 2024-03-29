@@ -23,16 +23,24 @@
         tools:ignore="LockedOrientationActivity"
         tools:targetApi="31">
         <activity
-            android:name=".activities.SleepActivity"
+            android:name=".activities.RingtoneActivity"
+            android:launchMode = "singleTop"
             android:exported="false" />
         <activity
-            android:name=".activities.InitialActivity"
+            android:name=".activities.AlarmActivity"
+            android:launchMode = "singleTop"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SleepActivity"
+            android:launchMode = "singleTop"
             android:exported="false" />
         <activity
             android:name=".activities.AgreementActivity"
+            android:launchMode = "singleTop"
             android:exported="false" />
         <activity
             android:name=".activities.MainActivity"
+            android:launchMode = "singleTop"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

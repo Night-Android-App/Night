@@ -19,21 +19,19 @@ import night.app.data.Ringtone;
 import night.app.databinding.ItemRingtoneBinding;
 import night.app.services.RingtonePlayer;
 
-public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    public List<Product> productList;
+public class RingtoneOwnedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public List<Ringtone> ringtoneList;
 
     public final AppCompatActivity activity;
     final public RingtonePlayer ringtonePlayer;
-    public List<RingtoneViewHolder> viewHolders = new ArrayList<>();
 
     @Override
     public int getItemCount() {
-        return productList.size();
+        return ringtoneList.size();
     }
 
     @Override @NonNull
-    public RingtoneViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public RingtoneOwnedViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
         ItemRingtoneBinding binding =
@@ -41,19 +39,17 @@ public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         binding.setTheme(MainActivity.getAppliedTheme());
 
-        return new RingtoneViewHolder(this, binding);
+        return new RingtoneOwnedViewHolder(this, binding);
     }
 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) {
-        ((RingtoneViewHolder) viewHolder).loadData(productList.get(position));
-
-        viewHolders.add((RingtoneViewHolder) viewHolder);
+        ((RingtoneOwnedViewHolder) viewHolder).loadData(ringtoneList.get(position));
 
     }
 
-    public RingtoneAdapter(AppCompatActivity activity, List<Product> productList) {
+    public RingtoneOwnedAdapter(AppCompatActivity activity, List<Ringtone> ringtoneList) {
         this.activity = activity;
-        this.productList = productList;
+        this.ringtoneList = ringtoneList;
 
         ringtonePlayer = new RingtonePlayer(activity);
     }

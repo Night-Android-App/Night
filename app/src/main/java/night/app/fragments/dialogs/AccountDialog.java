@@ -26,7 +26,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import night.app.R;
-import night.app.activities.InitialActivity;
 import night.app.activities.MainActivity;
 import night.app.data.DataStoreHelper;
 import night.app.databinding.DialogAccountBinding;
@@ -80,8 +79,6 @@ public class  AccountDialog extends DialogFragment {
                     getParentFragmentManager().setFragmentResult("accountStatus", bundle);
                     dialog.dismiss();
                     dismiss();
-
-                    if (requireActivity() instanceof InitialActivity) requireActivity().finish();
                     return;
                 }
 
@@ -135,8 +132,6 @@ public class  AccountDialog extends DialogFragment {
                     getParentFragmentManager().setFragmentResult("accountStatus", bundle);
                     dialog.dismiss();
                     dismiss();
-
-                    if (requireActivity() instanceof InitialActivity) requireActivity().finish();
                 }
                 catch (JSONException e) {
                     requireActivity().runOnUiThread(() -> {

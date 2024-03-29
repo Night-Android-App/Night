@@ -1,4 +1,4 @@
-package night.app.fragments.settings;
+package night.app.fragments.widgets;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,7 +25,8 @@ import java.util.TimeZone;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.Alarm;
-import night.app.data.AppDAO;
+import night.app.data.dao.AlarmDAO;
+import night.app.data.dao.AppDAO;
 import night.app.data.DataStoreHelper;
 import night.app.data.Day;
 import night.app.data.PreferenceViewModel;
@@ -51,10 +52,8 @@ public class BackupConfigFragment extends Fragment {
         JSONObject json = new JSONObject();
 
         json.put("id", alarm.id);
-        json.put("startTime", alarm.startTime);
         json.put("endTime", alarm.endTime);
-        json.put("isAlarmEnabled", alarm.isAlarmEnabled);
-        json.put("isDNDEnabled", alarm.isDNDEnabled);
+        json.put("isAlarmEnabled", alarm.enableAlarm);
         return json;
     }
 
@@ -81,7 +80,7 @@ public class BackupConfigFragment extends Fragment {
         JSONObject requestBody = new JSONObject();
         new Thread(() -> {
             List<Day> days = MainActivity.getDatabase().dao().getAllDay();
-            List<Alarm> alarms = MainActivity.getDatabase().dao().getAllAlarms();
+            List<Alarm> alarms = MainActivity.getDatabase().alarmDAO().getAllAlarms();
 
             activity.runOnUiThread(() -> {
                 try {
@@ -159,7 +158,7 @@ public class BackupConfigFragment extends Fragment {
     }
 
     private void recoveryAlarmList(String data) throws JSONException {
-        AppDAO dao = MainActivity.getDatabase().dao();
+        AlarmDAO dao = MainActivity.getDatabase().alarmDAO();
 
         JSONObject alarmList = new JSONObject(data);
         Iterator<String> keys = alarmList.keys();
@@ -170,9 +169,8 @@ public class BackupConfigFragment extends Fragment {
 
             dao.createAlarm(
                     alarm.getInt("endTime"),
-                    alarm.getInt("isAlarmEnabled"),
-                    alarm.getInt("isDNDEnabled"),
-                    alarm.optString("ringtone", "default")
+                    alarm.optInt("enableMission", 0),
+                    alarm.optInt("ringtone", 0)
             );
         }
     }
@@ -181,7 +179,7 @@ public class BackupConfigFragment extends Fragment {
         try {
             AppDAO dao = MainActivity.getDatabase().dao();
             dao.deleteAllDays();
-            dao.deleteAllAlarms();
+            MainActivity.getDatabase().alarmDAO().deleteAllAlarms();
 
             JSONObject responseBody = res.getJSONObject("response");
 

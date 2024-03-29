@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="night.app.activities.MainActivity"
-        android:background="@{theme.secondary, default=`#f5f5f5`}"
+        android:background="@{theme.secondary}"
         tools:ignore="UseAppTint, UseCompoundDrawables" >
 
         <androidx.fragment.app.FragmentContainerView

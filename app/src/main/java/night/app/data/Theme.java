@@ -11,11 +11,11 @@ import androidx.room.PrimaryKey;
 
 import night.app.utils.ColorUtils;
 
-@Entity(tableName="theme", foreignKeys = {
+@Entity(tableName="Themes", foreignKeys = {
         @ForeignKey(
                 entity = Product.class,
-                parentColumns = "prod_id",
-                childColumns = "prod_id",
+                parentColumns = "prodId",
+                childColumns = "prodId",
                 onUpdate = ForeignKey.CASCADE,
                 onDelete = ForeignKey.CASCADE
         )
@@ -24,11 +24,9 @@ public class Theme {
 
     @NonNull
     @PrimaryKey
-    @ColumnInfo(name = "theme_name")
     public String name = "Default Theme";
 
     @NonNull
-    @ColumnInfo(name = "prod_id")
     public Integer prodId = -1;
 
     public String primary;

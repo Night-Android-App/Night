@@ -1,5 +1,6 @@
 package night.app.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import night.app.R;
+import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
 import night.app.databinding.FragmentClockPageBinding;
 import night.app.fragments.clocks.AlarmFragment;
@@ -61,6 +63,15 @@ public class ClockPageFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .add(R.id.fr_clock_details, AlarmFragment.class, null)
                 .commit();
+
+        binding.clClockTop.setOnClickListener(v -> {
+            if (getChildFragmentManager().findFragmentById(R.id.fr_clock_details) instanceof  AlarmFragment) {
+                Intent intent = new Intent(requireActivity(), AlarmActivity.class);
+
+                intent.putExtra("type", AlarmActivity.TYPE_SLEEP);
+                startActivity(intent);
+            }
+        });
 
         return binding.getRoot();
     }

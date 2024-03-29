@@ -14,7 +14,7 @@ import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.data.AppDAO;
+import night.app.data.dao.AppDAO;
 import night.app.data.Day;
 import night.app.databinding.FragmentDayRecordBinding;
 import night.app.fragments.AnalysisPageFragment;

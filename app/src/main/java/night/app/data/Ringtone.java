@@ -6,11 +6,11 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "ringtone", foreignKeys = {
+@Entity(tableName = "Ringtones", foreignKeys = {
         @ForeignKey(
                 entity = Product.class,
-                parentColumns = "prod_id",
-                childColumns = "prod_id",
+                parentColumns = "prodId",
+                childColumns = "prodId",
                 onUpdate = ForeignKey.CASCADE,
                 onDelete = ForeignKey.CASCADE
         )
@@ -19,11 +19,9 @@ public class Ringtone {
 
     @NonNull
     @PrimaryKey
-    @ColumnInfo(name = "ring_name")
     public String name = "Default Ringtone";
 
     @NonNull
-    @ColumnInfo(name = "prod_id")
     public Integer prodId;
 
     @NonNull

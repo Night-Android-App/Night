@@ -14,27 +14,22 @@ import androidx.datastore.preferences.core.Preferences;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.tabs.TabLayout;
-
-import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.DataStoreHelper;
 import night.app.data.PreferenceViewModel;
-import night.app.databinding.FragmentSettingsPageBinding;
+import night.app.databinding.FragmentWidgetsPageBinding;
 import night.app.fragments.dialogs.AccountDialog;
 import night.app.fragments.dialogs.ConfirmDialog;
 import night.app.fragments.dialogs.ShopDialog;
-import night.app.fragments.settings.BackupConfigFragment;
-import night.app.fragments.settings.OthersConfigFragment;
+import night.app.fragments.widgets.BackupConfigFragment;
+import night.app.fragments.widgets.OthersConfigFragment;
 import night.app.utils.LayoutUtils;
 
 
-public class SettingsPageFragment extends Fragment {
-    private FragmentSettingsPageBinding binding;
+public class WidgetsPageFragment extends Fragment {
+    private FragmentWidgetsPageBinding binding;
 
 
     private void clearLocalAccountRecord() {
@@ -137,7 +132,7 @@ public class SettingsPageFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings_page, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_widgets_page, container, false);
         binding.setTheme(MainActivity.getAppliedTheme());
 
         setOnTabSelectedListener();

@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +22,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final List<Alarm> alarmList;
     private List<AlarmViewHolder> viewHolders = new ArrayList<>();
     private List<Integer> selectedAlarms = new ArrayList<>();
+    public AppCompatActivity activity;
 
     public final static int MODE_NORMAL = 0;
     public final static int MODE_SELECT = 1;
@@ -40,7 +42,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         new Thread(() -> {
-            MainActivity.getDatabase().dao().deleteAlarm(id);
+            MainActivity.getDatabase().alarmDAO().deleteAlarm(id);
         }).start();
 
 //        selectedAlarms.clear();
@@ -87,7 +89,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return new AlarmViewHolder(this, binding);
     }
 
-    public AlarmAdapter(List<Alarm> alarmList) {
+    public AlarmAdapter(AppCompatActivity activity, List<Alarm> alarmList) {
+        this.activity = activity;
         this.alarmList = alarmList;
     }
 }

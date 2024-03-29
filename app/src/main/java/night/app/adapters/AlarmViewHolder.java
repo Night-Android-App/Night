@@ -1,5 +1,6 @@
 package night.app.adapters;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import night.app.R;
+import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
 import night.app.data.Alarm;
 import night.app.databinding.ItemAlarmBinding;
@@ -25,20 +27,28 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
 
     private int status = STATUS_NORMAL;
 
-    private void showDetailDialog() {
+    private Alarm alarm;
 
+    private void showDetailDialog() {
+        Intent intent = new Intent(adapter.activity, AlarmActivity.class);
+        intent.putExtra("type", AlarmActivity.TYPE_ALARM);
+        intent.putExtra("id", alarm.id);
+
+        adapter.activity.startActivity(intent);
     }
 
     private void updateAlarmStatus(int id) {
         new Thread(() -> {
-            MainActivity.getDatabase().dao()
+            MainActivity.getDatabase().alarmDAO()
                     .updateAlarmEnabled(id, binding.swAlarmEnable.isChecked() ? 1 : 0);
         }).start();
     }
 
     public void loadData(Alarm alarm) {
+        this.alarm = alarm;
+
         binding.tvTime.setText(TimeUtils.toTimeNotation(alarm.endTime * 60));
-        binding.swAlarmEnable.setChecked(alarm.isAlarmEnabled == 1);
+        binding.swAlarmEnable.setChecked(alarm.enableAlarm == 1);
 
         binding.swAlarmEnable.setOnClickListener(v -> updateAlarmStatus(alarm.id));
     }
