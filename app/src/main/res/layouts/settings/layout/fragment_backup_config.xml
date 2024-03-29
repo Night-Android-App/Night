@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <import type="android.graphics.Color" />
@@ -11,26 +12,29 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_marginHorizontal="16dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
-                android:text="STATUS"
-                android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:compoundDrawableTintList="@{theme.onPrimaryVColorStateList}"
+                android:drawableStart="@drawable/ic_history"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:text="HISTORY"
+                android:textColor="@{theme.onPrimaryVariant}"
                 android:textSize="11sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginVertical="5dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -41,7 +45,8 @@
                     android:gravity="center_vertical"
                     android:minHeight="48dp"
                     android:text="Recent backup"
-                    android:textColor="@{theme.onSurface, default=`#000`}"
+                    android:textColor="@{theme.onSurface}"
+                    tools:textColor="#000"
                     android:textSize="16sp" />
 
                 <TextView
@@ -51,7 +56,9 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|end"
                     android:text="@{viewModel.lastBackupDate}"
-                    android:textColor="@{theme.onSurface , default=`#000`}" />
+                    android:textColor="@{theme.onSurface}"
+                    tools:textColor="#000"
+                    tools:text="12 Mar 2024" />
             </LinearLayout>
 
         </LinearLayout>
@@ -63,25 +70,30 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:compoundDrawableTintList="@{theme.onPrimaryVColorStateList}"
+                android:drawableStart="@drawable/ic_settings"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
                 android:text="OPTION"
-                android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
-                android:textSize="11sp" />
+                android:textColor="@{theme.onPrimaryVariant}"
+                android:textSize="11sp"
+                tools:textColor="#61666a" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/btn_sett_backup_opt_alarm"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginVertical="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginBottom="5dp"
                 android:checked="@={viewModel.isBackupAlarm}"
-                android:textColor="@{theme.onSurface, default=`#000`}"
-                android:thumbTintList="@{theme.switchThumbColors}"
-                android:trackTintList="@{theme.switchTrackColors}"
                 android:text="@string/alarm_list"
-                android:textSize="16sp" />
+                android:textColor="@{theme.onSurface}"
+                tools:textColor="#000"
+                android:textSize="16sp"
+                android:thumbTintList="@{theme.switchThumbColors}"
+                android:trackTintList="@{theme.switchTrackColors}" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/btn_sett_backup_opt_sleep"
@@ -90,24 +102,26 @@
                 android:layout_marginVertical="5dp"
                 android:layout_marginStart="5dp"
                 android:checked="@={viewModel.isBackupSleep}"
-                android:textColor="@{theme.onSurface, default=`#000`}"
-                android:thumbTintList="@{theme.switchThumbColors}"
-                android:trackTintList="@{theme.switchTrackColors}"
                 android:text="@string/sleep_data"
-                android:textSize="16sp" />
+                android:textColor="@{theme.onSurface}"
+                tools:textColor="#000"
+                android:textSize="16sp"
+                android:thumbTintList="@{theme.switchThumbColors}"
+                android:trackTintList="@{theme.switchTrackColors}" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/btn_sett_backup_opt_dream"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginVertical="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
                 android:checked="@={viewModel.isBackupDream}"
-                android:textColor="@{theme.onSurface, default=`#000`}"
-                android:thumbTintList="@{theme.switchThumbColors}"
-                android:trackTintList="@{theme.switchTrackColors}"
                 android:text="@string/dream_record"
-                android:textSize="16sp" />
+                android:textColor="@{theme.onSurface}"
+                tools:textColor="#000"
+                android:textSize="16sp"
+                android:thumbTintList="@{theme.switchThumbColors}"
+                android:trackTintList="@{theme.switchTrackColors}" />
 
         </LinearLayout>
 
@@ -115,14 +129,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:compoundDrawableTintList="@{theme.onPrimaryVColorStateList}"
+                android:drawableStart="@drawable/ic_function"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
                 android:text="@string/action"
-                android:textColor="@{theme.onPrimaryVariant, default=`#61666a`}"
+                android:textColor="@{theme.onPrimaryVariant}"
                 android:textSize="11sp" />
 
             <Button
@@ -130,16 +148,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginVertical="5dp"
-                android:backgroundTint="@{theme.accent, default=`#441E9F`}"
-                android:text="@string/backupCapital" />
+                android:layout_marginStart="5dp"
+                android:backgroundTint="@{theme.accent}"
+                android:text="@string/backupCapital"
+                tools:backgroundTint="#441E9F" />
 
             <Button
                 android:id="@+id/btn_sett_backup_act_recovery"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginVertical="5dp"
-                android:backgroundTint="@{theme.accent, default=`#441E9F`}"
-                android:text="@string/recovery" />
+                android:layout_marginStart="5dp"
+                android:backgroundTint="@{theme.accent}"
+                android:text="@string/recovery"
+                tools:backgroundTint="#441E9F" />
 
         </LinearLayout>
 

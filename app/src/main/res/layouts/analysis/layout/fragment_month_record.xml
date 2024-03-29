@@ -23,19 +23,18 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imageView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="-5dp"
+                android:alpha="0.7"
                 app:srcCompat="@drawable/bg_sleep_owl" />
 
             <TextView
-                android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="-5dp"
                 android:text="You don't have any record"
-                android:textColor="@{theme.onSurface}"
+                android:textColor="@{theme.onPrimaryVariant}"
                 android:textSize="16sp" />
         </LinearLayout>
 
