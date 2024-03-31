@@ -70,10 +70,10 @@ public class ShopDialog extends DialogFragment {
     }
 
     private void setOnTabSelectedListener() {
-        binding.tabShop.addOnTabSelectedListener(LayoutUtils.getOnTabSelectedListener((tab) -> {
+        LayoutUtils.onSelected(binding.tabShop, (tab) -> {
                 releaseRingtonePlayer();
                 loadItemList(tab.getPosition() == 0 ? 1 : 2);
-        }));
+        });
     }
 
     @Override

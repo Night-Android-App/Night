@@ -35,7 +35,7 @@ public class ClockPageFragment extends Fragment {
     }
 
     private void setOnTabSelectedListener() {
-        binding.tabClock.addOnTabSelectedListener(LayoutUtils.getOnTabSelectedListener(tab -> {
+        LayoutUtils.onSelected(binding.tabClock, tab -> {
             Class<? extends Fragment> fr =
                     tab.getPosition() == 0 ? AlarmFragment.class : NapFragment.class;
 
@@ -49,7 +49,7 @@ public class ClockPageFragment extends Fragment {
             getChildFragmentManager().beginTransaction()
                     .replace(R.id.fr_clock_details, fr, null)
                     .commit();
-        }));
+        });
     }
 
     @Override @Nullable

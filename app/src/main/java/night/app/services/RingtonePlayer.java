@@ -1,17 +1,23 @@
 package night.app.services;
 
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 import night.app.activities.MainActivity;
+import night.app.data.Ringtone;
 
 public class RingtonePlayer {
     private MediaPlayer mediaPlayer;
     public Integer playerOwner;
-    private AppCompatActivity activity;
+    private Context context;
     private Integer id;
 
     public void release() {
@@ -20,23 +26,35 @@ public class RingtonePlayer {
         }
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void run() {
         new Thread(() -> {
             String path;
             if (id != null) {
-                path = MainActivity.getDatabase().dao().getRingtone(id).get(0).path;
+                List<Ringtone> list = MainActivity.getDatabase().dao().getRingtone(id);
+                if (list.size() > 0) {
+                    path = list.get(0).path;
+                }
+                else {
+                    path = "content://settings/system/alarm_alert";
+                }
             }
             else {
                 path = "content://settings/system/alarm_alert";
             }
-            activity.runOnUiThread(() -> {
+
+            new Handler(Looper.getMainLooper()).post(() -> {
                 try {
                     if (mediaPlayer != null) mediaPlayer.release();
 
                     mediaPlayer =  new MediaPlayer();
                     if (path.startsWith("file://android_asset/")) {
                         AssetFileDescriptor afd =
-                                activity.getAssets().openFd(path.replace("file://android_asset/", ""));
+                                context.getAssets().openFd(path.replace("file://android_asset/", ""));
+                        mediaPlayer.setLooping(true);
 
                         mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 
@@ -46,13 +64,15 @@ public class RingtonePlayer {
                         afd.close();
                     }
                     else {
-                        mediaPlayer.setDataSource(activity, Uri.parse(path));
+                        mediaPlayer.setLooping(true);
+                        mediaPlayer.setDataSource(context, Uri.parse(path));
                         mediaPlayer.prepare();
                         mediaPlayer.start();
                     }
                 }
                 catch (Exception e) {
                     System.err.println(e);
+                    System.err.println("???");
                 }
             });
         }).start();
@@ -65,7 +85,7 @@ public class RingtonePlayer {
         this.playerOwner = playerOwner;
     }
 
-    public RingtonePlayer(AppCompatActivity activity) {
-        this.activity = activity;
+    public RingtonePlayer(Context context) {
+        this.context = context;
     }
 }

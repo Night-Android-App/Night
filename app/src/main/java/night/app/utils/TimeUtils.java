@@ -22,6 +22,11 @@ public class TimeUtils {
         return (int) (calendar.getTimeInMillis() / 1000);
     }
 
+    public static int getTodayHrMin() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(Calendar.AM_PM) == Calendar.AM ? 0 : 12*60 + calendar.get(Calendar.HOUR)*60 + calendar.get(Calendar.MINUTE);
+    }
+
     public static int timeDiff(int earlier, int later) {
         if (earlier > later) {
             return later + (24*60 - earlier);

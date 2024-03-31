@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ import night.app.fragments.WidgetsPageFragment;
 import night.app.R;
 import night.app.fragments.clocks.AlarmFragment;
 import night.app.fragments.clocks.NapFragment;
+import night.app.utils.LayoutUtils;
 
 public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
@@ -97,14 +99,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setOnBackPressedListener() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
+        LayoutUtils.onBackPressed(this, getOnBackPressedDispatcher(), () -> {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
 
-                if (fragment instanceof ClockPageFragment) System.exit(0);
-                switchPage(R.id.btn_page_clock, ClockPageFragment.class);
-            }
+            if (fragment instanceof ClockPageFragment) System.exit(0);
+            switchPage(R.id.btn_page_clock, ClockPageFragment.class);
         });
     }
 
@@ -112,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         dataStore.dispose();
+
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override
@@ -119,6 +120,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setDataStore(new DataStoreHelper(this));
+
+        if (getIntent() != null && getIntent().hasExtra("alarmId")) {
+            startActivity(new Intent(this, SleepActivity.class));
+        }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -175,8 +180,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
 
-                        getWindow().setStatusBarColor(theme.getPrimary());
-                        getWindow().setNavigationBarColor(theme.getPrimary());
+                        LayoutUtils.setSystemBarColor(getWindow(), theme.getPrimary(), theme.getPrimary());
                     });
                 }
             }

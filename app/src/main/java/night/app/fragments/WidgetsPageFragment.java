@@ -50,7 +50,7 @@ public class WidgetsPageFragment extends Fragment {
     }
 
     private void setOnTabSelectedListener() {
-        binding.tabSett.addOnTabSelectedListener(LayoutUtils.getOnTabSelectedListener(tab -> {
+        LayoutUtils.onSelected(binding.tabSett, tab -> {
             if (tab.getPosition() == 0) {
                 new ShopDialog().show(requireActivity().getSupportFragmentManager(), null);
                 binding.tabSett.getTabAt(1).select();
@@ -66,7 +66,7 @@ public class WidgetsPageFragment extends Fragment {
             getChildFragmentManager().beginTransaction()
                     .replace(R.id.fr_sett_details, fragmentClass, null)
                     .commit();
-        }));
+        });
     }
 
     private void setAccountStatusResult(String key, Bundle result) {

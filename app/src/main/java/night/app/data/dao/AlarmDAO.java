@@ -22,7 +22,7 @@ public interface AlarmDAO {
     void updateAlarmEnabled(int id, int isEnabled);
 
     @Query("INSERT INTO Alarms (endTime, enableMission, ringtoneId) VALUES (:time, :enableMission, :prodId)")
-    void createAlarm(int time, int enableMission, int prodId);
+    void createAlarm(int time, int enableMission, Integer prodId);
 
     @Query("DELETE FROM Alarms")
     void deleteAllAlarms();
@@ -30,4 +30,6 @@ public interface AlarmDAO {
     @Query("DELETE FROM Alarms WHERE id IN (:id)")
     void deleteAlarm(List<Integer> id);
 
+    @Query("SELECT * FROM Alarms ORDER BY id DESC LIMIT 1")
+    Alarm getLastAlarm();
 }

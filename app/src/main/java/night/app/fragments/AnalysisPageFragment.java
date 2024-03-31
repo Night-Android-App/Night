@@ -91,7 +91,7 @@ public class AnalysisPageFragment extends Fragment {
         Theme theme = binding.getTheme();
         binding.tabAnal.setTabTextColors(theme.getOnPrimaryVariant(), theme.getOnPrimary());
 
-        binding.tabAnal.addOnTabSelectedListener(LayoutUtils.getOnTabSelectedListener(tab -> {
+        LayoutUtils.onSelected(binding.tabAnal, tab -> {
             Class<? extends Fragment> fragmentClass = switch (tab.getPosition()) {
                 case 0 -> DayRecordFragment.class;
                 case 1 -> WeekRecordFragment.class;
@@ -99,7 +99,7 @@ public class AnalysisPageFragment extends Fragment {
             };
 
             switchDetailsPage(fragmentClass);
-        }));
+        });
     }
 
     private void setStyleForNormalMode() {

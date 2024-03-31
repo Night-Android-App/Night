@@ -1,10 +1,13 @@
 package night.app.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.shawnlin.numberpicker.NumberPicker;
@@ -15,9 +18,11 @@ import java.util.List;
 import night.app.data.Alarm;
 import night.app.data.Ringtone;
 import night.app.data.Sleep;
-import night.app.data.Theme;
+import night.app.data.dao.AlarmDAO;
 import night.app.databinding.ActivityAlarmBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
+import night.app.services.AlarmReceiver;
+import night.app.utils.LayoutUtils;
 import night.app.utils.TimeUtils;
 
 public class AlarmActivity extends AppCompatActivity {
@@ -34,7 +39,7 @@ public class AlarmActivity extends AppCompatActivity {
 
     private int sleepTime;
     private int wakeUpTime;
-    private int prodId = 0;
+    private Integer prodId = null;
 
     private boolean isUpdate = false;
 
@@ -48,31 +53,58 @@ public class AlarmActivity extends AppCompatActivity {
         }).show(getSupportFragmentManager(), null);
     }
 
-    private void saveAlarm() {
+    private void updateExistedAlarm() {
+        AlarmDAO alarmDAO = MainActivity.getDatabase().alarmDAO();
+        int enableMission = binding.swMission.isChecked() ? 1 : 0;
 
+        new Thread(() -> {
+            alarmDAO.updateAlarm(wakeUpTime, enableMission, prodId);
+            finish();
+        }).start();
+    }
+
+    private void scheduleAlarm() {
+        AlarmDAO alarmDAO = MainActivity.getDatabase().alarmDAO();
+
+
+        int delayInSeconds;
+        if (TimeUtils.getTodayHrMin() > wakeUpTime) {
+            delayInSeconds = (wakeUpTime + (23*60 - TimeUtils.getTodayHrMin()))*60 - Calendar.getInstance().get(Calendar.MINUTE) * 60;
+        }
+        else {
+            delayInSeconds = (wakeUpTime - TimeUtils.getTodayHrMin())*60- Calendar.getInstance().get(Calendar.MINUTE)*60;
+        }
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.putExtra("ringtoneId", alarmDAO.getLastAlarm().ringtoneId);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        // alarmManager will trigger at least 5 seconds after
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delayInSeconds * 1000L, pendingIntent);
+    }
+
+    private void saveAlarm() {
         if (type == TYPE_SLEEP) {
             binding.swDnd.isChecked();
 
         }
         else if (type == TYPE_ALARM) {
+            AlarmDAO alarmDAO = MainActivity.getDatabase().alarmDAO();
 
             if (isUpdate) {
-                new Thread(() -> {
-                    MainActivity.getDatabase().alarmDAO().updateAlarm(wakeUpTime,  binding.swMission.isChecked() ? 1 : 0, prodId);
-                    finish();
-                }).start();
+                updateExistedAlarm();
+                return;
             }
-            else {
-                new Thread(() -> {
-                    MainActivity.getDatabase().alarmDAO().createAlarm(wakeUpTime,  binding.swMission.isChecked() ? 1 : 0, prodId);
+            new Thread(() -> {
+                int enableMission = binding.swMission.isChecked() ? 1 : 0;
 
-                    finish();
-                }).start();
-            }
+                alarmDAO.createAlarm(wakeUpTime,  enableMission, prodId);
+
+                scheduleAlarm();
+                finish();
+            }).start();
         }
-
-
-
     }
 
     private void handlePickerValueChanged(NumberPicker np, int old, int newValue) {
@@ -94,109 +126,113 @@ public class AlarmActivity extends AppCompatActivity {
         }
     }
 
-    private void setSleepWakeColor(int sleepBg, int wakeBg, int sleep, int wake) {
-        binding.llSleep.setBackgroundTintList(ColorStateList.valueOf(sleepBg));
-        binding.llWakeUp.setBackgroundTintList(ColorStateList.valueOf(wakeBg));
+    private void updateNumberPickers(int minutes) {
+        binding.npHrs.setValue(minutes / 60);
+        binding.npMins.setValue(minutes - binding.npHrs.getValue() * 60);
+    }
 
-        binding.tvWakeUpTitle.setTextColor(wake);
-        binding.tvWakeUp.setTextColor(wake);
+    private void initSleepSettingStyles() {
+        binding.llToggleTime.setVisibility(View.VISIBLE);
+        binding.swDnd.setVisibility(View.VISIBLE);
 
-        binding.tvSleepTitle.setTextColor(sleep);
-        binding.tvSleep.setTextColor(sleep);
+        type = TYPE_SLEEP;
+        npTarget = NP_SLEEP;
+
+        binding.tvTitle.setText("Sleep Settings");
+    }
+
+    private void loadAlarmSettings(int alarmId) {
+        new Thread(() -> {
+            Alarm alarm = MainActivity.getDatabase().alarmDAO().getAlarm(alarmId);
+            prodId = alarm.ringtoneId;
+
+            if (alarm.ringtoneId != null) {
+                List<Ringtone> ringtone = MainActivity.getDatabase().dao().getRingtone(alarm.ringtoneId);
+
+                if (ringtone.size() == 0) return;
+                runOnUiThread(() -> binding.tvRingName.setText(ringtone.get(0).name));
+            }
+
+            runOnUiThread(() -> {
+                binding.swMission.setChecked(alarm.enableMission == 1);
+
+                wakeUpTime = alarm.endTime;
+                updateNumberPickers(wakeUpTime);
+            });
+        }).start();
+    }
+
+    private void gotoSleepBranch() {
+        initSleepSettingStyles();
+
+        binding.llSleep.setOnClickListener(v -> {
+            binding.setNpType(NP_SLEEP);
+            updateNumberPickers(sleepTime);
+        });
+
+        binding.llWakeUp.setOnClickListener(v -> {
+            binding.setNpType(NP_WAKE);
+            updateNumberPickers(wakeUpTime);
+        });
+
+        wakeUpTime = 7*60;
+        sleepTime = 23*60;
+
+        int sleepId = getIntent().getExtras().getInt("id", -1);
+        if (sleepId >= 0) {
+            new Thread(() -> {
+                Sleep sleep = MainActivity.getDatabase().sleepDAO().getSleep(sleepId);
+
+                runOnUiThread(() -> {
+                    wakeUpTime = sleep.endTime;
+                    sleepTime = sleep.startTime;
+
+                    binding.tvSleep.setText(TimeUtils.toTimeNotation(sleepTime));
+                    binding.tvWakeUp.setText(TimeUtils.toTimeNotation(wakeUpTime));
+
+                    updateNumberPickers(sleepTime);
+                });
+            }).start();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && data != null && data.hasExtra("ringtoneId")) {
+            prodId = data.getExtras().getInt("ringtoneId");
+
+            new Thread(() -> {
+                String name = MainActivity.getDatabase().dao().getRingtone(prodId).get(0).name;
+
+                binding.tvRingName.setText(name);
+            }).start();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityAlarmBinding.inflate(getLayoutInflater());
         binding.setTheme(MainActivity.getAppliedTheme());
+
         setContentView(binding.getRoot());
 
-
         if (getIntent().getExtras().getInt("type") == TYPE_SLEEP) {
-            int sleepId = getIntent().getExtras().getInt("id", -1);
-
-            binding.llToggleTime.setVisibility(View.VISIBLE);
-            binding.swDnd.setVisibility(View.VISIBLE);
-
-            type = TYPE_SLEEP;
-            npTarget = NP_SLEEP;
-
-            binding.tvTitle.setText("Sleep Settings");
-
-
-            Theme theme = binding.getTheme();
-            setSleepWakeColor(theme.getAccent(), theme.getSurfaceVariant(), theme.getOnPrimary(), theme.getOnPrimaryVariant());
-
-            binding.llSleep.setOnClickListener(v -> {
-                npTarget = NP_SLEEP;
-
-                setSleepWakeColor(theme.getAccent(), theme.getSurfaceVariant(), theme.getOnPrimary(), theme.getOnPrimaryVariant());
-                binding.npHrs.setValue((int) (sleepTime / 60));
-                binding.npMins.setValue(sleepTime - binding.npHrs.getValue() * 60);
-            });
-            binding.llWakeUp.setOnClickListener(v -> {
-                npTarget = NP_WAKE;
-                setSleepWakeColor(theme.getSurfaceVariant(), theme.getAccent(), theme.getOnPrimaryVariant(), theme.getOnPrimary());
-                binding.npHrs.setValue((int) (wakeUpTime / 60));
-                binding.npMins.setValue(wakeUpTime - binding.npHrs.getValue() * 60);
-            });
-
-            binding.npMins.setOnValueChangedListener(this::handlePickerValueChanged);
-            binding.npHrs.setOnValueChangedListener(this::handlePickerValueChanged);
-
-            wakeUpTime = 7*60;
-            sleepTime = 23*60;
-            binding.npHrs.setValue((int) (sleepTime / 60));
-            binding.npMins.setValue(sleepTime - binding.npHrs.getValue() * 60);
-
-            if (sleepId >= 0) {
-                new Thread(() -> {
-                    Sleep sleep = MainActivity.getDatabase().sleepDAO().getSleep(sleepId);
-
-                    runOnUiThread(() -> {
-                        wakeUpTime = sleep.endTime;
-                        sleepTime = sleep.startTime;
-
-                        binding.tvSleep.setText(TimeUtils.toTimeNotation(sleepTime));
-                        binding.tvWakeUp.setText(TimeUtils.toTimeNotation(wakeUpTime));
-
-                        binding.npHrs.setValue((int) (sleepTime / 60));
-                        binding.npMins.setValue(sleepTime - binding.npHrs.getValue() * 60);
-                    });
-                }).start();
-            }
-
+            gotoSleepBranch();
         }
         else {
             int alarmId = getIntent().getExtras().getInt("id", -1);
             if (alarmId >= 0) {
                 isUpdate = true;
-                new Thread(() -> {
-                    Alarm alarm = MainActivity.getDatabase().alarmDAO().getAlarm(alarmId);
-                    prodId = alarm.ringtoneId;
-
-                    List<Ringtone> ringtone = MainActivity.getDatabase().dao().getRingtone(alarm.ringtoneId);
-
-                    runOnUiThread(() -> {
-                        binding.swMission.setChecked(alarm.enableMission == 1);
-                        if (ringtone.size() == 1) {
-                            binding.tvRingName.setText(ringtone.get(0).name);
-                        }
-
-                        wakeUpTime = alarm.endTime;
-                        binding.npHrs.setValue((int) (alarm.endTime / 60));
-                        binding.npMins.setValue(alarm.endTime - binding.npHrs.getValue() * 60);
-                    });
-                }).start();
+                loadAlarmSettings(alarmId);
             }
         }
 
-
-        binding.setTheme(MainActivity.getAppliedTheme());
-
         binding.btnChangeRingtone.setOnClickListener(v -> {
-            startActivity(new Intent(this, RingtoneActivity.class));
+            startActivityForResult(new Intent(this, RingtoneActivity.class), 1);
         });
 
         binding.btnDiscard.setOnClickListener(v -> discardAlarm());
@@ -205,7 +241,8 @@ public class AlarmActivity extends AppCompatActivity {
         binding.npHrs.setOnValueChangedListener(this::handlePickerValueChanged);
         binding.npMins.setOnValueChangedListener(this::handlePickerValueChanged);
 
-        getWindow().setStatusBarColor(binding.getTheme().getPrimary());
-        getWindow().setNavigationBarColor(binding.getTheme().getPrimary());
+        LayoutUtils.setSystemBarColor(getWindow(), binding.getTheme().getPrimary(), binding.getTheme().getPrimary());
+
+        LayoutUtils.onBackPressed(this, getOnBackPressedDispatcher(), this::discardAlarm);
     }
 }

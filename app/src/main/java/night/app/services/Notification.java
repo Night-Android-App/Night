@@ -8,6 +8,7 @@ import android.graphics.Color;
 import androidx.core.app.NotificationCompat;
 
 import night.app.R;
+import night.app.activities.MainActivity;
 
 public class Notification {
     NotificationManager manager;
@@ -19,7 +20,7 @@ public class Notification {
 
     public void createChannel(String id) {
         NotificationChannel channel =
-                new NotificationChannel(id, id, NotificationManager.IMPORTANCE_DEFAULT);
+                new NotificationChannel(id, id, NotificationManager.IMPORTANCE_LOW);
 
         manager.createNotificationChannel(channel);
     }
@@ -39,6 +40,9 @@ public class Notification {
 
                 // message information
                 .setContentTitle(title)
-                .setContentText(text);
+                .setContentText(text)
+
+                // prevent user remove notification
+                .setOngoing(true);
     }
 }

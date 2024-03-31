@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable name="theme" type="night.app.data.Theme" />
+        <variable name="npType" type="Integer" />
     </data>
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,6 +53,7 @@
                     app:np_min="0"
                     app:np_selectedTextSize="24sp"
                     app:np_textSize="20dp"
+                    app:np_value="23"
                     tools:textColor="#fff">
 
                 </com.shawnlin.numberpicker.NumberPicker>
@@ -113,7 +115,7 @@
                         android:layout_margin="12dp"
                         android:layout_weight="1"
                         android:background="@drawable/view_rect_r10"
-                        android:backgroundTint="#BB4444"
+                        android:backgroundTint="@{npType == 0 ? theme.accent : theme.surfaceVariant}"
                         android:minHeight="48dp"
                         android:orientation="vertical"
                         android:paddingTop="12dp"
@@ -126,6 +128,7 @@
                             android:layout_marginBottom="8dp"
                             android:gravity="center_horizontal"
                             android:text="Sleep"
+                            android:textColor="@{npType == 0 ? theme.onPrimary : theme.onPrimaryVariant}"
                             android:textSize="11sp" />
 
                         <TextView
@@ -134,6 +137,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
                             android:text="23:00"
+                            android:textColor="@{npType == 0 ? theme.onPrimary : theme.onPrimaryVariant}"
                             android:textSize="16sp" />
                     </LinearLayout>
 
@@ -144,7 +148,7 @@
                         android:layout_margin="12dp"
                         android:layout_weight="1"
                         android:background="@drawable/view_rect_r10"
-                        android:backgroundTint="#BB4444"
+                        android:backgroundTint="@{npType == 1 ? theme.accent : theme.surfaceVariant}"
                         android:minHeight="48dp"
                         android:orientation="vertical"
                         android:paddingTop="12dp"
@@ -156,6 +160,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:gravity="center_horizontal"
+                            android:textColor="@{npType == 1 ? theme.onPrimary : theme.onPrimaryVariant}"
                             android:text="Wake up"
                             android:textSize="11sp" />
 
@@ -164,6 +169,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
+                            android:textColor="@{npType == 1 ? theme.onPrimary : theme.onPrimaryVariant}"
                             android:text="07:00"
                             android:textSize="16sp" />
                     </LinearLayout>

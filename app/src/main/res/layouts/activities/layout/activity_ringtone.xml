@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable name="theme" type="night.app.data.Theme" />
     </data>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -13,18 +13,23 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="#C50D0D"
-            android:orientation="horizontal">
+            android:layout_height="56dp"
+            android:background="@{theme.primary}"
+            android:orientation="horizontal"
+            tools:background="#222222">
 
             <ImageButton
                 android:id="@+id/ib_exit"
                 android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:foreground="?attr/selectableItemBackground"
                 android:padding="12dp"
                 android:rotation="180"
-                android:tint="#000"
-                app:srcCompat="@drawable/ic_chevron_right" />
+                android:tint="@{theme.onPrimary}"
+                app:srcCompat="@drawable/ic_chevron_right"
+                tools:ignore="UseAppTint"
+                tools:tint="#fff" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -33,13 +38,17 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
                 android:text="Ringtones"
-                android:textSize="16sp" />
+                android:textColor="@{theme.onPrimary}"
+                android:textSize="16sp"
+                tools:textColor="#fff" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_ringtones"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:background="@{theme.secondary}" />
 
     </LinearLayout>
 </layout>

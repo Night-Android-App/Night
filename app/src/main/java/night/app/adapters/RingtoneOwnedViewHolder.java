@@ -1,10 +1,14 @@
 package night.app.adapters;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import night.app.activities.AlarmActivity;
+import night.app.activities.RingtoneActivity;
 import night.app.data.Ringtone;
 import night.app.databinding.ItemRingtoneBinding;
 
@@ -43,6 +47,14 @@ public class RingtoneOwnedViewHolder extends RecyclerView.ViewHolder {
         binding.button2.setText("Apply");
         binding.button2.setOnClickListener(v -> adapter.activity.finish());
 
+        binding.button2.setOnClickListener(v -> {
+
+            Intent intent = new Intent();
+            intent.putExtra("ringtoneId", itemData.prodId);
+            adapter.activity.setResult(Activity.RESULT_OK, intent);
+
+            ((RingtoneActivity) adapter.activity).selectRingtone(itemData.prodId);
+        });
 //                binding.llItemRingtone.setOnClickListener(v -> playRingtone());
     }
 
