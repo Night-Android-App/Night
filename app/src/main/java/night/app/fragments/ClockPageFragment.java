@@ -1,11 +1,17 @@
 package night.app.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -14,10 +20,12 @@ import androidx.fragment.app.Fragment;
 import night.app.R;
 import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
+import night.app.data.entities.Sleep;
 import night.app.databinding.FragmentClockPageBinding;
 import night.app.fragments.clocks.AlarmFragment;
 import night.app.fragments.clocks.NapFragment;
 import night.app.utils.LayoutUtils;
+import night.app.utils.TimeUtils;
 
 public class ClockPageFragment extends Fragment {
     public FragmentClockPageBinding binding;
@@ -32,6 +40,26 @@ public class ClockPageFragment extends Fragment {
                 binding.lowerMsg.setText(lowerMsg);
             }
         });
+    }
+
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    new Thread(() -> {
+                        Sleep entity = MainActivity.getDatabase().sleepDAO().getSleep();
+                        if (entity != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                showExistedSleepRecord(entity);
+                            });
+                        }
+                    }).start();
+                }
+            });
+
+    private void showExistedSleepRecord(Sleep entity) {
+        binding.upperMsg.setText("We will notify you at " + TimeUtils.toTimeNotation(entity.startTime*60));
+        binding.lowerMsg.setText("and wake up at " +TimeUtils.toTimeNotation(entity.endTime*60));
     }
 
     private void setOnTabSelectedListener() {
@@ -60,16 +88,17 @@ public class ClockPageFragment extends Fragment {
         setOnTabSelectedListener();
         setSleepMsgResultListener();
 
+
         getChildFragmentManager().beginTransaction()
                 .add(R.id.fr_clock_details, AlarmFragment.class, null)
                 .commit();
 
         binding.clClockTop.setOnClickListener(v -> {
-            if (getChildFragmentManager().findFragmentById(R.id.fr_clock_details) instanceof  AlarmFragment) {
-                Intent intent = new Intent(requireActivity(), AlarmActivity.class);
+            if (getChildFragmentManager().findFragmentById(R.id.fr_clock_details) instanceof AlarmFragment) {
+                Intent intent = new Intent(getContext(), AlarmActivity.class);
 
                 intent.putExtra("type", AlarmActivity.TYPE_SLEEP);
-                startActivity(intent);
+                resultLauncher.launch(intent);
             }
         });
 

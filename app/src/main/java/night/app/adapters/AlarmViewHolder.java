@@ -2,19 +2,17 @@ package night.app.adapters;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.view.LayoutInflater;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import night.app.R;
+import java.util.Calendar;
+
 import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
-import night.app.data.Alarm;
+import night.app.data.entities.Alarm;
 import night.app.databinding.ItemAlarmBinding;
-import night.app.databinding.ItemShopThemeBinding;
+import night.app.services.AlarmSchedule;
 import night.app.utils.ColorUtils;
 import night.app.utils.TimeUtils;
 
@@ -41,6 +39,21 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
         new Thread(() -> {
             MainActivity.getDatabase().alarmDAO()
                     .updateAlarmEnabled(id, binding.swAlarmEnable.isChecked() ? 1 : 0);
+
+            if (binding.swAlarmEnable.isChecked()) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.MINUTE, alarm.endTime - calendar.get(Calendar.HOUR) * 60 - calendar.get(Calendar.MINUTE));
+
+                new AlarmSchedule(adapter.activity.getApplicationContext())
+                        .setRingtone(alarm.ringtoneId)
+                        .post(alarm.id, calendar.getTimeInMillis());
+            }
+            else {
+                new AlarmSchedule(adapter.activity.getApplicationContext())
+                        .setRingtone(alarm.ringtoneId)
+                        .cancel(alarm.id);
+            }
+
         }).start();
     }
 

@@ -16,7 +16,7 @@ import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.data.Day;
+import night.app.data.entities.Day;
 import night.app.databinding.FragmentWeekRecordBinding;
 import night.app.fragments.AnalysisPageFragment;
 import night.app.services.ChartBuilder;
@@ -43,7 +43,7 @@ public class WeekRecordFragment extends Fragment {
 
     private void loadBarChart(long startDate, long endDate) {
         new Thread(() -> {
-            List<Day> dayList = MainActivity.getDatabase().dao().getDayRange(startDate, endDate);
+            List<Day> dayList = MainActivity.getDatabase().dayDAO().getDayRange(startDate, endDate);
             loadBarChart(dayList);
         }).start();
     }

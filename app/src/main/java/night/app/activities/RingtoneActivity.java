@@ -8,10 +8,8 @@ import android.os.Bundle;
 
 import java.util.List;
 
-import night.app.R;
-import night.app.adapters.RingtoneAdapter;
 import night.app.adapters.RingtoneOwnedAdapter;
-import night.app.data.Ringtone;
+import night.app.data.entities.Ringtone;
 import night.app.databinding.ActivityRingtoneBinding;
 import night.app.utils.LayoutUtils;
 

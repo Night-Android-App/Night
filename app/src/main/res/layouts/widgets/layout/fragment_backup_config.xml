@@ -6,7 +6,7 @@
         <import type="android.graphics.Color" />
         <import type="androidx.datastore.preferences.core.PreferencesKeys" />
         <variable name="viewModel" type="night.app.data.PreferenceViewModel" />
-        <variable name="theme" type="night.app.data.Theme" />
+        <variable name="theme" type="night.app.data.entities.Theme" />
     </data>
 
     <LinearLayout

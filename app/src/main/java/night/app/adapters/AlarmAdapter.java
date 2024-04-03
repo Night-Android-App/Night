@@ -14,9 +14,8 @@ import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.data.Alarm;
+import night.app.data.entities.Alarm;
 import night.app.databinding.ItemAlarmBinding;
-import night.app.fragments.dialogs.ConfirmDialog;
 
 public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Alarm> alarmList;

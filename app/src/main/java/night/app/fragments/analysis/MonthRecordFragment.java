@@ -9,14 +9,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.adapters.DayItemAdapter;
-import night.app.data.Day;
+import night.app.data.entities.Day;
 import night.app.databinding.FragmentMonthRecordBinding;
 import night.app.fragments.AnalysisPageFragment;
 import night.app.services.Sample;
@@ -66,7 +65,7 @@ public class MonthRecordFragment extends Fragment {
             endDate = 0;
         }
         else {
-            dayList = MainActivity.getDatabase().dao().getAllDay();
+            dayList = MainActivity.getDatabase().dayDAO().getAllDay();
             endDate = TimeUtils.getToday();
         }
 

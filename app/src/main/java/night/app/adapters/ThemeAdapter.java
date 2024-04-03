@@ -13,7 +13,7 @@ import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.data.Product;
+import night.app.data.entities.Product;
 import night.app.databinding.ItemShopThemeBinding;
 
 public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

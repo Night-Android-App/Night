@@ -3,7 +3,7 @@ package night.app.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import night.app.data.Day;
+import night.app.data.entities.Day;
 
 public class Sample {
     public static List<Day> getDay() {

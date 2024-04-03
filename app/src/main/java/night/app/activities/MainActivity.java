@@ -1,8 +1,8 @@
 package night.app.activities;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import night.app.data.AppDatabase;
 import night.app.data.DataStoreHelper;
-import night.app.data.Theme;
+import night.app.data.entities.Theme;
 import night.app.databinding.ActivityMainBinding;
 import night.app.fragments.AnalysisPageFragment;
 import night.app.fragments.ClockPageFragment;
@@ -98,21 +98,19 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void setOnBackPressedListener() {
-        LayoutUtils.onBackPressed(this, getOnBackPressedDispatcher(), () -> {
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
 
-            if (fragment instanceof ClockPageFragment) System.exit(0);
-            switchPage(R.id.btn_page_clock, ClockPageFragment.class);
-        });
+        if (fragment instanceof ClockPageFragment) System.exit(0);
+        switchPage(R.id.btn_page_clock, ClockPageFragment.class);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         dataStore.dispose();
-
-        startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override
@@ -121,16 +119,11 @@ public class MainActivity extends AppCompatActivity {
 
         setDataStore(new DataStoreHelper(this));
 
-        if (getIntent() != null && getIntent().hasExtra("alarmId")) {
-            startActivity(new Intent(this, SleepActivity.class));
-        }
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         binding.setTheme(new Theme());
-        getWindow().setStatusBarColor(theme.getPrimary());
-        getWindow().setNavigationBarColor(theme.getPrimary());
+        LayoutUtils.setSystemBarColor(getWindow(), theme.getPrimary(), theme.getPrimary());
 
         binding.btnPageClock
                 .setOnClickListener(v -> switchPage(v.getId(), ClockPageFragment.class));
@@ -138,8 +131,6 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(v -> switchPage(v.getId(), AnalysisPageFragment.class));
         binding.btnPageSettings
                 .setOnClickListener(v -> switchPage(v.getId(), WidgetsPageFragment.class));
-
-        setOnBackPressedListener();
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fr_app_page, ClockPageFragment.class, null)
@@ -162,27 +153,26 @@ public class MainActivity extends AppCompatActivity {
             if (appliedTheme != null) {
                 List<Theme> themeList = database.dao().getTheme(appliedTheme);
 
-                if (themeList.size() > 0) {
-                    runOnUiThread(() -> {
-                        MainActivity.setTheme(themeList.get(0));
-                        binding.setTheme(MainActivity.getAppliedTheme());
+                if (themeList.size() > 0) return;
+                runOnUiThread(() -> {
+                    MainActivity.setTheme(themeList.get(0));
+                    binding.setTheme(MainActivity.getAppliedTheme());
 
-                        Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
-                        if (fr instanceof ClockPageFragment) {
-                            ((ClockPageFragment) fr).binding.setTheme(theme);
+                    Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
+                    if (fr instanceof ClockPageFragment) {
+                        ((ClockPageFragment) fr).binding.setTheme(theme);
 
-                            Fragment innerFr = fr.getChildFragmentManager().findFragmentById(R.id.fr_clock_details);
-                            if (innerFr instanceof AlarmFragment) {
-                                ((AlarmFragment) innerFr).binding.setTheme(getAppliedTheme());
-                            }
-                            else if (innerFr instanceof NapFragment) {
-                                ((NapFragment) innerFr).binding.setTheme(theme);
-                            }
+                        Fragment innerFr = fr.getChildFragmentManager().findFragmentById(R.id.fr_clock_details);
+                        if (innerFr instanceof AlarmFragment) {
+                            ((AlarmFragment) innerFr).binding.setTheme(getAppliedTheme());
                         }
+                        else if (innerFr instanceof NapFragment) {
+                            ((NapFragment) innerFr).binding.setTheme(theme);
+                        }
+                    }
 
-                        LayoutUtils.setSystemBarColor(getWindow(), theme.getPrimary(), theme.getPrimary());
-                    });
-                }
+                    LayoutUtils.setSystemBarColor(getWindow(), theme.getPrimary(), theme.getPrimary());
+                });
             }
         }).start();
 

@@ -12,11 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
 
-import night.app.data.Alarm;
+import night.app.data.entities.Alarm;
 import night.app.databinding.ActivitySleepBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
 import night.app.fragments.dialogs.MissionDialog;
 import night.app.services.AlarmReceiver;
+import night.app.services.AlarmSchedule;
 import night.app.services.AlarmService;
 import night.app.services.RingtonePlayer;
 import night.app.utils.LayoutUtils;
@@ -33,22 +34,15 @@ public class SleepActivity extends AppCompatActivity {
         new MissionDialog().show(getSupportFragmentManager(), null);
     }
 
+    public void disableAlarm() {
+        AlarmService.getInstance().stop();
+        finish();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            AlarmService.getInstance().stop();
-            finish();
-        }
-    }
-
-    private void setAlarm(long timestamp) {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-        // alarmManager will trigger at least 5 seconds after
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, timestamp, pendingIntent);
+        if (resultCode == RESULT_OK) disableAlarm();
     }
 
     private void countdown(int seconds) {
@@ -128,7 +122,9 @@ public class SleepActivity extends AppCompatActivity {
             binding.tvCurrent.setText(TimeUtils.toTimeNotation(calendar));
 
             calendar.add(Calendar.MINUTE, sleepMinutes);
-            setAlarm(calendar.getTimeInMillis());
+
+            new AlarmSchedule(getApplicationContext())
+                    .post(-1, calendar.getTimeInMillis());
 
             binding.tvWake.setText(TimeUtils.toTimeNotation(calendar));
 

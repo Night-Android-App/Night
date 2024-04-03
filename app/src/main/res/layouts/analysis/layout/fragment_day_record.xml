@@ -2,7 +2,7 @@
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <variable name="theme" type="night.app.data.Theme" />
+        <variable name="theme" type="night.app.data.entities.Theme" />
     </data>
     <ScrollView
         android:layout_width="match_parent"
@@ -79,10 +79,10 @@
                     android:layout_height="32dp"
                     android:gravity="center"
                     android:textColor="@{theme.onSurface}"
-                    tools:textColor="#fff"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    tools:text="@string/not_applicable" />
+                    tools:text="@string/not_applicable"
+                    tools:textColor="#000" />
 
                 <TextView
                     android:layout_width="match_parent"

@@ -15,7 +15,8 @@ import java.util.List;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.dao.AppDAO;
-import night.app.data.Day;
+import night.app.data.dao.DayDAO;
+import night.app.data.entities.Day;
 import night.app.databinding.FragmentDayRecordBinding;
 import night.app.fragments.AnalysisPageFragment;
 import night.app.services.ChartBuilder;
@@ -47,7 +48,7 @@ public class DayRecordFragment extends Fragment {
         if (getActivity() == null) return;
 
         new Thread(() -> {
-            AppDAO dao = MainActivity.getDatabase().dao();
+            DayDAO dao = MainActivity.getDatabase().dayDAO();
             List<Day> dayList = dao.getDayByDate(date);
 
             getActivity().runOnUiThread(() -> loadDay(dayList));

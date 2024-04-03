@@ -1,10 +1,11 @@
-package night.app.data;
+package night.app.data.entities;
 
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
+
+import night.app.data.entities.Product;
 
 @Entity(tableName = "Ringtones", foreignKeys = {
         @ForeignKey(

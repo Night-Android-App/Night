@@ -18,8 +18,8 @@ import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.adapters.RingtoneAdapter;
 import night.app.adapters.ThemeAdapter;
-import night.app.data.Product;
-import night.app.data.Theme;
+import night.app.data.entities.Product;
+import night.app.data.entities.Theme;
 import night.app.databinding.DialogShopBinding;
 import night.app.utils.LayoutUtils;
 

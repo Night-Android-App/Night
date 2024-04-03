@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <variable name="theme" type="night.app.data.Theme" />
+        <variable name="theme" type="night.app.data.entities.Theme" />
     </data>
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,10 +15,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@{theme.primary}"
-            tools:background="#212529"
+            android:foreground="?attr/selectableItemBackground"
             android:paddingHorizontal="24dp"
             android:paddingTop="24dp"
-            android:paddingBottom="12dp">
+            android:paddingBottom="12dp"
+            tools:background="#212529">
 
             <ImageView
                 android:id="@+id/iv_sleep"

@@ -7,12 +7,10 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.List;
 
 import night.app.activities.MainActivity;
-import night.app.data.Ringtone;
+import night.app.data.entities.Ringtone;
 
 public class RingtonePlayer {
     private MediaPlayer mediaPlayer;

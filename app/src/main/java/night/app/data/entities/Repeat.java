@@ -1,8 +1,10 @@
-package night.app.data;
+package night.app.data.entities;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
+
+import night.app.data.entities.Alarm;
 
 @Entity(tableName="Repeats", foreignKeys = {
         @ForeignKey(
@@ -17,11 +19,11 @@ public class Repeat {
     public Integer id;
     public Integer alarmId;
 
-    public Integer day1;
-    public Integer day2;
-    public Integer day3;
-    public Integer day4;
-    public Integer day5;
-    public Integer day6;
-    public Integer day7;
+    public Integer day1 = 0;
+    public Integer day2 = 0;
+    public Integer day3 = 0;
+    public Integer day4 = 0;
+    public Integer day5 = 0;
+    public Integer day6 = 0;
+    public Integer day7 = 0;
 }

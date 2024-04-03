@@ -13,10 +13,9 @@ import java.util.List;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.DataStoreHelper;
-import night.app.data.Product;
-import night.app.data.Theme;
+import night.app.data.entities.Product;
+import night.app.data.entities.Theme;
 import night.app.databinding.ItemShopThemeBinding;
-import night.app.fragments.ClockPageFragment;
 import night.app.fragments.WidgetsPageFragment;
 import night.app.fragments.dialogs.PurchaseDialog;
 

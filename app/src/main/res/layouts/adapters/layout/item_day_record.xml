@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="theme" type="night.app.data.Theme" />
+        <variable name="theme" type="night.app.data.entities.Theme" />
     </data>
 
     <LinearLayout
@@ -33,6 +33,7 @@
             android:layout_marginBottom="12dp"
             android:background="@drawable/view_rect_r10"
             android:backgroundTint="@{theme.surface}"
+            android:foreground="?attr/selectableItemBackground"
             android:minHeight="48dp"
             tools:backgroundTint="#fff">
 

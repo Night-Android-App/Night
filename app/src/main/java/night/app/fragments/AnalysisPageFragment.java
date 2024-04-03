@@ -14,7 +14,7 @@ import java.time.ZoneOffset;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.data.Theme;
+import night.app.data.entities.Theme;
 import night.app.databinding.FragmentAnalysisPageBinding;
 import night.app.fragments.analysis.DayRecordFragment;
 import night.app.fragments.analysis.MonthRecordFragment;
@@ -47,7 +47,7 @@ public class AnalysisPageFragment extends Fragment {
             long endDate = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
             long startDate = endDate - 29*24*60*60;
 
-            MainActivity.getDatabase().dao().deleteOldDays(startDate);
+            MainActivity.getDatabase().dayDAO().deleteOldDays(startDate);
         }).start();
     }
 
@@ -135,7 +135,7 @@ public class AnalysisPageFragment extends Fragment {
         deleteOldRecords();
 
         new Thread(() -> {
-            if (MainActivity.getDatabase().dao().getRecentDay().size() > 0) {
+            if (MainActivity.getDatabase().dayDAO().getRecentDay().size() > 0) {
                 binding.llTips.setVisibility(View.GONE);
             }
         }).start();

@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import night.app.R;
-import night.app.data.Day;
+import night.app.data.entities.Day;
 import night.app.databinding.ItemDayRecordBinding;
 import night.app.services.SleepData;
 import night.app.utils.TimeUtils;

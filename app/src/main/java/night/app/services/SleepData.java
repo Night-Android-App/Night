@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import night.app.data.Day;
+import night.app.data.entities.Day;
 import night.app.utils.TimeUtils;
 
 public class SleepData {

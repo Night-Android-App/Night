@@ -5,15 +5,15 @@ import androidx.room.Query;
 
 import java.util.List;
 
-import night.app.data.Alarm;
+import night.app.data.entities.Alarm;
 
 @Dao
 public interface AlarmDAO {
     @Query("SELECT * FROM Alarms")
     List<Alarm> getAllAlarms();
 
-    @Query("UPDATE Alarms SET endTime=:endTime, enableMission=:enableMission, ringtoneId=:prodId")
-    void updateAlarm(int endTime, int enableMission, int prodId);
+    @Query("UPDATE Alarms SET endTime=:endTime, enableMission=:enableMission, ringtoneId=:prodId WHERE id=:id")
+    void updateAlarm(int id, int endTime, int enableMission, Integer prodId);
 
     @Query("SELECT * FROM Alarms WHERE id=:id LIMIT 1")
     Alarm getAlarm(int id);

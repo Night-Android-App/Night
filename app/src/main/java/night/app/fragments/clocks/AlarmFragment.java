@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -26,19 +27,15 @@ import night.app.R;
 import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
 import night.app.adapters.AlarmAdapter;
-import night.app.data.Alarm;
+import night.app.data.entities.Alarm;
+import night.app.data.entities.Sleep;
 import night.app.databinding.FragmentAlarmBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
+import night.app.utils.TimeUtils;
 
 public class AlarmFragment extends Fragment {
     public FragmentAlarmBinding binding;
 
-    private MaterialTimePicker picker;
-    private Calendar calendar;
-
-    private void showSleepSettings() {
-
-    }
 
     private void loadAlarmList() {
         new Thread(() -> {
@@ -76,40 +73,6 @@ public class AlarmFragment extends Fragment {
         }
     }
 
-    private void showTimePicker(View view) {
-        picker = new MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_12H)
-                .setHour(12)
-                .setMinute(0)
-                .setTitleText("Select Alarm Time")
-                .build();
-
-        picker.addOnPositiveButtonClickListener(v -> {
-            calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, picker.getHour());
-            calendar.set(Calendar.MINUTE, picker.getMinute());
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-
-        });
-
-        picker.show(getParentFragmentManager(), "timePicker");
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "testReminderChannel";
-            String description = "Night Alarm";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("timePicker", name, importance);
-            channel.setDescription(description);
-
-            NotificationManager notificationManager = requireContext().getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-
     @Override @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false);
@@ -118,7 +81,20 @@ public class AlarmFragment extends Fragment {
         binding.rvAlarm.setLayoutManager(new LinearLayoutManager(requireActivity()));
         loadAlarmList();
 
-        updateSleepMsg("Sleep time has not been set", "Press here to configure");
+        new Thread(() -> {
+            Sleep entity = MainActivity.getDatabase().sleepDAO().getSleep();
+
+            if (entity != null) {
+                new Thread(() -> {
+                    updateSleepMsg(
+                            "We will notify you at " + TimeUtils.toTimeNotation(entity.startTime*60),
+                            "and wake up at " +TimeUtils.toTimeNotation(entity.endTime*60)
+                    );
+                }).start();
+                return;
+            }
+            updateSleepMsg("Sleep time has not been set", "Press here to configure");
+        }).start();
 
 
         binding.ibAdd.setOnClickListener(v -> {
@@ -129,6 +105,7 @@ public class AlarmFragment extends Fragment {
         });
 
         binding.ibTrash.setOnClickListener(this::handleOnClickDiscard);
+
         return binding.getRoot();
     }
 }

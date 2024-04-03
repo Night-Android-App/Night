@@ -7,9 +7,8 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import night.app.activities.AlarmActivity;
 import night.app.activities.RingtoneActivity;
-import night.app.data.Ringtone;
+import night.app.data.entities.Ringtone;
 import night.app.databinding.ItemRingtoneBinding;
 
 public class RingtoneOwnedViewHolder extends RecyclerView.ViewHolder {

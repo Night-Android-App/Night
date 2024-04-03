@@ -24,11 +24,12 @@ import java.util.TimeZone;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.data.Alarm;
+import night.app.data.dao.DayDAO;
+import night.app.data.entities.Alarm;
 import night.app.data.dao.AlarmDAO;
 import night.app.data.dao.AppDAO;
 import night.app.data.DataStoreHelper;
-import night.app.data.Day;
+import night.app.data.entities.Day;
 import night.app.data.PreferenceViewModel;
 import night.app.databinding.FragmentBackupConfigBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
@@ -79,7 +80,7 @@ public class BackupConfigFragment extends Fragment {
 
         JSONObject requestBody = new JSONObject();
         new Thread(() -> {
-            List<Day> days = MainActivity.getDatabase().dao().getAllDay();
+            List<Day> days = MainActivity.getDatabase().dayDAO().getAllDay();
             List<Alarm> alarms = MainActivity.getDatabase().alarmDAO().getAllAlarms();
 
             activity.runOnUiThread(() -> {
@@ -140,7 +141,7 @@ public class BackupConfigFragment extends Fragment {
     }
 
     private void recoverySleepData(String data) throws JSONException {
-        AppDAO dao = MainActivity.getDatabase().dao();
+        DayDAO dao = MainActivity.getDatabase().dayDAO();
 
         JSONObject sleepData = new JSONObject(data);
         Iterator<String> keys = sleepData.keys();
@@ -177,7 +178,7 @@ public class BackupConfigFragment extends Fragment {
 
     private void recoveryCallBack(JSONObject res) {
         try {
-            AppDAO dao = MainActivity.getDatabase().dao();
+            DayDAO dao = MainActivity.getDatabase().dayDAO();
             dao.deleteAllDays();
             MainActivity.getDatabase().alarmDAO().deleteAllAlarms();
 

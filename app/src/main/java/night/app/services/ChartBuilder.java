@@ -16,9 +16,8 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import night.app.data.Theme;
+import night.app.data.entities.Theme;
 
 
 public class ChartBuilder <T extends  BarLineChartBase<?>> {

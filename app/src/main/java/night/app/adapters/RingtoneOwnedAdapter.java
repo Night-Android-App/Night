@@ -9,13 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.data.Product;
-import night.app.data.Ringtone;
+import night.app.data.entities.Ringtone;
 import night.app.databinding.ItemRingtoneBinding;
 import night.app.services.RingtonePlayer;
 

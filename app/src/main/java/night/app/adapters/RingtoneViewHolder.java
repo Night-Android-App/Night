@@ -6,8 +6,8 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.RecyclerView;
 
 import night.app.activities.MainActivity;
-import night.app.data.Product;
-import night.app.data.Ringtone;
+import night.app.data.entities.Product;
+import night.app.data.entities.Ringtone;
 import night.app.databinding.ItemRingtoneBinding;
 import night.app.fragments.dialogs.PurchaseDialog;
 

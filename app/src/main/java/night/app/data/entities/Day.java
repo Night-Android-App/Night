@@ -1,4 +1,4 @@
-package night.app.data;
+package night.app.data.entities;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
