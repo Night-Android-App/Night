@@ -155,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (themeList.size() > 0) return;
                 runOnUiThread(() -> {
+                    if (themeList.size() <= 0) return;
+                    
                     MainActivity.setTheme(themeList.get(0));
                     binding.setTheme(MainActivity.getAppliedTheme());
 
