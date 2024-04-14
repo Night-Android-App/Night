@@ -43,6 +43,8 @@ public class AlarmFragment extends Fragment {
 
     public ActivityResultLauncher<Intent> mStartForResult =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                System.out.println("Load Start...");
+
                 if(result.getResultCode()== Activity.RESULT_OK) {
                     System.out.println("Load");
                     loadAlarmList();
@@ -113,7 +115,7 @@ public class AlarmFragment extends Fragment {
             Intent intent = new Intent(requireActivity(), AlarmActivity.class);
 
             intent.putExtra("type", AlarmActivity.TYPE_ALARM);
-            startActivity(intent);
+            mStartForResult.launch(intent);
         });
 
         binding.ibTrash.setOnClickListener(this::handleOnClickDiscard);
