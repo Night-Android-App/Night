@@ -26,19 +26,12 @@ public class MonthRecordFragment extends Fragment {
     private FragmentMonthRecordBinding binding;
 
     private void setAdapter(List<Day> dayList) {
-        if (getView() != null) {
-            if (getActivity() instanceof AppCompatActivity) {
-                binding.rvItems
-                        .setAdapter(new DayItemAdapter((AppCompatActivity) getActivity(), dayList));
+        binding.rvItems.setAdapter(
+                new DayItemAdapter((AppCompatActivity) getActivity(), dayList)
+        );
 
-                if (dayList.size() > 0) {
-                    requireView().findViewById(R.id.ll_no_Data).setVisibility(View.INVISIBLE);
-                }
-                else {
-                    requireView().findViewById(R.id.ll_no_Data).setVisibility(View.VISIBLE);
-                }
-            }
-        }
+        requireView().findViewById(R.id.ll_no_Data)
+                .setVisibility(dayList.size() > 0 ? View.INVISIBLE : View.VISIBLE);
     }
 
     public void setUpperPanelResult(String date, int score, double info1, double info2) {

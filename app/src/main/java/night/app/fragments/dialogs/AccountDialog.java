@@ -54,7 +54,6 @@ public class  AccountDialog extends DialogFragment {
             binding.etLoginPwd.setError(Password.validate(pwdValue));
             return;
         }
-
         ConfirmDialog dialog = new ConfirmDialog("", "", null);
         dialog.showNow(getParentFragmentManager(), null);
 

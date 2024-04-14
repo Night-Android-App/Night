@@ -1,5 +1,6 @@
 package night.app.fragments.clocks;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -9,6 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +41,13 @@ import night.app.utils.TimeUtils;
 public class AlarmFragment extends Fragment {
     public FragmentAlarmBinding binding;
 
+    public ActivityResultLauncher<Intent> mStartForResult =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if(result.getResultCode()== Activity.RESULT_OK) {
+                    System.out.println("Load");
+                    loadAlarmList();
+                }
+            });
 
     private void loadAlarmList() {
         new Thread(() -> {
@@ -43,7 +55,7 @@ public class AlarmFragment extends Fragment {
 
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    AlarmAdapter adapter = new AlarmAdapter((AppCompatActivity) requireActivity(), alarmList);
+                    AlarmAdapter adapter = new AlarmAdapter((AppCompatActivity) requireActivity(), this, alarmList);
                     binding.rvAlarm.setAdapter(adapter);
                 });
             }

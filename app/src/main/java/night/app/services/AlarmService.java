@@ -49,23 +49,6 @@ public class AlarmService extends Service {
 
         playRingtone();
 
-        return START_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        player.release();
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
         instance = this;
 
         Intent nextActivity = new Intent(getApplicationContext(), SleepActivity.class);
@@ -86,5 +69,18 @@ public class AlarmService extends Service {
                 .setContentIntent(pendingIntent);
 
         startForeground(1, builder.build());
+
+        return START_STICKY;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        player.release();
     }
 }

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private List<Integer> selectedAlarms = new ArrayList<>();
     public AppCompatActivity activity;
 
+    private Fragment fr;
     public final static int MODE_NORMAL = 0;
     public final static int MODE_SELECT = 1;
 
@@ -85,11 +87,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         ItemAlarmBinding binding =
                 DataBindingUtil.inflate(inflater, R.layout.item_alarm, parent, false);
 
-        return new AlarmViewHolder(this, binding);
+        return new AlarmViewHolder(this, binding, fr);
     }
 
-    public AlarmAdapter(AppCompatActivity activity, List<Alarm> alarmList) {
+    public AlarmAdapter(AppCompatActivity activity, Fragment fr, List<Alarm> alarmList) {
         this.activity = activity;
         this.alarmList = alarmList;
+        this.fr = fr;
     }
 }

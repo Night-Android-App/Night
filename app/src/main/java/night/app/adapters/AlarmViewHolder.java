@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.view.View;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Calendar;
@@ -12,6 +13,7 @@ import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Alarm;
 import night.app.databinding.ItemAlarmBinding;
+import night.app.fragments.clocks.AlarmFragment;
 import night.app.services.AlarmSchedule;
 import night.app.utils.ColorUtils;
 import night.app.utils.TimeUtils;
@@ -24,7 +26,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
     public final static int STATUS_SELECT = 1;
 
     private int status = STATUS_NORMAL;
-
+    private Fragment fr;
     private Alarm alarm;
 
     private void showDetailDialog() {
@@ -32,7 +34,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
         intent.putExtra("type", AlarmActivity.TYPE_ALARM);
         intent.putExtra("id", alarm.id);
 
-        adapter.activity.startActivity(intent);
+        ((AlarmFragment) fr).mStartForResult.launch(intent);
     }
 
     private void updateAlarmStatus(int id) {
@@ -107,12 +109,13 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public AlarmViewHolder(AlarmAdapter adapter, ItemAlarmBinding binding) {
+    public AlarmViewHolder(AlarmAdapter adapter, ItemAlarmBinding binding, Fragment fr) {
         super(binding.getRoot());
         binding.setTheme(MainActivity.getAppliedTheme());
 
         this.adapter = adapter;
         this.binding = binding;
+        this.fr = fr;
 
         binding.clItemAlarm.setOnClickListener(this::handleOnClickItem);
         binding.clItemAlarm.setOnLongClickListener(this::handleOnLongClickItem);

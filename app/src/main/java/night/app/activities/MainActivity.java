@@ -98,6 +98,19 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    private void loadTheme(Theme theme) {
+        MainActivity.setTheme(theme);
+        binding.setTheme(MainActivity.getAppliedTheme());
+
+        Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fr_app_page, fr.getClass(), null)
+                .commit();
+
+        LayoutUtils.setSystemBarColor(getWindow(), theme.getPrimary(), theme.getPrimary());
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -153,28 +166,9 @@ public class MainActivity extends AppCompatActivity {
             if (appliedTheme != null) {
                 List<Theme> themeList = database.dao().getTheme(appliedTheme);
 
-                if (themeList.size() > 0) return;
-                runOnUiThread(() -> {
-                    if (themeList.size() <= 0) return;
-                    
-                    MainActivity.setTheme(themeList.get(0));
-                    binding.setTheme(MainActivity.getAppliedTheme());
-
-                    Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fr_app_page);
-                    if (fr instanceof ClockPageFragment) {
-                        ((ClockPageFragment) fr).binding.setTheme(theme);
-
-                        Fragment innerFr = fr.getChildFragmentManager().findFragmentById(R.id.fr_clock_details);
-                        if (innerFr instanceof AlarmFragment) {
-                            ((AlarmFragment) innerFr).binding.setTheme(getAppliedTheme());
-                        }
-                        else if (innerFr instanceof NapFragment) {
-                            ((NapFragment) innerFr).binding.setTheme(theme);
-                        }
-                    }
-
-                    LayoutUtils.setSystemBarColor(getWindow(), theme.getPrimary(), theme.getPrimary());
-                });
+                if (themeList.size() > 0) {
+                    runOnUiThread(() -> loadTheme(themeList.get(0)));
+                }
             }
         }).start();
 

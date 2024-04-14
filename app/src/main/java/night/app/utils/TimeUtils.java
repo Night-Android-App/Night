@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class TimeUtils {
     public static int DayInSeconds = 24 * 60 * 60;
@@ -18,13 +19,38 @@ public class TimeUtils {
     public static int getToday() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
         return (int) (calendar.getTimeInMillis() / 1000);
     }
 
-    public static int getTodayHrMin() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.AM_PM) == Calendar.AM ? 0 : 12*60 + calendar.get(Calendar.HOUR)*60 + calendar.get(Calendar.MINUTE);
+    public static long getMsOfToday() {
+        Calendar current = Calendar.getInstance();
+        return ((current.get(Calendar.HOUR_OF_DAY) * 60 +
+                current.get(Calendar.MINUTE)) * 60 +
+                current.get(Calendar.SECOND)) * 1000 + current.get(Calendar.MILLISECOND);
+    }
+
+    public static long getClosestDateTime(long msOfDay) {
+        Calendar current = Calendar.getInstance();
+
+        if (getMsOfToday() > msOfDay) {
+            current.add(Calendar.DATE, 1);
+        }
+
+        int targetHour = (int) TimeUnit.MILLISECONDS.toHours(msOfDay);
+
+        // TimeUnits will return total minutes including hours
+        int targetMin = (int) TimeUnit.MILLISECONDS.toMinutes(msOfDay) - targetHour * 60;
+
+        current.set(Calendar.HOUR_OF_DAY, targetHour);
+        current.set(Calendar.MINUTE, targetMin);
+        current.set(Calendar.SECOND, 0);
+        current.set(Calendar.MILLISECOND, 0);
+
+        return current.getTimeInMillis();
     }
 
     public static int timeDiff(int earlier, int later) {

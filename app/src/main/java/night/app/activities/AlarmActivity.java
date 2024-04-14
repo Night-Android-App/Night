@@ -1,15 +1,19 @@
 package night.app.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +23,7 @@ import com.shawnlin.numberpicker.NumberPicker;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import night.app.data.entities.Alarm;
 import night.app.data.entities.Repeat;
@@ -57,6 +62,9 @@ public class AlarmActivity extends AppCompatActivity {
     private void discardAlarm() {
         new ConfirmDialog("Discard changed settings", "Are you sure?", (dialog) -> {
             dialog.dismiss();
+            setResult(RESULT_OK);
+
+            Toast.makeText(this, "Discard Alarm Settings", Toast.LENGTH_SHORT).show();
             finish();
         }).show(getSupportFragmentManager(), null);
     }
@@ -67,25 +75,28 @@ public class AlarmActivity extends AppCompatActivity {
 
         new Thread(() -> {
             alarmDAO.updateAlarm(alarm.id, wakeUpTime, enableMission, prodId);
-            finish();
+            setResult(RESULT_OK);
         }).start();
+        Toast.makeText(this, "Updated Alarm", Toast.LENGTH_SHORT).show();
+
+        new AlarmSchedule(getApplicationContext())
+                .setRingtone(prodId)
+                .cancel(alarm.id);
+
+        scheduleAlarm(alarm.id);
+        finish();
     }
 
     private void scheduleAlarm(int id) {
-        int delayInSeconds;
-        if (TimeUtils.getTodayHrMin() > wakeUpTime) {
-            delayInSeconds = (wakeUpTime + (23*60 - TimeUtils.getTodayHrMin()))*60 - Calendar.getInstance().get(Calendar.MINUTE) * 60;
-        }
-        else {
-            delayInSeconds = (wakeUpTime - TimeUtils.getTodayHrMin())*60- Calendar.getInstance().get(Calendar.MINUTE)*60;
-        }
-
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, wakeUpTime - calendar.get(Calendar.HOUR) * 60 - calendar.get(Calendar.MINUTE));
 
-        new AlarmSchedule(getApplicationContext())
-                .post(id, calendar.getTimeInMillis());
+        System.out.println("Schedule Alarm: SleepTime = " + sleepTime);
+        System.out.println("Schedule Alarm: WakeTime = " + wakeUpTime);
+        calendar.setTimeInMillis(TimeUtils.getClosestDateTime((long) wakeUpTime*60*1000));
 
+        System.out.println(calendar.get(Calendar.MONTH)+1 + "/" + calendar.get(Calendar.DAY_OF_MONTH));
+        System.out.println(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
+        new AlarmSchedule(getApplicationContext()).post(id, calendar.getTimeInMillis());
     }
 
     private void saveAlarm() {
@@ -125,6 +136,7 @@ public class AlarmActivity extends AppCompatActivity {
                 alarmDAO.createAlarm(wakeUpTime, enableMission, prodId);
 
                 scheduleAlarm(alarmDAO.getLastAlarm().id);
+                setResult(RESULT_OK);
                 finish();
             }).start();
         }
@@ -244,11 +256,19 @@ public class AlarmActivity extends AppCompatActivity {
                         ? ColorStateList.valueOf(binding.getTheme().getAccent())
                         : ColorStateList.valueOf(binding.getTheme().getOnPrimaryVariant())
         );
-
     }
 
     private void gotoAlarmBranch() {
         int alarmId = getIntent().getExtras().getInt("id", -1);
+
+        binding.setNpType(NP_WAKE);
+
+        // set current time to number picker (more convenient for users)
+        wakeUpTime = (int) TimeUnit.MILLISECONDS.toMinutes(TimeUtils.getMsOfToday());
+        binding.npHrs.setValue((int) TimeUnit.MINUTES.toHours(wakeUpTime));
+        binding.npMins.setValue(wakeUpTime - binding.npHrs.getValue() * 60);
+
+
         if (alarmId >= 0) {
             isUpdate = true;
             loadAlarmSettings(alarmId);
@@ -290,9 +310,31 @@ public class AlarmActivity extends AppCompatActivity {
         });
     }
 
+    private void showNotificationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Notification Permission")
+                .setMessage("Required for alarms.")
+                .setPositiveButton("Grant", (dialog, i) -> {
+                    Intent intent = new Intent();
+                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
+
+                    startActivity(intent);
+                })
+                .setNegativeButton("Not now", ((dialog, i) -> saveAlarm()))
+                .show();
+    }
+
+    @Override
+    protected void onStop() {
+        setResult(RESULT_OK);
+        super.onStop();
+    }
+
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         discardAlarm();
     }
 
@@ -320,25 +362,13 @@ public class AlarmActivity extends AppCompatActivity {
 
         binding.btnDiscard.setOnClickListener(v -> discardAlarm());
         binding.btnSave.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            // check whether the user granted Notification Permission or not
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED) {
                 saveAlarm();
+                return;
             }
-            else {
-                new ConfirmDialog("Permission required", "Notification", (dialog) -> {
-                    Intent intent = new Intent();
-                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    // for Android 5-7
-                    // intent.putExtra("app_package", getPackageName());
-                    // intent.putExtra("app_uid", getApplicationInfo().uid);
-
-                    intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
-
-                    startActivity(intent);
-                    dialog.dismiss();
-                }).show(getSupportFragmentManager(), null);
-            }
+            showNotificationDialog();
         });
 
         binding.npHrs.setOnValueChangedListener(this::handlePickerValueChanged);
