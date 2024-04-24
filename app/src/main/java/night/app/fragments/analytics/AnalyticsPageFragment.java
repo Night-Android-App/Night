@@ -1,4 +1,4 @@
-package night.app.fragments;
+package night.app.fragments.analytics;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,13 +16,13 @@ import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Theme;
 import night.app.databinding.FragmentAnalysisPageBinding;
-import night.app.fragments.analysis.DayRecordFragment;
-import night.app.fragments.analysis.MonthRecordFragment;
-import night.app.fragments.analysis.WeekRecordFragment;
+import night.app.fragments.analytics.DayRecordFragment;
+import night.app.fragments.analytics.MonthRecordFragment;
+import night.app.fragments.analytics.WeekRecordFragment;
 import night.app.utils.LayoutUtils;
 import night.app.utils.TimeUtils;
 
-public class AnalysisPageFragment extends Fragment {
+public class AnalyticsPageFragment extends Fragment {
     private FragmentAnalysisPageBinding binding;
 
     public static final int MODE_NORMAL = 0;
@@ -56,17 +56,17 @@ public class AnalysisPageFragment extends Fragment {
 
         binding.tvAnalDate.setText(date);
 
-        if (score > 0) {
+        if (score >= 0) {
             binding.tvAnalMainScoreData.setText(String.valueOf(Math.round(score)));
         }
         else {
             binding.tvAnalMainScoreData.setText("N/A");
         }
 
-        String info1String = info1 > 0 ? TimeUtils.toHrMinString((int) Math.round(info1)) : "N/A";
+        String info1String = info1 >= 0 ? TimeUtils.toHrMinString((int) Math.round(info1)) : "N/A";
         binding.tvAnalMainInfoData1.setText(info1String);
 
-        String info2String = info2 > 0 ? Math.round(info2 * 100) + "%" : "N/A";
+        String info2String = info2 >= 0 ? Math.round(info2 * 100) + "%" : "N/A";
         binding.tvAnalMainInfoData2.setText(info2String);
     }
 

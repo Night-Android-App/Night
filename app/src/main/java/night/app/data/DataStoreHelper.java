@@ -28,12 +28,6 @@ public class DataStoreHelper {
             KEY_BACKUP_SLEEP = PreferencesKeys.booleanKey("backupSleepRecord");
     public final static Preferences.Key<Boolean>
             KEY_BACKUP_DREAM = PreferencesKeys.booleanKey("backupDreamRecord");
-    public final static Preferences.Key<Integer>
-            KEY_TOTAL_EARNED = PreferencesKeys.intKey("totalEarned");
-    public final static Preferences.Key<Integer>
-            KEY_PREY_CAUGHT = PreferencesKeys.intKey("preyCaught");
-    public final static Preferences.Key<Integer>
-            KEY_SALE_PRICE = PreferencesKeys.intKey("salePrice");
 
     public <T> void update(Preferences.Key<T> key, T value) {
         Single<Preferences> updateResult = dataStore.updateDataAsync(prefsIn -> {

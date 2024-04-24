@@ -6,42 +6,48 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import night.app.activities.MainActivity;
 import night.app.data.entities.Day;
+import night.app.data.entities.SleepEvent;
 import night.app.utils.TimeUtils;
 
 public class SleepData {
-    private final Integer[] timelines;
-    private final Integer[] confidences;
+    private SleepEvent[] events;
 
-    public Integer[] getTimelines() { return timelines; }
-    public Integer[] getConfidences() { return confidences; }
-
-    private boolean isInRange(int data, int start, int end) {
+    private boolean isInRange(long data, long start, long end) {
         return data >= start && data <= end;
     }
 
     public int getScore() {
         double score = 0;
 
-        int sleepTime = getTotalSecondsByConfidence(50, 101);
+        long sleepTime = getConfidenceDuration(50, 100);
         if (sleepTime <= 0) return 0;
 
-        if (isInRange(sleepTime, 420, 540)) score += 0.3;
-        if (isInRange(sleepTime, 300, 420)) score += 0.3;
-        else if (isInRange(sleepTime, 540, 660)) score += 0.3;
+
+        if (isInRange(sleepTime, TimeUnit.HOURS.toMillis(7), TimeUnit.HOURS.toMillis(9))) {
+            score += 0.9;
+        }
+        else {
+            long sdLowerLimit = Math.abs(sleepTime - TimeUnit.HOURS.toMillis(7));
+            long sdUpperLimit = Math.abs(sleepTime - TimeUnit.HOURS.toMillis(9));
+
+            score += .9 * (1- (double) Math.min(sdLowerLimit, sdUpperLimit)/120);
+        }
 
         if (getSleepEfficiency() >= 0.85) score += 0.1;
         if (getSleepEfficiency() >= 0.75) score += 0.1;
 
-        if (getFellAsleepTime() != -1) {
-            if (getFellAsleepTime() <= 2760) score += 0.1;
-            if (getFellAsleepTime() <= 1800) score += 0.1;
+        if (getFellAsleepDuration() != -1) {
+            if (getFellAsleepDuration() <= 2760) score += 0.1;
+            if (getFellAsleepDuration() <= 1800) score += 0.1;
         }
 
         int awake = -2;
-        for (Integer confidence : confidences) {
-            if (confidence < 50) awake++;
+        for (SleepEvent event : events) {
+            if (event.confidence < 50) awake++;
         }
 
         if (awake <= 3) score += 0.1;
@@ -51,23 +57,11 @@ public class SleepData {
     }
 
     public double getSleepEfficiency() {
-        if (timelines.length == 0) return -1;
-
-        int inBedSeconds = TimeUtils.timeDiff(timelines[0], timelines[timelines.length-1]);
-        int sleepSeconds = getTotalSecondsByConfidence(50, 101);
-        return (double) sleepSeconds / inBedSeconds;
+        return (double) (getConfidenceDuration(50, 100) / getInBedDuration());
     }
 
-    public Integer getTotalSleep() {
-        if (timelines.length == 0) return 0;
-
-        int prevTime = timelines[0];
-        int laterTime = timelines[timelines.length-1];
-
-        if (prevTime > laterTime) {
-            return 24 * 60 + laterTime - prevTime;
-        }
-        return laterTime - prevTime;
+    public long getInBedDuration() {
+        return events[events.length-1].timeline - events[0].timeline;
     }
 
     public static SleepData[] dayListToSleepDataArray(List<Day> dayList) {
@@ -79,53 +73,37 @@ public class SleepData {
         return sleepData;
     }
 
-    public int getFellAsleepTime() {
-        if (confidences.length == 0) return -1;
+    public long getFellAsleepDuration() {
+        long durationInMills = 0;
 
-        for (int i=0; i < confidences.length; i++) {
-            if (confidences[i] >= 50) {
-                return TimeUtils.timeDiff(timelines[0], timelines[i]);
+        for (int i=0; i <events.length; i++) {
+            if (events[i].confidence >= 50) return durationInMills;
+            durationInMills += getEventDuration(i);
+        }
+        return -1;
+    }
+
+    public long getEventDuration(int index) {
+        // the duration of last event is 0
+        if (index+1 >= events.length) return 0;
+
+        // return in Mills
+        return events[index+1].timeline - events[index].timeline;
+    }
+
+    public long getConfidenceDuration(int min, int max) {
+        long durationInMills = 0;
+
+        for (int i=0; i <events.length; i++) {
+            if (events[i].confidence >= min && events[i].confidence <= max) {
+                durationInMills += getEventDuration(i);
             }
         }
-        return TimeUtils.timeDiff(timelines[0], timelines[timelines.length-1]);
+
+        return durationInMills;
     }
 
-    public int getEventDuration(int index) {
-        if (index+1 >= timelines.length) return 0;
-
-        return TimeUtils.timeDiff(timelines[index], timelines[index+1]);
-    }
-
-    public int getTotalSecondsByConfidence(int min, int max) {
-        int seconds = 0;
-
-        for (int i=0; i < confidences.length; i++) {
-            if (confidences[i] >= min && confidences[i] < max) seconds += getEventDuration(i);
-        }
-        return seconds;
-    }
-
-    public SleepData(String str) {
-        JSONObject json;
-
-        try { json = new JSONObject(str); }
-        catch (JSONException e) {
-            timelines = new Integer[] {};
-            confidences = new Integer[] {};
-            return;
-        }
-
-        List<Integer> timelines = new ArrayList<>();
-        List<Integer> confidence = new ArrayList<>();
-
-        for (Iterator<String> it = json.keys(); it.hasNext();) {
-            String key = it.next();
-            timelines.add(Integer.parseInt(key));
-
-            confidence.add(json.optInt(key));
-        }
-
-        this.timelines = timelines.toArray(new Integer[0]);
-        this.confidences = confidence.toArray(new Integer[0]);
+    public SleepData(SleepEvent[] e) {
+        events = e;
     }
 }

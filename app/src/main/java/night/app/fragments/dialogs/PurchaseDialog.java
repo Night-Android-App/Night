@@ -21,7 +21,7 @@ import night.app.activities.MainActivity;
 import night.app.adapters.RingtoneViewHolder;
 import night.app.adapters.ThemeViewHolder;
 import night.app.databinding.DialogPurchaseBinding;
-import night.app.fragments.ClockPageFragment;
+import night.app.fragments.clocks.ClockPageFragment;
 import night.app.networks.ServiceRequest;
 
 public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extends DialogFragment {

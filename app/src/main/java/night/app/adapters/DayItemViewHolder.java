@@ -66,10 +66,10 @@ public class DayItemViewHolder extends RecyclerView.ViewHolder {
         binding.tvWeekOfDay.setText("(" + days[calendar.get(Calendar.DAY_OF_WEEK)] + ")");
 
 
-        SleepData sleepData = new SleepData("{}");
-        binding.tvSleepHrs.setText(TimeUtils.toHrMinString(sleepData.getTotalSleep()));
-
-        binding.tvSleepEfficiency.setText(Math.round(sleepData.getSleepEfficiency() * 100) + "%");
+//        SleepData sleepData = new SleepData("{}");
+//        binding.tvSleepHrs.setText(TimeUtils.toHrMinString(sleepData.getTotalSleep()));
+//
+//        binding.tvSleepEfficiency.setText(Math.round(sleepData.getSleepEfficiency() * 100) + "%");
     }
 
     public DayItemViewHolder(DayItemAdapter adapter, ItemDayRecordBinding binding) {

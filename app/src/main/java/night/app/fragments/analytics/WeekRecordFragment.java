@@ -1,4 +1,4 @@
-package night.app.fragments.analysis;
+package night.app.fragments.analytics;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,7 +18,6 @@ import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Day;
 import night.app.databinding.FragmentWeekRecordBinding;
-import night.app.fragments.AnalysisPageFragment;
 import night.app.services.ChartBuilder;
 import night.app.services.Sample;
 import night.app.services.SleepData;
@@ -26,8 +25,8 @@ import night.app.utils.TimeUtils;
 
 public class WeekRecordFragment extends Fragment {
     private FragmentWeekRecordBinding binding;
-    private int startDate;
-    private int endDate;
+    private long startDate;
+    private long endDate;
 
     private void setUpperPanelResult(String date, int score, double info1, double info2) {
         Bundle bundle = new Bundle();
@@ -69,11 +68,11 @@ public class WeekRecordFragment extends Fragment {
             double sleepEfficiency = 0d;
 
             for (SleepData data : sleepData) {
-                double efficiency = data.getSleepEfficiency();
-                if (efficiency >= 0) sleepEfficiency += efficiency;
-
-                int totalSleep = data.getTotalSleep();
-                if (totalSleep >= 0) sleepSeconds += totalSleep;
+//                double efficiency = data.getSleepEfficiency();
+//                if (efficiency >= 0) sleepEfficiency += efficiency;
+//
+//                int totalSleep = data.getTotalSleep();
+//                if (totalSleep >= 0) sleepSeconds += totalSleep;
             }
 
             Integer[] sleepHrs = new Integer[7];
@@ -84,7 +83,7 @@ public class WeekRecordFragment extends Fragment {
                 calendar.setTimeInMillis(dayList.get(i).date * 1000);
 
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                sleepHrs[dayOfWeek == 7 ? 0 : dayOfWeek+1] = sleepData[i].getTotalSleep() / 60;
+//                sleepHrs[dayOfWeek == 7 ? 0 : dayOfWeek+1] = sleepData[i].getTotalSleep() / 60;
             }
 
             new ChartBuilder<>(binding.barChartWeekRecord, sleepHrs)
@@ -105,8 +104,8 @@ public class WeekRecordFragment extends Fragment {
         endDate = TimeUtils.dayAdd(startDate, -1);
         startDate = TimeUtils.dayAdd(startDate, -7);
 
-        if (startDate < TimeUtils.dayAdd(TimeUtils.getToday(), -29)) {
-            startDate = TimeUtils.dayAdd(TimeUtils.getToday(), -29);
+        if (startDate < TimeUtils.dayAdd(TimeUtils.getTodayAtMidNight(), -29)) {
+            startDate = TimeUtils.dayAdd(TimeUtils.getTodayAtMidNight(), -29);
         }
 
         loadBarChart(startDate, endDate);
@@ -114,7 +113,7 @@ public class WeekRecordFragment extends Fragment {
         if (getActivity() == null) return;
         getActivity().findViewById(R.id.iv_right).setVisibility(View.VISIBLE);
 
-        if (TimeUtils.dayAdd(endDate, -7) < TimeUtils.dayAdd(TimeUtils.getToday(), -30)) {
+        if (TimeUtils.dayAdd(endDate, -7) < TimeUtils.dayAdd(TimeUtils.getTodayAtMidNight(), -30)) {
             getActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
             return;
         }
@@ -125,11 +124,11 @@ public class WeekRecordFragment extends Fragment {
         startDate = TimeUtils.dayAdd(endDate, 1);
         endDate = TimeUtils.dayAdd(endDate, 7);
 
-        if (endDate > TimeUtils.getToday()) endDate = TimeUtils.getToday();
+        if (endDate > TimeUtils.getTodayAtMidNight()) endDate = TimeUtils.getTodayAtMidNight();
 
         loadBarChart(startDate, endDate);
 
-        if (TimeUtils.dayAdd(startDate, 7) > TimeUtils.getToday()) {
+        if (TimeUtils.dayAdd(startDate, 7) > TimeUtils.getTodayAtMidNight()) {
             requireActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
             return;
         }
@@ -149,7 +148,7 @@ public class WeekRecordFragment extends Fragment {
         if (getArguments() != null) {
             int mode = getArguments().getInt("mode", 0);
 
-            if (mode == AnalysisPageFragment.MODE_SAMPLE) {
+            if (mode == AnalyticsPageFragment.MODE_SAMPLE) {
                 List<Day> days = Sample.getDay();
                 startDate = TimeUtils.dayAdd(startDate, -7);
                 endDate = 0;

@@ -2,12 +2,10 @@ package night.app.activities;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,12 +18,10 @@ import night.app.data.AppDatabase;
 import night.app.data.DataStoreHelper;
 import night.app.data.entities.Theme;
 import night.app.databinding.ActivityMainBinding;
-import night.app.fragments.AnalysisPageFragment;
-import night.app.fragments.ClockPageFragment;
-import night.app.fragments.WidgetsPageFragment;
+import night.app.fragments.analytics.AnalyticsPageFragment;
+import night.app.fragments.clocks.ClockPageFragment;
+import night.app.fragments.widgets.WidgetsPageFragment;
 import night.app.R;
-import night.app.fragments.clocks.AlarmFragment;
-import night.app.fragments.clocks.NapFragment;
 import night.app.utils.LayoutUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -141,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         binding.btnPageClock
                 .setOnClickListener(v -> switchPage(v.getId(), ClockPageFragment.class));
         binding.btnPageAnalysis
-                .setOnClickListener(v -> switchPage(v.getId(), AnalysisPageFragment.class));
+                .setOnClickListener(v -> switchPage(v.getId(), AnalyticsPageFragment.class));
         binding.btnPageSettings
                 .setOnClickListener(v -> switchPage(v.getId(), WidgetsPageFragment.class));
 

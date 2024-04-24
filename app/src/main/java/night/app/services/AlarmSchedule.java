@@ -23,7 +23,7 @@ public class AlarmSchedule {
                 context, alarmId, intent, PendingIntent.FLAG_IMMUTABLE
         );
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, timestamp, pendingIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timestamp, pendingIntent);
     }
 
     public void cancel(int alarmId) {

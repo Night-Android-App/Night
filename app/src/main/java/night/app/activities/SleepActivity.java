@@ -203,12 +203,6 @@ public class SleepActivity extends AppCompatActivity {
                 .addOnSuccessListener( o -> {
                     System.out.println("Successfully subscribed to sleep data.");
                 })
-                .addOnCanceledListener(() -> {
-                    System.out.println("Canceled");
-                })
-                .addOnCompleteListener(o -> {
-                    System.out.println("Completed");
-                })
                 .addOnFailureListener(e -> {
                     System.out.println("Fail to subscribe to sleep data");
                 });

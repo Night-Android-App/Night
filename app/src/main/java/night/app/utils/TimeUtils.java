@@ -12,18 +12,18 @@ import java.util.concurrent.TimeUnit;
 public class TimeUtils {
     public static int DayInSeconds = 24 * 60 * 60;
 
-    public static int dayAdd(int date, int day) {
-        return date + day * DayInSeconds;
+    public static long dayAdd(long date, int day) {
+        return date + day * (long) DayInSeconds;
     }
 
-    public static int getToday() {
+    public static long getTodayAtMidNight() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        return (int) (calendar.getTimeInMillis() / 1000);
+        return calendar.getTimeInMillis();
     }
 
     public static long getMsOfToday() {

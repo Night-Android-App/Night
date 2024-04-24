@@ -1,4 +1,4 @@
-package night.app.fragments;
+package night.app.fragments.clocks;
 
 import android.app.Activity;
 import android.content.Intent;

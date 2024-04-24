@@ -1,4 +1,4 @@
-package night.app.fragments.analysis;
+package night.app.fragments.analytics;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,26 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.data.dao.AppDAO;
-import night.app.data.dao.DayDAO;
-import night.app.data.entities.Day;
 import night.app.data.entities.SleepEvent;
 import night.app.databinding.FragmentDayRecordBinding;
-import night.app.fragments.AnalysisPageFragment;
 import night.app.services.ChartBuilder;
-import night.app.services.Sample;
 import night.app.services.SleepData;
 import night.app.utils.TimeUtils;
 
 public class DayRecordFragment extends Fragment {
     private FragmentDayRecordBinding binding;
-    private int date = TimeUtils.getToday();
+    private long date = TimeUtils.getTodayAtMidNight();
 
     private void setUpperPanelResult(String date, SleepData sleepData) {
         Bundle bundle = new Bundle();
@@ -39,11 +32,10 @@ public class DayRecordFragment extends Fragment {
 
         if (sleepData != null) {
             bundle.putInt("score", Math.round(sleepData.getScore()));
-            bundle.putDouble("info1", sleepData.getFellAsleepTime());
+            bundle.putDouble("info1", sleepData.getFellAsleepDuration());
             bundle.putDouble("info2", sleepData.getSleepEfficiency());
         }
 
-        if (!isAdded()) return;
         getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
     }
 
@@ -69,51 +61,26 @@ public class DayRecordFragment extends Fragment {
                 confidence[i] = events[i].confidence;
 
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(events[i].timeline * 1000);
+                calendar.setTimeInMillis(events[i].timeline);
 
                 time[i] = calendar.get(Calendar.HOUR_OF_DAY) + ":" +calendar.get(Calendar.MINUTE);
             }
-
-            System.out.println("Confidence List: " + Arrays.toString(confidence));
-            System.out.println("Timelines: " + Arrays.toString(time));
 
             new ChartBuilder<>(binding.lineChartDayRecord, time, confidence)
                     .setTheme(binding.getTheme())
                     .invalidate();
 
-            int light = 0;
-            int deep = 0;
-            for (int confi : confidence) {
-                if (confi >= 50 && confi < 75) {
+            if (events.length >= 1) {
+                SleepData data = new SleepData(events);
+                setUpperPanelResult(TimeUtils.toDateString(timestamp, true), data);
 
-                }
+                binding.tvLightSleep.setText(TimeUtils.toHrMinString((int) data.getConfidenceDuration(50,74)));
+                binding.tvDeepSleep.setText(TimeUtils.toHrMinString((int) data.getConfidenceDuration(75,100)));
+                binding.tvInBed.setText(TimeUtils.toHrMinString((int) data.getInBedDuration()));
+                return;
             }
-
-
-                setUpperPanelResult(TimeUtils.toDateString(timestamp, true), null);
+            setUpperPanelResult(TimeUtils.toDateString(timestamp, true), null);
         }).start();
-
-
-//        int totalLightSleep = sleepData.getTotalSecondsByConfidence(50, 75);
-//        binding.tvLightSleep.setText(TimeUtils.toHrMinString(totalLightSleep));
-//
-//        int totalDeepSleep = sleepData.getTotalSecondsByConfidence(75, 101);
-//        binding.tvDeepSleep.setText(TimeUtils.toHrMinString(totalDeepSleep));
-//
-//        binding.tvInBed.setText(TimeUtils.toHrMinString(sleepData.getTotalSleep()));
-//        binding.tvAnalDream.setText(day.dream == null ? "No record" : day.dream);
-//
-//        Integer[] data = sleepData.getConfidences();
-//
-//        Integer[] timelines = sleepData.getTimelines();
-//        String[] hrMin = new String[timelines.length];
-//        for (int i=0; i < timelines.length; i++) {
-//            hrMin[i] = TimeUtils.toTimeNotation(timelines[i]*60);
-//        }
-//
-//        new ChartBuilder<>(binding.lineChartDayRecord, hrMin, data)
-//                .setTheme(binding.getTheme())
-//                .invalidate();
     }
 
     private void setLoadDayResultListener() {
@@ -134,15 +101,8 @@ public class DayRecordFragment extends Fragment {
                 });
     }
 
-    private void toPreviousDay() {
-        date = TimeUtils.dayAdd(date, -1);
-        loadDay(date);
-
-        setStylesForNormalMode();
-    }
-
-    private void toNextDay() {
-        date = TimeUtils.dayAdd(date, 1);
+    private void loadDayByDiff(int diff) {
+        date = TimeUtils.dayAdd(date, diff);
         loadDay(date);
 
         setStylesForNormalMode();
@@ -169,10 +129,10 @@ public class DayRecordFragment extends Fragment {
         ivRight.setVisibility(View.VISIBLE);
 
 
-        if (TimeUtils.dayAdd(date, 1) > TimeUtils.getToday()) {
+        if (TimeUtils.dayAdd(date, 1) > TimeUtils.getTodayAtMidNight()) {
             ivRight.setVisibility(View.GONE);
         }
-        else if (date <= TimeUtils.dayAdd(TimeUtils.getToday(), -29)) {
+        else if (date <= TimeUtils.dayAdd(TimeUtils.getTodayAtMidNight(), -29)) {
             ivLeft.setVisibility(View.GONE);
         }
 
@@ -187,19 +147,16 @@ public class DayRecordFragment extends Fragment {
         if (getArguments() != null) {
             int mode = getArguments().getInt("mode", 0);
 
-            if (mode == AnalysisPageFragment.MODE_SAMPLE) {
+            if (mode == AnalyticsPageFragment.MODE_SAMPLE) {
                 setStylesForSampleMode();
                 return binding.getRoot();
             }
         }
 
-        getActivity().findViewById(R.id.iv_left)
-                .setOnClickListener(v -> toPreviousDay());
+        getActivity().findViewById(R.id.iv_left).setOnClickListener(v -> loadDayByDiff(-1));
+        getActivity().findViewById(R.id.iv_right).setOnClickListener(v -> loadDayByDiff(+1));
 
-        getActivity().findViewById(R.id.iv_right)
-                .setOnClickListener(v -> toNextDay());
-
-        loadDay(TimeUtils.getToday());
+        loadDay(TimeUtils.getTodayAtMidNight());
         setStylesForNormalMode();
 
         return binding.getRoot();

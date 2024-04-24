@@ -16,7 +16,7 @@ import night.app.data.DataStoreHelper;
 import night.app.data.entities.Product;
 import night.app.data.entities.Theme;
 import night.app.databinding.ItemShopThemeBinding;
-import night.app.fragments.WidgetsPageFragment;
+import night.app.fragments.widgets.WidgetsPageFragment;
 import night.app.fragments.dialogs.PurchaseDialog;
 
 public class ThemeViewHolder extends RecyclerView.ViewHolder {

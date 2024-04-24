@@ -1,4 +1,4 @@
-package night.app.fragments;
+package night.app.fragments.widgets;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -30,7 +30,6 @@ import night.app.utils.LayoutUtils;
 
 public class WidgetsPageFragment extends Fragment {
     private FragmentWidgetsPageBinding binding;
-
 
     private void clearLocalAccountRecord() {
         DataStoreHelper dataStore = MainActivity.getDataStore();

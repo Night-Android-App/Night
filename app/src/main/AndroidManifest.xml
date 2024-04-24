@@ -34,7 +34,12 @@
             android:name=".activities.BarCodeActivity"
             android:exported="false" />
 
-        <receiver android:name=".services.AlarmReceiver" />
+        <receiver android:name=".services.AlarmReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
         <receiver android:name=".services.SleepReceiver" />
 
 

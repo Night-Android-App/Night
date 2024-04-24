@@ -1,4 +1,4 @@
-package night.app.fragments.analysis;
+package night.app.fragments.analytics;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,9 +17,7 @@ import night.app.activities.MainActivity;
 import night.app.adapters.DayItemAdapter;
 import night.app.data.entities.Day;
 import night.app.databinding.FragmentMonthRecordBinding;
-import night.app.fragments.AnalysisPageFragment;
 import night.app.services.Sample;
-import night.app.services.SleepData;
 import night.app.utils.TimeUtils;
 
 public class MonthRecordFragment extends Fragment {
@@ -50,19 +48,19 @@ public class MonthRecordFragment extends Fragment {
         if (getActivity() == null || getArguments() == null) return;
 
         List<Day> dayList;
-        int endDate;
+        long endDate;
 
         int mode = getArguments().getInt("mode", 0);
-        if (mode == AnalysisPageFragment.MODE_SAMPLE) {
+        if (mode == AnalyticsPageFragment.MODE_SAMPLE) {
             dayList = Sample.getDay();
             endDate = 0;
         }
         else {
             dayList = MainActivity.getDatabase().dayDAO().getAllDay();
-            endDate = TimeUtils.getToday();
+            endDate = TimeUtils.getTodayAtMidNight();
         }
 
-        int startedDate = TimeUtils.dayAdd(endDate, -29);
+        long startedDate = TimeUtils.dayAdd(endDate, -29);
 
         getActivity().runOnUiThread(() -> {
             if (dayList.size() == 0) {
@@ -73,15 +71,15 @@ public class MonthRecordFragment extends Fragment {
             double sleepScore = 0, sleepSeconds = 0, sleepEfficiency = 0;
 
             for (int i=0; i < dayList.size(); i++) {
-                SleepData data = new SleepData("{}");
-
-                sleepScore += data.getScore();
-
-                double efficiency = data.getSleepEfficiency();
-                if (efficiency >= 0) sleepEfficiency += efficiency;
-
-                int totalSleep = data.getTotalSleep();
-                if (totalSleep >= 0) sleepSeconds += totalSleep;
+//                SleepData data = new SleepData("{}");
+//
+//                sleepScore += data.getScore();
+//
+//                double efficiency = data.getSleepEfficiency();
+//                if (efficiency >= 0) sleepEfficiency += efficiency;
+//
+//                int totalSleep = data.getTotalSleep();
+//                if (totalSleep >= 0) sleepSeconds += totalSleep;
             }
 
             setUpperPanelResult(
@@ -104,10 +102,8 @@ public class MonthRecordFragment extends Fragment {
 
         new Thread(this::loadData).start();
 
-        if (getActivity() != null) {
-            getActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
-            getActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
-        }
+        getActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
 
         return binding.getRoot();
     }

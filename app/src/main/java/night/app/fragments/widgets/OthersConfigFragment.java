@@ -46,8 +46,6 @@ public class OthersConfigFragment extends Fragment {
         binding.btnOpenPolicy
                 .setOnClickListener(v -> showAgreements(AgreementActivity.TYPE_POLICY));
 
-
-
         binding.btnPermission.getCompoundDrawables()[2]
                 .setTint(MainActivity.getAppliedTheme().getOnSurface());
 
