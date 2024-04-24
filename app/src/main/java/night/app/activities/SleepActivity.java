@@ -1,14 +1,25 @@
 package night.app.activities;
 
-import android.app.AlarmManager;
+import android.Manifest;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityRecognitionClient;
+import com.google.android.gms.location.SleepSegmentRequest;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.Calendar;
 
@@ -16,13 +27,12 @@ import night.app.data.entities.Alarm;
 import night.app.databinding.ActivitySleepBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
 import night.app.fragments.dialogs.MissionDialog;
-import night.app.services.AlarmReceiver;
 import night.app.services.AlarmSchedule;
 import night.app.services.AlarmService;
 import night.app.services.RingtonePlayer;
+import night.app.services.SleepReceiver;
 import night.app.utils.LayoutUtils;
 import night.app.utils.TimeUtils;
-
 
 public class SleepActivity extends AppCompatActivity {
     private ActivitySleepBinding binding;
@@ -35,7 +45,9 @@ public class SleepActivity extends AppCompatActivity {
     }
 
     public void disableAlarm() {
-        AlarmService.getInstance().stop();
+        if (AlarmService.getInstance() != null) {
+            AlarmService.getInstance().stop();
+        }
         finish();
     }
 
@@ -55,8 +67,8 @@ public class SleepActivity extends AppCompatActivity {
                     String text = "(" + TimeUtils.toHrMinSec(remain) + ")";
                     runOnUiThread(() -> binding.tvCount.setText(text));
                     remain--;
+                } catch (InterruptedException e) {
                 }
-                catch (InterruptedException e) { }
             }
             runOnUiThread(() -> binding.tvCount.setText("End"));
         });
@@ -73,15 +85,14 @@ public class SleepActivity extends AppCompatActivity {
                 });
 
                 updateCurrentTime();
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }).start();
     }
 
     private void setWeekOfDay() {
-        String[] dayName = new String[] {
+        String[] dayName = new String[]{
                 "Sunday", "Monday",
                 "Tuesday", "Wednesday",
                 "Thursday", "Friday",
@@ -128,9 +139,9 @@ public class SleepActivity extends AppCompatActivity {
 
             binding.tvWake.setText(TimeUtils.toTimeNotation(calendar));
 
-            String text = "(" + TimeUtils.toHrMinSec(sleepMinutes*60) + ")";
+            String text = "(" + TimeUtils.toHrMinSec(sleepMinutes * 60) + ")";
             binding.tvCount.setText(text);
-            countdown(sleepMinutes * 60-1);
+            countdown(sleepMinutes * 60 - 1);
         }
     }
 
@@ -140,6 +151,11 @@ public class SleepActivity extends AppCompatActivity {
 
         if (player != null) player.release();
         if (countdownThread != null) countdownThread.interrupt();
+
+        Intent intent = new Intent(getApplicationContext(), SleepReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+
+        ActivityRecognition.getClient(getApplicationContext()).removeSleepSegmentUpdates(pendingIntent);
     }
 
     @Override
@@ -169,9 +185,32 @@ public class SleepActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra("alarmId")) {
             gotoAlarmBranch();
-        }
-        else {
+        } else {
             gotoSleepBranch();
         }
+
+        Intent intent = new Intent(getApplicationContext(), SleepReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+
+        if (checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("No permission");
+            return;
+        }
+
+        ActivityRecognition.getClient(getApplicationContext())
+                .requestSleepSegmentUpdates(pendingIntent,
+                        new SleepSegmentRequest(SleepSegmentRequest.CLASSIFY_EVENTS_ONLY))
+                .addOnSuccessListener( o -> {
+                    System.out.println("Successfully subscribed to sleep data.");
+                })
+                .addOnCanceledListener(() -> {
+                    System.out.println("Canceled");
+                })
+                .addOnCompleteListener(o -> {
+                    System.out.println("Completed");
+                })
+                .addOnFailureListener(e -> {
+                    System.out.println("Fail to subscribe to sleep data");
+                });
     }
 }

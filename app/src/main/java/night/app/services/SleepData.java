@@ -73,7 +73,7 @@ public class SleepData {
     public static SleepData[] dayListToSleepDataArray(List<Day> dayList) {
         SleepData[] sleepData = new SleepData[dayList.size()];
         for (int i=0; i < dayList.size(); i++) {
-            sleepData[i] = new SleepData(dayList.get(i).sleep);
+//            sleepData[i] = new SleepData(dayList.get(i).sleep);
         }
 
         return sleepData;

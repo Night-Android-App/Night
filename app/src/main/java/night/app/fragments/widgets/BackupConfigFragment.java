@@ -42,7 +42,8 @@ public class BackupConfigFragment extends Fragment {
         JSONObject json = new JSONObject();
 
         json.put("date", day.date);
-        json.put("sleep", day.sleep);
+        json.put("startTime", day.startTime);
+        json.put("endTime", day.endTime);
 
         Boolean isBackupDream = binding.getViewModel().getIsBackupDream();
         json.put("dream", isBackupDream == null || !isBackupDream ? day.dream : null);
@@ -152,7 +153,8 @@ public class BackupConfigFragment extends Fragment {
 
             dao.insertDay(
                     Integer.parseInt(key),
-                    day.getString("sleep"),
+                    day.getInt("startTime"),
+                    day.getInt("endTime"),
                     day.has("dream") ? day.getString("dream") : null
             );
         }

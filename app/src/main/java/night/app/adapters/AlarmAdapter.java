@@ -37,9 +37,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         List<Integer> id = new ArrayList<>();
         for (int adapterPos : selectedAlarms) {
-            id.add(alarmList.get(adapterPos).id);
-            alarmList.remove(adapterPos);
-            notifyItemRemoved(adapterPos);
+            if (alarmList.size() > adapterPos) {
+                id.add(alarmList.get(adapterPos).id);
+                alarmList.remove(adapterPos);
+                notifyItemRemoved(adapterPos);
+            }
         }
 
         new Thread(() -> {

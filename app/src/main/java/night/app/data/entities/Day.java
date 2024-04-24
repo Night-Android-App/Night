@@ -11,8 +11,9 @@ public class Day {
     @PrimaryKey
     public Integer date;
 
-    @NonNull
-    public String sleep;
+    public Integer startTime;
+
+    public Integer endTime;
 
     public String dream;
 }

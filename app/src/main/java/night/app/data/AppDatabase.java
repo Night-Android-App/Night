@@ -7,6 +7,7 @@ import night.app.data.dao.AlarmDAO;
 import night.app.data.dao.AppDAO;
 import night.app.data.dao.DayDAO;
 import night.app.data.dao.SleepDAO;
+import night.app.data.dao.SleepEventDAO;
 import night.app.data.entities.Alarm;
 import night.app.data.entities.Day;
 import night.app.data.entities.Product;
@@ -14,6 +15,7 @@ import night.app.data.entities.ProductType;
 import night.app.data.entities.Repeat;
 import night.app.data.entities.Ringtone;
 import night.app.data.entities.Sleep;
+import night.app.data.entities.SleepEvent;
 import night.app.data.entities.Theme;
 
 @Database(
@@ -25,7 +27,8 @@ import night.app.data.entities.Theme;
                 Alarm.class,
                 ProductType.class,
                 Repeat.class,
-                Sleep.class
+                Sleep.class,
+                SleepEvent.class
         },
         version = 1,
         exportSchema = false
@@ -39,4 +42,5 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract DayDAO dayDAO();
 
+    public abstract SleepEventDAO sleepEventDAO();
 }

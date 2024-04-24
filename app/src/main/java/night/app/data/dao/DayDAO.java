@@ -24,8 +24,8 @@ public interface DayDAO {
     @Query("DELETE FROM Days WHERE date < :dayBefore")
     void deleteOldDays(long dayBefore);
 
-    @Query("INSERT INTO Days (date, sleep, dream) VALUES (:date, :sleep, :dream)")
-    void insertDay(int date, String sleep, String dream);
+    @Query("INSERT INTO Days (date, startTime, endTime, dream) VALUES (:date, :startTime, :endTime, :dream)")
+    void insertDay(int date, int startTime, int endTime, String dream);
 
     @Query("DELETE FROM Days")
     void deleteAllDays();

@@ -62,6 +62,7 @@ public class AlarmFragment extends Fragment {
                 });
             }
         }).start();
+
     }
 
     private void handleOnClickDiscard(View view) {

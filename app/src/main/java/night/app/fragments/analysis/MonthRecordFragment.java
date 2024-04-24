@@ -73,7 +73,7 @@ public class MonthRecordFragment extends Fragment {
             double sleepScore = 0, sleepSeconds = 0, sleepEfficiency = 0;
 
             for (int i=0; i < dayList.size(); i++) {
-                SleepData data = new SleepData(dayList.get(i).sleep);
+                SleepData data = new SleepData("{}");
 
                 sleepScore += data.getScore();
 

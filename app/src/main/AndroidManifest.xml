@@ -35,6 +35,9 @@
             android:exported="false" />
 
         <receiver android:name=".services.AlarmReceiver" />
+        <receiver android:name=".services.SleepReceiver" />
+
+
 
         <service
             android:name=".services.AlarmService"
