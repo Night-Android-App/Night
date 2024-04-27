@@ -15,13 +15,11 @@ import java.util.List;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Product;
-import night.app.data.entities.Ringtone;
-import night.app.databinding.ItemRingtoneBinding;
-import night.app.services.RingtonePlayer;
+import night.app.databinding.HolderRingtoneViewBinding;
+import night.app.utils.RingtonePlayer;
 
 public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public List<Product> productList;
-    public List<Ringtone> ringtoneList;
 
     public final AppCompatActivity activity;
     final public RingtonePlayer ringtonePlayer;
@@ -36,8 +34,8 @@ public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RingtoneViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
-        ItemRingtoneBinding binding =
-                DataBindingUtil.inflate(inflater, R.layout.item_ringtone, viewGroup, false);
+        HolderRingtoneViewBinding binding =
+                DataBindingUtil.inflate(inflater, R.layout.holder_ringtone_view, viewGroup, false);
 
         binding.setTheme(MainActivity.getAppliedTheme());
 

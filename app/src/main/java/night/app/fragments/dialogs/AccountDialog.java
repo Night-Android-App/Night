@@ -30,7 +30,7 @@ import night.app.activities.MainActivity;
 import night.app.data.DataStoreHelper;
 import night.app.databinding.DialogAccountBinding;
 import night.app.networks.AccountRequest;
-import night.app.services.Password;
+import night.app.utils.Password;
 
 public class  AccountDialog extends DialogFragment {
     DialogAccountBinding binding;

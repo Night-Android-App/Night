@@ -24,16 +24,15 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import night.app.data.entities.Alarm;
-import night.app.data.entities.Repeat;
 import night.app.data.entities.Ringtone;
 import night.app.data.entities.Sleep;
 import night.app.data.dao.AlarmDAO;
 import night.app.databinding.ActivityAlarmBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
-import night.app.services.AlarmSchedule;
+import night.app.utils.AlarmSchedule;
 import night.app.services.NotificationReceiver;
 import night.app.utils.LayoutUtils;
-import night.app.utils.TimeUtils;
+import night.app.utils.DatetimeUtils;
 
 public class AlarmActivity extends AppCompatActivity {
     public final static int TYPE_SLEEP = 0;
@@ -51,7 +50,6 @@ public class AlarmActivity extends AppCompatActivity {
 
     private boolean isUpdate = false;
 
-    private Repeat repeat;
     private Alarm alarm;
 
 
@@ -75,6 +73,7 @@ public class AlarmActivity extends AppCompatActivity {
             alarmDAO.update(alarm.id, wakeUpTime, enableMission, prodId);
             setResult(RESULT_OK);
         }).start();
+
         Toast.makeText(this, "Updated Alarm", Toast.LENGTH_SHORT).show();
 
         new AlarmSchedule(getApplicationContext())
@@ -87,39 +86,26 @@ public class AlarmActivity extends AppCompatActivity {
 
     private void scheduleAlarm(int id) {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(DatetimeUtils.getClosestDateTime(wakeUpTime));
 
-        System.out.println("Schedule Alarm: SleepTime = " + sleepTime);
-        System.out.println("Schedule Alarm: WakeTime = " + wakeUpTime);
-        calendar.setTimeInMillis(TimeUtils.getClosestDateTime(wakeUpTime));
-
-        System.out.println(calendar.get(Calendar.MONTH)+1 + "/" + calendar.get(Calendar.DAY_OF_MONTH));
-        System.out.println(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
         new AlarmSchedule(getApplicationContext()).post(id, calendar.getTimeInMillis());
     }
 
     private void saveAlarm() {
         if (type == TYPE_SLEEP) {
-            binding.swDnd.isChecked();
-
             new Thread(() -> {
-                if (MainActivity.getDatabase().sleepDAO().getSleep() == null) {
-                    // disable previous alarm
-                }
-                MainActivity.getDatabase().sleepDAO().insertUpdate(
-                        sleepTime, wakeUpTime,
-                        binding.swMission.isChecked() ? 1 : 0, binding.swDnd.isChecked() ? 1 : 0,
-                        prodId
-                );
+                int isMission = binding.swMission.isChecked() ? 1 : 0;
+                int isDnd = binding.swDnd.isChecked() ? 1 : 0;
+                MainActivity.getDatabase().sleepDAO().insertUpdate(sleepTime, wakeUpTime, isMission, isDnd, prodId);
 
-                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, NotificationReceiver.class), PendingIntent.FLAG_IMMUTABLE);
+                Intent intent = new Intent(this, NotificationReceiver.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(TimeUtils.getClosestDateTime(sleepTime));
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                calendar.setTimeInMillis(DatetimeUtils.getClosestDateTime(sleepTime));
 
-                System.out.println(calendar.getTimeInMillis());
+                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
             }).start();
 
             setResult(RESULT_OK);
@@ -133,11 +119,11 @@ public class AlarmActivity extends AppCompatActivity {
                 return;
             }
             new Thread(() -> {
-                int enableMission = binding.swMission.isChecked() ? 1 : 0;
-
-                alarmDAO.create(wakeUpTime, enableMission, prodId);
+                alarmDAO.create(wakeUpTime, binding.swMission.isChecked() ? 1 : 0, prodId);
 
                 scheduleAlarm(alarmDAO.getLast().id);
+                Toast.makeText(this, "Created Alarm", Toast.LENGTH_SHORT).show();
+
                 setResult(RESULT_OK);
                 finish();
             }).start();
@@ -155,11 +141,11 @@ public class AlarmActivity extends AppCompatActivity {
 
         if (binding.getNpType() == NP_WAKE) {
             wakeUpTime = hrValue + minValue;
-            binding.tvWakeUp.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
+            binding.tvWakeUp.setText(DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
         }
         else if (binding.getNpType() == NP_SLEEP) {
             sleepTime = hrValue + minValue;
-            binding.tvSleep.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
+            binding.tvSleep.setText(DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
         }
     }
 
@@ -228,8 +214,8 @@ public class AlarmActivity extends AppCompatActivity {
                     wakeUpTime = sleep.endTime;
                     sleepTime = sleep.startTime;
 
-                    binding.tvSleep.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
-                    binding.tvWakeUp.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(wakeUpTime)));
+                    binding.tvSleep.setText(DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
+                    binding.tvWakeUp.setText(DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(wakeUpTime)));
 
                     updateNumberPickers(sleepTime);
                 });
@@ -266,7 +252,7 @@ public class AlarmActivity extends AppCompatActivity {
         binding.setNpType(NP_WAKE);
 
         // set current time to number picker (more convenient for users)
-        wakeUpTime = (int) TimeUnit.MILLISECONDS.toMinutes(TimeUtils.getMsOfToday());
+        wakeUpTime = (int) TimeUnit.MILLISECONDS.toMinutes(DatetimeUtils.getMsOfToday());
         binding.npHrs.setValue((int) TimeUnit.MILLISECONDS.toHours(wakeUpTime));
         binding.npMins.setValue((int) (wakeUpTime - binding.npHrs.getValue() * 60));
 
@@ -275,41 +261,6 @@ public class AlarmActivity extends AppCompatActivity {
             isUpdate = true;
             loadAlarmSettings(alarmId);
         }
-
-        binding.llSu.setOnClickListener(v -> {
-            repeat.day1 = repeat.day1 == 1 ? 0 : 1;
-            setRepeat(v, repeat.day1 == 1);
-        });
-
-        binding.llMo.setOnClickListener(v -> {
-            repeat.day2 = repeat.day2 == 1 ? 0 : 1;
-            setRepeat(v, repeat.day2 == 1);
-        });
-
-        binding.llTu.setOnClickListener(v -> {
-            repeat.day3 = repeat.day3 == 1 ? 0 : 1;
-            setRepeat(v, repeat.day3 == 1);
-        });
-
-        binding.llWe.setOnClickListener(v -> {
-            repeat.day4 = repeat.day4 == 1 ? 0 : 1;
-            setRepeat(v, repeat.day4 == 1);
-        });
-
-        binding.llTh.setOnClickListener(v -> {
-            repeat.day5 = repeat.day5 == 1 ? 0 : 1;
-            setRepeat(v, repeat.day5 == 1);
-        });
-
-        binding.llFr.setOnClickListener(v -> {
-            repeat.day6 = repeat.day6 == 1 ? 0 : 1;
-            setRepeat(v, repeat.day6 == 1);
-        });
-
-        binding.llSa.setOnClickListener(v -> {
-            repeat.day7 = repeat.day7 == 1 ? 0 : 1;
-            setRepeat(v, repeat.day7 == 1);
-        });
     }
 
     private void showNotificationDialog() {
@@ -346,8 +297,6 @@ public class AlarmActivity extends AppCompatActivity {
 
         binding = ActivityAlarmBinding.inflate(getLayoutInflater());
         binding.setTheme(MainActivity.getAppliedTheme());
-
-        if (repeat == null) repeat = new Repeat();
 
         setContentView(binding.getRoot());
 

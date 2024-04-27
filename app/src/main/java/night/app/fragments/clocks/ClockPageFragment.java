@@ -2,14 +2,11 @@ package night.app.fragments.clocks;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -24,10 +21,8 @@ import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Sleep;
 import night.app.databinding.FragmentClockPageBinding;
-import night.app.fragments.clocks.AlarmFragment;
-import night.app.fragments.clocks.NapFragment;
 import night.app.utils.LayoutUtils;
-import night.app.utils.TimeUtils;
+import night.app.utils.DatetimeUtils;
 
 public class ClockPageFragment extends Fragment {
     public FragmentClockPageBinding binding;
@@ -60,8 +55,8 @@ public class ClockPageFragment extends Fragment {
             });
 
     private void showExistedSleepRecord(Sleep entity) {
-        binding.upperMsg.setText("We will notify you at " + TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.startTime)));
-        binding.lowerMsg.setText("and wake up at " +TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.endTime)));
+        binding.upperMsg.setText("We will notify you at " + DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.startTime)));
+        binding.lowerMsg.setText("and wake up at " + DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.endTime)));
     }
 
     private void setOnTabSelectedListener() {

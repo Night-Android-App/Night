@@ -9,26 +9,27 @@ import night.app.data.entities.Day;
 
 @Dao
 public interface DayDAO {
-    @Query("SELECT * FROM Days WHERE date=:date LIMIT 1")
-    Day getDayByDate(long date);
+    @Query("REPLACE INTO Days (date, startTime, endTime) VALUES (:date, :startTime, :endTime)")
+    void create(long date, long startTime, long endTime);
 
-    @Query("SELECT * FROM Days ORDER BY date DESC LIMIT 1")
-    List<Day> getRecentDay();
-
-    @Query("SELECT * FROM Days WHERE date BETWEEN :start AND :end")
-    Day[] getDayRange(long start, long end);
+    @Query("UPDATE Days SET dream=:dream WHERE date=:date")
+    void updateDream(long date, String dream);
 
     @Query("SELECT * FROM Days ORDER BY date DESC LIMIT 30")
-    List<Day> getAllDay();
+    List<Day> getAll();
+
+    @Query("SELECT * FROM Days ORDER BY date DESC LIMIT 1")
+    List<Day> getRecent();
+
+    @Query("SELECT * FROM Days WHERE date=:date LIMIT 1")
+    Day getByDate(long date);
+
+    @Query("SELECT * FROM Days WHERE date BETWEEN :start AND :end")
+    Day[] getByRange(long start, long end);
+
+    @Query("DELETE FROM Days")
+    void deleteAll();
 
     @Query("DELETE FROM Days WHERE date < :dayBefore")
     void deleteOldDays(long dayBefore);
-
-    @Query("REPLACE INTO Days (date, startTime, endTime, dream) " +
-            "VALUES (:date, :startTime, :endTime, :dream)")
-    void create(long date, long startTime, long endTime, String dream);
-
-    @Query("DELETE FROM Days")
-    void deleteAllDays();
-
 }

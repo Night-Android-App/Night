@@ -1,4 +1,4 @@
-package night.app.services;
+package night.app.utils;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -70,7 +70,6 @@ public class RingtonePlayer {
                 }
                 catch (Exception e) {
                     System.err.println(e);
-                    System.err.println("???");
                 }
             });
         }).start();

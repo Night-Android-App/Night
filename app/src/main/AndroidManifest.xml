@@ -50,8 +50,6 @@
 
         <receiver android:name=".services.SleepReceiver" />
 
-
-
         <service
             android:name=".services.AlarmService"
             android:enabled="true"

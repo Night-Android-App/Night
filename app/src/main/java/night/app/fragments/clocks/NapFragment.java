@@ -1,16 +1,10 @@
 package night.app.fragments.clocks;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,14 +13,13 @@ import androidx.fragment.app.Fragment;
 
 import com.shawnlin.numberpicker.NumberPicker;
 
-import java.lang.reflect.Field;
 import java.util.Calendar;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.activities.SleepActivity;
 import night.app.databinding.FragmentNapBinding;
-import night.app.utils.TimeUtils;
+import night.app.utils.DatetimeUtils;
 
 public class NapFragment extends Fragment {
     public FragmentNapBinding binding;
@@ -44,7 +37,7 @@ public class NapFragment extends Fragment {
         int hrValue = binding.npHrs.getValue();
         int minValue = binding.npMins.getValue();
 
-        String totalNap = TimeUtils.toHrMinString(hrValue * 3600 + minValue * 60);
+        String totalNap = DatetimeUtils.toHrMinString(hrValue * 3600 + minValue * 60);
 
         updateSleepMsg("Alarm will ring at " + (calendar.get(Calendar.HOUR) + (calendar.get(Calendar.AM_PM) == Calendar.PM ? 12 : 0)) + ":" + (calendar.get(Calendar.MINUTE)), "Take a " + totalNap + " nap");
     }

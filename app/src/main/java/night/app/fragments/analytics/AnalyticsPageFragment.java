@@ -15,15 +15,12 @@ import java.time.ZoneOffset;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Theme;
-import night.app.databinding.FragmentAnalysisPageBinding;
-import night.app.fragments.analytics.DayRecordFragment;
-import night.app.fragments.analytics.MonthRecordFragment;
-import night.app.fragments.analytics.WeekRecordFragment;
+import night.app.databinding.FragmentAnalyticsPageBinding;
 import night.app.utils.LayoutUtils;
-import night.app.utils.TimeUtils;
+import night.app.utils.DatetimeUtils;
 
 public class AnalyticsPageFragment extends Fragment {
-    private FragmentAnalysisPageBinding binding;
+    private FragmentAnalyticsPageBinding binding;
 
     public static final int MODE_NORMAL = 0;
     public static final int MODE_SAMPLE = 1;
@@ -63,7 +60,7 @@ public class AnalyticsPageFragment extends Fragment {
             binding.tvAnalMainScoreData.setText("N/A");
         }
 
-        String info1String = info1 >= 0 ? TimeUtils.toHrMinString(info1) : "N/A";
+        String info1String = info1 >= 0 ? DatetimeUtils.toHrMinString(info1) : "N/A";
         binding.tvAnalMainInfoData1.setText(info1String);
 
         String info2String = info2 >= 0 ? Math.round(info2 * 100) + "%" : "N/A";
@@ -124,7 +121,7 @@ public class AnalyticsPageFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_analysis_page, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_analytics_page, container, false);
         binding.setTheme(MainActivity.getAppliedTheme());
 
         setOnTabSelectedListener();
@@ -133,7 +130,7 @@ public class AnalyticsPageFragment extends Fragment {
         deleteOldRecords();
 
         new Thread(() -> {
-            if (MainActivity.getDatabase().dayDAO().getRecentDay().size() > 0) {
+            if (MainActivity.getDatabase().dayDAO().getRecent().size() > 0) {
                 binding.llTips.setVisibility(View.GONE);
             }
         }).start();

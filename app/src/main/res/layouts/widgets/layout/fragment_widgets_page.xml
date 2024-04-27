@@ -66,36 +66,45 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_sett"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@{theme.primary, default=`#212529`}"
-            app:tabIndicatorColor="#FFFFFF"
-            app:tabRippleColor="#A2A2A2"
-            app:tabSelectedTextColor="#FFFFFF"
-            app:tabTextColor="#A2A2A2"
-            app:tabUnboundedRipple="false">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAlignment="gravity" />
+            <ImageButton
+                android:id="@+id/ib_shop"
+                android:layout_width="64dp"
+                android:layout_height="48dp"
+                android:background="@{theme.primary, default=`#212529`}"
+                android:foreground="?attr/selectableItemBackground"
+                app:srcCompat="@drawable/ic_shop" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/backup"
-                android:textAlignment="gravity" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_sett"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@{theme.primary, default=`#212529`}"
+                android:theme="@style/SelectableItemBackground"
+                app:tabIndicatorColor="#FFFFFF"
+                app:tabRippleColor="@null"
+                app:tabSelectedTextColor="#FFFFFF"
+                app:tabTextColor="#A2A2A2">
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="16dp"
-                android:text="@string/others"
-                android:textAlignment="gravity" />
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/backup"
+                    android:textAlignment="gravity" />
 
-        </com.google.android.material.tabs.TabLayout>
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="16dp"
+                    android:text="@string/others"
+                    android:textAlignment="gravity" />
+
+            </com.google.android.material.tabs.TabLayout>
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"

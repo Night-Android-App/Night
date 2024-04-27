@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="12dp"
-                android:background="@drawable/view_rect_r10"
+                android:background="@drawable/drawable_rect_r10"
                 android:backgroundTint="@{theme.accent}"
                 android:foreground="?attr/selectableItemBackground"
                 android:gravity="center_vertical"

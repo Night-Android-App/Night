@@ -1,4 +1,4 @@
-package night.app.services;
+package night.app.utils;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
@@ -67,11 +67,11 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
         this.dataSet = dataSet;
     }
 
-    private void setLineData(Integer[] data) {
+    private void setLineData(int[] data) {
         ArrayList<Entry> dataEntries = new ArrayList<>();
 
         for (int i=0; i < data.length; i++) {
-            if (data[i] == null) dataEntries.add(new Entry(i, 0));
+            dataEntries.add(new Entry(i, 0));
             dataEntries.add(new Entry(i, data[i]));
         }
 
@@ -115,13 +115,13 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
         setTheme();
     }
 
-    public ChartBuilder(T chart, String[] xLabel, Integer[] data) {
+    public ChartBuilder(T chart, String[] xLabel, int[] data) {
         this.chart = chart;
 
         initStyle();
 
         if (xLabel == null) xLabel = new String[] {};
-        if (data == null) data = new Integer[] {};
+        if (data == null) data = new int[] {};
 
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xLabel));
 

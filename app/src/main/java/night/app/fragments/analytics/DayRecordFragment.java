@@ -16,15 +16,15 @@ import night.app.data.AppDatabase;
 import night.app.data.entities.Day;
 import night.app.data.entities.SleepEvent;
 import night.app.databinding.FragmentDayRecordBinding;
-import night.app.services.ChartBuilder;
-import night.app.services.SleepData;
-import night.app.utils.TimeUtils;
+import night.app.utils.ChartBuilder;
+import night.app.utils.SleepAnalyser;
+import night.app.utils.DatetimeUtils;
 
 public class DayRecordFragment extends Fragment {
     private FragmentDayRecordBinding binding;
-    private long date = TimeUtils.getTodayAtMidNight();
+    private long date = DatetimeUtils.getTodayAtMidNight();
 
-    private void setUpperPanelResult(String date, SleepData sleepData) {
+    private void setUpperPanelResult(String date, SleepAnalyser sleepData) {
         Bundle bundle = new Bundle();
 
         bundle.putInt("type", 0);
@@ -46,31 +46,32 @@ public class DayRecordFragment extends Fragment {
 
         new ChartBuilder<>(binding.lineChartDayRecord, null, null).invalidate();
 
-        setUpperPanelResult(TimeUtils.toDateString(date, true), null);
+        setUpperPanelResult(DatetimeUtils.toDateString(date, true), null);
     }
 
     private void loadDay(long timestamp) {
-        setUpperPanelResult(TimeUtils.toDateString(timestamp, true), null);
+        setUpperPanelResult(DatetimeUtils.toDateString(timestamp, true), null);
 
         AppDatabase db = MainActivity.getDatabase();
 
         new Thread(() -> {
-            Day day = db.dayDAO().getDayByDate(timestamp);
+            Day day = db.dayDAO().getByDate(timestamp);
 
             if (day == null) day = new Day();
 
             SleepEvent[] events = db.sleepEventDAO().getByRange(day.date, day.startTime, day.endTime);
-            SleepData data = new SleepData(events);
+            SleepAnalyser data = new SleepAnalyser(events);
 
             // load chart
             new ChartBuilder<>(binding.lineChartDayRecord, data.getTimelines(), data.getConfidences())
                     .invalidate();
 
-            binding.tvLightSleep.setText(TimeUtils.toHrMinString(data.getConfidenceDuration(50,74)));
-            binding.tvDeepSleep.setText(TimeUtils.toHrMinString(data.getConfidenceDuration(75,100)));
-            binding.tvInBed.setText(TimeUtils.toHrMinString(data.getInBedDuration()));
+            binding.tvLightSleep.setText(DatetimeUtils.toHrMinString(data.getConfidenceDuration(50,74)));
+            binding.tvDeepSleep.setText(DatetimeUtils.toHrMinString(data.getConfidenceDuration(75,100)));
+            binding.tvInBed.setText(DatetimeUtils.toHrMinString(data.getInBedDuration()));
 
-            setUpperPanelResult(TimeUtils.toDateString(timestamp, true), data);
+            binding.tvAnalDream.setText(day.dream);
+            setUpperPanelResult(DatetimeUtils.toDateString(timestamp, true), data);
         }).start();
     }
 
@@ -91,7 +92,7 @@ public class DayRecordFragment extends Fragment {
     }
 
     private void loadDayByDiff(int diff) {
-        date = TimeUtils.dayAdd(date, diff);
+        date = DatetimeUtils.dayAdd(date, diff);
         loadDay(date);
 
         setStylesForNormalMode();
@@ -116,10 +117,10 @@ public class DayRecordFragment extends Fragment {
         ivRight.setVisibility(View.VISIBLE);
 
 
-        if (TimeUtils.dayAdd(date, 1) > TimeUtils.getTodayAtMidNight()) {
+        if (DatetimeUtils.dayAdd(date, 1) > DatetimeUtils.getTodayAtMidNight()) {
             ivRight.setVisibility(View.GONE);
         }
-        else if (date <= TimeUtils.dayAdd(TimeUtils.getTodayAtMidNight(), -29)) {
+        else if (date <= DatetimeUtils.dayAdd(DatetimeUtils.getTodayAtMidNight(), -29)) {
             ivLeft.setVisibility(View.GONE);
         }
 
@@ -134,7 +135,7 @@ public class DayRecordFragment extends Fragment {
         getActivity().findViewById(R.id.iv_left).setOnClickListener(v -> loadDayByDiff(-1));
         getActivity().findViewById(R.id.iv_right).setOnClickListener(v -> loadDayByDiff(+1));
 
-        loadDay(TimeUtils.getTodayAtMidNight());
+        loadDay(DatetimeUtils.getTodayAtMidNight());
         setStylesForNormalMode();
 
         if (getArguments() != null) {

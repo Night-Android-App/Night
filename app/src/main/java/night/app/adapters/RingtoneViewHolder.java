@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Product;
 import night.app.data.entities.Ringtone;
-import night.app.databinding.ItemRingtoneBinding;
+import night.app.databinding.HolderRingtoneViewBinding;
 import night.app.fragments.dialogs.PurchaseDialog;
 
 public class RingtoneViewHolder extends RecyclerView.ViewHolder {
     private final RingtoneAdapter adapter;
-    private final ItemRingtoneBinding binding;
+    private final HolderRingtoneViewBinding binding;
     private int id;
 
     private void stopRingtone() {
@@ -76,7 +76,7 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public RingtoneViewHolder(RingtoneAdapter adapter, ItemRingtoneBinding binding) {
+    public RingtoneViewHolder(RingtoneAdapter adapter, HolderRingtoneViewBinding binding) {
         super(binding.getRoot());
 
         this.adapter = adapter;

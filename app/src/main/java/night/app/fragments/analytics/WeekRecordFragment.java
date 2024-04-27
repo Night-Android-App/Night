@@ -18,12 +18,11 @@ import java.util.concurrent.TimeUnit;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Day;
-import night.app.data.entities.Sleep;
 import night.app.databinding.FragmentWeekRecordBinding;
-import night.app.services.ChartBuilder;
-import night.app.services.Sample;
-import night.app.services.SleepData;
-import night.app.utils.TimeUtils;
+import night.app.utils.ChartBuilder;
+import night.app.utils.DaySample;
+import night.app.utils.SleepAnalyser;
+import night.app.utils.DatetimeUtils;
 
 public class WeekRecordFragment extends Fragment {
     private FragmentWeekRecordBinding binding;
@@ -44,7 +43,7 @@ public class WeekRecordFragment extends Fragment {
 
     private void loadBarChart(long startDate, long endDate) {
         new Thread(() -> {
-            Day[] days = MainActivity.getDatabase().dayDAO().getDayRange(startDate, endDate);
+            Day[] days = MainActivity.getDatabase().dayDAO().getByRange(startDate, endDate);
             loadBarChart(days);
         }).start();
     }
@@ -54,7 +53,7 @@ public class WeekRecordFragment extends Fragment {
 
         getActivity().runOnUiThread(() -> {
             if (days.length == 0) {
-                setUpperPanelResult(TimeUtils.toDateString(startDate, endDate), 0, 0, 0);
+                setUpperPanelResult(DatetimeUtils.toDateString(startDate, endDate), 0, 0, 0);
 
                 new ChartBuilder<>(binding.barChartWeekRecord, new Integer[] {})
                         .invalidate();
@@ -62,16 +61,16 @@ public class WeekRecordFragment extends Fragment {
             }
 
             new Thread(() -> {
-                SleepData[] sleepData = new SleepData[days.length];
+                SleepAnalyser[] sleepData = new SleepAnalyser[days.length];
                 for (int i=0; i < days.length; i++) {
                     if (days[i] != null) {
-                        sleepData[i] = new SleepData(MainActivity.getDatabase().sleepEventDAO().getByRange(days[i].date, days[i].startTime, days[i].endTime));
+                        sleepData[i] = new SleepAnalyser(MainActivity.getDatabase().sleepEventDAO().getByRange(days[i].date, days[i].startTime, days[i].endTime));
 
                     }
                 }
 
                 int score = 0;
-                for (SleepData data : sleepData) {
+                for (SleepAnalyser data : sleepData) {
                     if (data != null) score += data.getScore();
                 }
 
@@ -79,7 +78,7 @@ public class WeekRecordFragment extends Fragment {
                 double sleepEfficiency = 0d;
 
 
-                for (SleepData data : sleepData) {
+                for (SleepAnalyser data : sleepData) {
                     if (data == null) continue;
 
                     double efficiency = data.getSleepEfficiency();
@@ -115,7 +114,7 @@ public class WeekRecordFragment extends Fragment {
 
 
                     setUpperPanelResult(
-                            TimeUtils.toDateString(startDate, endDate),
+                            DatetimeUtils.toDateString(startDate, endDate),
                             finalScore / days.length,
                             finalSleepInMills / days.length,
                             finalSleepEfficiency / days.length
@@ -126,11 +125,11 @@ public class WeekRecordFragment extends Fragment {
     }
 
     private void toPreviousWeek() {
-        endDate = TimeUtils.dayAdd(startDate, -1);
-        startDate = TimeUtils.dayAdd(startDate, -7);
+        endDate = DatetimeUtils.dayAdd(startDate, -1);
+        startDate = DatetimeUtils.dayAdd(startDate, -7);
 
-        if (startDate < TimeUtils.dayAdd(TimeUtils.getTodayAtMidNight(), -29)) {
-            startDate = TimeUtils.dayAdd(TimeUtils.getTodayAtMidNight(), -29);
+        if (startDate < DatetimeUtils.dayAdd(DatetimeUtils.getTodayAtMidNight(), -29)) {
+            startDate = DatetimeUtils.dayAdd(DatetimeUtils.getTodayAtMidNight(), -29);
         }
 
         loadBarChart(startDate, endDate);
@@ -138,7 +137,7 @@ public class WeekRecordFragment extends Fragment {
         if (getActivity() == null) return;
         getActivity().findViewById(R.id.iv_right).setVisibility(View.VISIBLE);
 
-        if (TimeUtils.dayAdd(endDate, -7) < TimeUtils.dayAdd(TimeUtils.getTodayAtMidNight(), -30)) {
+        if (DatetimeUtils.dayAdd(endDate, -7) < DatetimeUtils.dayAdd(DatetimeUtils.getTodayAtMidNight(), -30)) {
             getActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
             return;
         }
@@ -146,14 +145,14 @@ public class WeekRecordFragment extends Fragment {
     }
 
     private void toNextWeek() {
-        startDate = TimeUtils.dayAdd(endDate, 1);
-        endDate = TimeUtils.dayAdd(endDate, 7);
+        startDate = DatetimeUtils.dayAdd(endDate, 1);
+        endDate = DatetimeUtils.dayAdd(endDate, 7);
 
-        if (endDate > TimeUtils.getTodayAtMidNight()) endDate = TimeUtils.getTodayAtMidNight();
+        if (endDate > DatetimeUtils.getTodayAtMidNight()) endDate = DatetimeUtils.getTodayAtMidNight();
 
         loadBarChart(startDate, endDate);
 
-        if (TimeUtils.dayAdd(startDate, 7) > TimeUtils.getTodayAtMidNight()) {
+        if (DatetimeUtils.dayAdd(startDate, 7) > DatetimeUtils.getTodayAtMidNight()) {
             requireActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
             return;
         }
@@ -174,8 +173,8 @@ public class WeekRecordFragment extends Fragment {
             int mode = getArguments().getInt("mode", 0);
 
             if (mode == AnalyticsPageFragment.MODE_SAMPLE) {
-                List<Day> days = Sample.getDay();
-                startDate = TimeUtils.dayAdd(startDate, -7);
+                List<Day> days = DaySample.getDay();
+                startDate = DatetimeUtils.dayAdd(startDate, -7);
                 endDate = 0;
 
 //                loadBarChart(days);

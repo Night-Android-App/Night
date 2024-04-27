@@ -28,7 +28,7 @@ import night.app.adapters.AlarmAdapter;
 import night.app.data.entities.Alarm;
 import night.app.data.entities.Sleep;
 import night.app.databinding.FragmentAlarmBinding;
-import night.app.utils.TimeUtils;
+import night.app.utils.DatetimeUtils;
 
 public class AlarmFragment extends Fragment {
     public FragmentAlarmBinding binding;
@@ -94,8 +94,8 @@ public class AlarmFragment extends Fragment {
             if (entity != null) {
                 new Thread(() -> {
                     updateSleepMsg(
-                            "We will notify you at " + TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.startTime)),
-                            "and wake up at " +TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.endTime))
+                            "We will notify you at " + DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.startTime)),
+                            "and wake up at " + DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.endTime))
                     );
                 }).start();
                 return;

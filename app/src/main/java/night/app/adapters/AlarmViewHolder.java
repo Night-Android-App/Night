@@ -13,15 +13,15 @@ import java.util.concurrent.TimeUnit;
 import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Alarm;
-import night.app.databinding.ItemAlarmBinding;
+import night.app.databinding.HolderAlarmViewBinding;
 import night.app.fragments.clocks.AlarmFragment;
-import night.app.services.AlarmSchedule;
+import night.app.utils.AlarmSchedule;
 import night.app.utils.ColorUtils;
-import night.app.utils.TimeUtils;
+import night.app.utils.DatetimeUtils;
 
 public class AlarmViewHolder extends RecyclerView.ViewHolder {
     private AlarmAdapter adapter;
-    private ItemAlarmBinding binding;
+    private HolderAlarmViewBinding binding;
 
     public final static int STATUS_NORMAL = 0;
     public final static int STATUS_SELECT = 1;
@@ -63,7 +63,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
     public void loadData(Alarm alarm) {
         this.alarm = alarm;
 
-        binding.tvTime.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(alarm.endTime)));
+        binding.tvTime.setText(DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(alarm.endTime)));
         binding.swAlarmEnable.setChecked(alarm.enableAlarm == 1);
 
         binding.swAlarmEnable.setOnClickListener(v -> updateAlarmStatus(alarm.id));
@@ -110,7 +110,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public AlarmViewHolder(AlarmAdapter adapter, ItemAlarmBinding binding, Fragment fr) {
+    public AlarmViewHolder(AlarmAdapter adapter, HolderAlarmViewBinding binding, Fragment fr) {
         super(binding.getRoot());
         binding.setTheme(MainActivity.getAppliedTheme());
 

@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/view_rect_r10"
+        android:background="@drawable/drawable_rect_r10"
         android:backgroundTint="@{theme.secondary}"
         android:minWidth="580dp"
         android:minHeight="150dp"

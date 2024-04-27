@@ -1,22 +1,16 @@
 package night.app.services;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.IBinder;
 
-import androidx.core.app.NotificationCompat;
-
 import night.app.R;
-import night.app.activities.AgreementActivity;
 import night.app.activities.SleepActivity;
+import night.app.utils.Notification;
+import night.app.utils.RingtonePlayer;
 
 public class AlarmService extends Service {
     Intent intent;
@@ -46,31 +40,17 @@ public class AlarmService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         this.intent = intent;
-
-        playRingtone();
-
         instance = this;
 
         Intent nextActivity = new Intent(getApplicationContext(), SleepActivity.class);
         nextActivity.putExtra("isAlarm", true);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, nextActivity, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, nextActivity, PendingIntent.FLAG_IMMUTABLE);
 
-        NotificationChannel channel =
-                new NotificationChannel("night", "night", NotificationManager.IMPORTANCE_LOW);
+        Notification notification = new Notification(getApplicationContext(), pi, "Night", "Wake up!");
+        startForeground(1, notification.getBuilder().build());
 
-        NotificationManager manager = getSystemService(NotificationManager.class);
-
-        manager.createNotificationChannel(channel);
-
-        Notification.Builder builder = new Notification.Builder(getApplicationContext(), "night")
-                .setAutoCancel(true)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle("Night")
-                .setContentText("Wake up!")
-                .setContentIntent(pendingIntent);
-
-        startForeground(1, builder.build());
+        playRingtone();
 
         return START_STICKY;
     }

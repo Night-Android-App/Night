@@ -1,7 +1,5 @@
 package night.app.fragments.dialogs;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,15 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 
-import javax.xml.transform.Result;
-
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.activities.BarCodeActivity;
 import night.app.activities.SleepActivity;
-import night.app.databinding.DialogDreamBinding;
 import night.app.databinding.DialogMathBinding;
-import night.app.databinding.DialogMissionBinding;
 
 public class MathDialog extends DialogFragment {
     private DialogMathBinding binding;

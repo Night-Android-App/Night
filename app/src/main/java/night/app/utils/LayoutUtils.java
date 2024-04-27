@@ -14,10 +14,6 @@ public class LayoutUtils {
         void run(TabLayout.Tab w);
     }
 
-    public interface Function {
-        void run();
-    }
-
     public static void onSelected(TabLayout tl, onTabSelected fn) {
         tl.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -34,14 +30,5 @@ public class LayoutUtils {
     public static void setSystemBarColor(Window window, int statusColor, int navColor) {
         window.setStatusBarColor(statusColor);
         window.setNavigationBarColor(navColor);
-    }
-
-    public static void onBackPressed(AppCompatActivity owner, OnBackPressedDispatcher dp, Function fn) {
-        dp.addCallback(owner, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                fn.run();
-            }
-        });
     }
 }

@@ -13,7 +13,6 @@ import androidx.fragment.app.DialogFragment;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.activities.BarCodeActivity;
-import night.app.databinding.DialogDreamBinding;
 import night.app.databinding.DialogMissionBinding;
 
 public class MissionDialog extends DialogFragment {
@@ -31,10 +30,12 @@ public class MissionDialog extends DialogFragment {
 
         binding.btnQrcode.setOnClickListener(v -> {
             startActivityForResult(new Intent(getActivity(), BarCodeActivity.class), 1);
+            dismiss();
         });
 
         binding.btnMath.setOnClickListener(v -> {
             new MathDialog().show(getParentFragmentManager(), null);
+            dismiss();
         });
 
         return binding.getRoot();

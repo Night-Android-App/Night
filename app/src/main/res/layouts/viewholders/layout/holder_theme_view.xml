@@ -302,7 +302,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="4dp"
-                    android:background="@drawable/view_rect_r10"
+                    android:background="@drawable/drawable_rect_r10"
                     android:backgroundTint="@{preview.primary, default=@android:color/transparent}"
                     tools:backgroundTint="#212529" />
 
@@ -310,7 +310,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="12dp"
-                    android:background="@drawable/view_rect_r10"
+                    android:background="@drawable/drawable_rect_r10"
                     android:backgroundTint="@{preview.secondary, default=@android:color/transparent}"
                     tools:backgroundTint="#f5f5f5" />
             </LinearLayout>
@@ -332,7 +332,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="4dp"
-                    android:background="@drawable/view_rect_r10"
+                    android:background="@drawable/drawable_rect_r10"
                     android:backgroundTint="@{preview.surface, default=@android:color/transparent}"
                     tools:backgroundTint="#fff" />
 
@@ -340,7 +340,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="12dp"
-                    android:background="@drawable/view_rect_r10"
+                    android:background="@drawable/drawable_rect_r10"
                     android:backgroundTint="@{preview.accent, default=@android:color/transparent}"
                     tools:backgroundTint="#6750A3" />
 
@@ -348,7 +348,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="12dp"
-                    android:background="@drawable/view_rect_r10"
+                    android:background="@drawable/drawable_rect_r10"
                     android:backgroundTint="@{preview.surfaceVariant, default=@android:color/transparent}" />
             </LinearLayout>
 
@@ -369,7 +369,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="4dp"
-                    android:background="@drawable/view_rect_r10"
+                    android:background="@drawable/drawable_rect_r10"
                     android:backgroundTint="@{preview.onPrimary, default=@android:color/transparent}"
                     tools:backgroundTint="@android:color/black" />
 
@@ -377,7 +377,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="12dp"
-                    android:background="@drawable/view_rect_r10"
+                    android:background="@drawable/drawable_rect_r10"
                     android:backgroundTint="@{preview.onPrimaryVariant, default=@android:color/transparent}"
                     tools:backgroundTint="#55606A" />
 
@@ -385,7 +385,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="12dp"
-                    android:background="@drawable/view_rect_r10"
+                    android:background="@drawable/drawable_rect_r10"
                     android:backgroundTint="@{preview.onSurface, default=@android:color/transparent}"
                     tools:backgroundTint="#fff" />
             </LinearLayout>

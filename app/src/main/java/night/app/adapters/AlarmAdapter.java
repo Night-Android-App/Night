@@ -16,7 +16,7 @@ import java.util.List;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Alarm;
-import night.app.databinding.ItemAlarmBinding;
+import night.app.databinding.HolderAlarmViewBinding;
 
 public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Alarm> alarmList;
@@ -86,8 +86,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        ItemAlarmBinding binding =
-                DataBindingUtil.inflate(inflater, R.layout.item_alarm, parent, false);
+        HolderAlarmViewBinding binding =
+                DataBindingUtil.inflate(inflater, R.layout.holder_alarm_view, parent, false);
 
         return new AlarmViewHolder(this, binding, fr);
     }

@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class TimeUtils {
+public class DatetimeUtils {
     public static long dayAdd(long date, int day) {
         return date + TimeUnit.DAYS.toMillis(day);
     }
@@ -25,10 +25,7 @@ public class TimeUtils {
     }
 
     public static long getMsOfToday() {
-        Calendar current = Calendar.getInstance();
-        return ((current.get(Calendar.HOUR_OF_DAY) * 60 +
-                current.get(Calendar.MINUTE)) * 60 +
-                current.get(Calendar.SECOND)) * 1000 + current.get(Calendar.MILLISECOND);
+        return System.currentTimeMillis() - getTodayAtMidNight();
     }
 
     public static long getClosestDateTime(long msOfDay) {
@@ -67,20 +64,20 @@ public class TimeUtils {
     }
 
     public static String toHrMinString(long ms) {
-        return toHrMinString((int) (ms / 1000));
+        long hours = TimeUnit.MILLISECONDS.toHours(ms);
+        long minutes = TimeUnit.MINUTES.toMinutes(ms) - hours * 60;
+
+        if (hours > 0 && minutes <= 0) return hours + "h ";
+        return hours + "h " + minutes + "m";
     }
 
     public static String toHrMinString(int seconds) {
         int hours = seconds / 3600;
         int minutes = seconds / 60 - hours * 60;
 
-        if (hours <= 0) {
-            return minutes + "m";
-        }
+        if (hours <= 0) return minutes + "m";
+        if (hours > 0 && minutes <= 0) return hours + "h ";
 
-        if (hours >0 && minutes <= 0) {
-            return hours + "h ";
-        }
         return hours + "h " + minutes + "m";
     }
 
@@ -95,7 +92,7 @@ public class TimeUtils {
             return minutes + "m " + (seconds - hours*3600 - minutes*60) + "s";
         }
 
-        if (hours >0 && minutes <= 0) {
+        if (hours > 0 && minutes <= 0) {
             return hours + "h ";
         }
         return hours + "h " + minutes + "m " + (seconds - hours*3600 - minutes*60) + "s";

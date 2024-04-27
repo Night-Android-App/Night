@@ -13,9 +13,9 @@ import java.util.List;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Day;
-import night.app.databinding.ItemDayRecordBinding;
+import night.app.databinding.HolderDayRecordViewBinding;
 
-public class DayItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     AppCompatActivity activity;
     List<Day> days;
     public int currMonth = -1;
@@ -26,23 +26,23 @@ public class DayItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override @NonNull
-    public DayItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public DayViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
-        ItemDayRecordBinding binding =
-                DataBindingUtil.inflate(inflater, R.layout.item_day_record, viewGroup, false);
+        HolderDayRecordViewBinding binding =
+                DataBindingUtil.inflate(inflater, R.layout.holder_day_record_view, viewGroup, false);
 
         binding.setTheme(MainActivity.getAppliedTheme());
 
 
-        return new DayItemViewHolder(this, binding);
+        return new DayViewHolder(this, binding);
     }
 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) {
-        ((DayItemViewHolder) viewHolder).loadData(days.get(position));
+        ((DayViewHolder) viewHolder).loadData(days.get(position));
     }
 
-    public DayItemAdapter(AppCompatActivity activity, List<Day> days) {
+    public DayAdapter(AppCompatActivity activity, List<Day> days) {
         this.activity = activity;
         this.days = days;
     }

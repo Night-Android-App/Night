@@ -1,5 +1,6 @@
 package night.app.fragments.widgets;
 
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -50,20 +51,10 @@ public class WidgetsPageFragment extends Fragment {
 
     private void setOnTabSelectedListener() {
         LayoutUtils.onSelected(binding.tabSett, tab -> {
-            if (tab.getPosition() == 0) {
-                new ShopDialog().show(requireActivity().getSupportFragmentManager(), null);
-                binding.tabSett.getTabAt(1).select();
-
-                return;
-            }
-            Class<? extends Fragment> fragmentClass = BackupConfigFragment.class;
-
-            if (tab.getPosition() == 2) {
-                fragmentClass = OthersConfigFragment.class;
-            }
+            Fragment fragment = tab.getPosition() == 0 ? new BackupConfigFragment() : new OthersConfigFragment();
 
             getChildFragmentManager().beginTransaction()
-                    .replace(R.id.fr_sett_details, fragmentClass, null)
+                    .replace(R.id.fr_sett_details, fragment)
                     .commit();
         });
     }
@@ -96,13 +87,13 @@ public class WidgetsPageFragment extends Fragment {
     }
 
     private void showLogoutModal() {
-        String title = "Logout";
-        String desc = "You have to login again to use part of services.";
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity())
+                .setTitle("Logout?")
+                .setMessage("You have to login again to use part of services")
+                .setNegativeButton("No", null)
+                .setPositiveButton("Yes", (dialog, which) -> setStylesForGuest());
 
-        new ConfirmDialog(title, desc, (dialog) -> {
-            setStylesForGuest();
-            dialog.dismiss();
-        }).show(requireActivity().getSupportFragmentManager(), null);
+        builder.show();
     }
 
 
@@ -119,16 +110,6 @@ public class WidgetsPageFragment extends Fragment {
         setStylesForGuest();
     }
 
-    private void setTabWidth(int pos, float width) {
-        LinearLayout llTabItem0 = ((LinearLayout) ((LinearLayout) binding.tabSett.getChildAt(0)).getChildAt(pos));
-
-        LinearLayout.LayoutParams layoutParams =
-                (LinearLayout.LayoutParams) llTabItem0.getLayoutParams();
-
-        layoutParams.weight = width;
-        llTabItem0.setLayoutParams(layoutParams);
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_widgets_page, container, false);
@@ -142,16 +123,13 @@ public class WidgetsPageFragment extends Fragment {
         getChildFragmentManager()
                 .setFragmentResultListener("accountStatus", this, this::setAccountStatusResult);
 
+        binding.ibShop.setOnClickListener(v -> {
+            new ShopDialog().show(requireActivity().getSupportFragmentManager(), null);
+        });
+
         getChildFragmentManager().beginTransaction()
                 .add(R.id.fr_sett_details, BackupConfigFragment.class, null)
                 .commit();
-
-        binding.tabSett.getTabAt(0).setIcon(R.drawable.ic_shop);
-        binding.tabSett.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.SRC_IN);
-
-        binding.tabSett.getTabAt(1).select();
-
-        setTabWidth(0, 0.5f);
 
         return binding.getRoot();
     }

@@ -1,11 +1,11 @@
-package night.app.services;
+package night.app.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import night.app.data.entities.Day;
 
-public class Sample {
+public class DaySample {
     public static List<Day> getDay() {
         List<Day> dayList = new ArrayList<>();
 

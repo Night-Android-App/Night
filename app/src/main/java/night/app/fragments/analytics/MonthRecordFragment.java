@@ -14,20 +14,20 @@ import java.util.List;
 
 import night.app.R;
 import night.app.activities.MainActivity;
-import night.app.adapters.DayItemAdapter;
+import night.app.adapters.DayAdapter;
 import night.app.data.entities.Day;
 import night.app.data.entities.SleepEvent;
 import night.app.databinding.FragmentMonthRecordBinding;
-import night.app.services.Sample;
-import night.app.services.SleepData;
-import night.app.utils.TimeUtils;
+import night.app.utils.DaySample;
+import night.app.utils.SleepAnalyser;
+import night.app.utils.DatetimeUtils;
 
 public class MonthRecordFragment extends Fragment {
     private FragmentMonthRecordBinding binding;
 
     private void setAdapter(List<Day> dayList) {
         binding.rvItems.setAdapter(
-                new DayItemAdapter((AppCompatActivity) getActivity(), dayList)
+                new DayAdapter((AppCompatActivity) getActivity(), dayList)
         );
 
         requireView().findViewById(R.id.ll_no_Data)
@@ -54,18 +54,18 @@ public class MonthRecordFragment extends Fragment {
 
         int mode = getArguments().getInt("mode", 0);
         if (mode == AnalyticsPageFragment.MODE_SAMPLE) {
-            dayList = Sample.getDay();
+            dayList = DaySample.getDay();
             endDate = 0;
         }
         else {
-            dayList = MainActivity.getDatabase().dayDAO().getAllDay();
-            endDate = TimeUtils.getTodayAtMidNight();
+            dayList = MainActivity.getDatabase().dayDAO().getAll();
+            endDate = DatetimeUtils.getTodayAtMidNight();
         }
 
-        long startedDate = TimeUtils.dayAdd(endDate, -29);
+        long startedDate = DatetimeUtils.dayAdd(endDate, -29);
 
         if (dayList.size() == 0) {
-            setUpperPanelResult(TimeUtils.toDateString(startedDate, endDate), 0, 0, 0);
+            setUpperPanelResult(DatetimeUtils.toDateString(startedDate, endDate), 0, 0, 0);
             return;
         }
 
@@ -77,7 +77,7 @@ public class MonthRecordFragment extends Fragment {
                 SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO()
                         .getByRange(day.date, day.startTime, day.endTime);
 
-                SleepData data = new SleepData(events);
+                SleepAnalyser data = new SleepAnalyser(events);
 
                 sleepScore += data.getScore();
                 sleepEfficiency += data.getSleepEfficiency();
@@ -86,7 +86,7 @@ public class MonthRecordFragment extends Fragment {
             }
 
             setUpperPanelResult(
-                    TimeUtils.toDateString(startedDate, endDate),
+                    DatetimeUtils.toDateString(startedDate, endDate),
                     (int) sleepScore / dayList.size(),
                     (long) (sleepInMills / dayList.size()),
                     sleepEfficiency / dayList.size()

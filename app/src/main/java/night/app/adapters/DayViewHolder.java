@@ -8,22 +8,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Day;
 import night.app.data.entities.SleepEvent;
-import night.app.databinding.ItemDayRecordBinding;
-import night.app.services.SleepData;
-import night.app.utils.TimeUtils;
+import night.app.databinding.HolderDayRecordViewBinding;
+import night.app.utils.SleepAnalyser;
+import night.app.utils.DatetimeUtils;
 
-public class DayItemViewHolder extends RecyclerView.ViewHolder {
-    DayItemAdapter adapter;
-    ItemDayRecordBinding binding;
+public class DayViewHolder extends RecyclerView.ViewHolder {
+    DayAdapter adapter;
+    HolderDayRecordViewBinding binding;
     Day day;
 
     private void handleOnClickItem(View view) {
@@ -68,17 +66,17 @@ public class DayItemViewHolder extends RecyclerView.ViewHolder {
 
         new Thread(() -> {
             SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO().getByRange(day.date, day.startTime, day.endTime);
-            SleepData sleepData = new SleepData(events);
+            SleepAnalyser sleepData = new SleepAnalyser(events);
 
             adapter.activity.runOnUiThread(() -> {
-                binding.tvSleepHrs.setText(TimeUtils.toHrMinString(sleepData.getConfidenceDuration(50, 100)));
+                binding.tvSleepHrs.setText(DatetimeUtils.toHrMinString(sleepData.getConfidenceDuration(50, 100)));
 
                 binding.tvSleepEfficiency.setText(Math.round(sleepData.getSleepEfficiency() * 100) + "%");
             });
         }).start();
     }
 
-    public DayItemViewHolder(DayItemAdapter adapter, ItemDayRecordBinding binding) {
+    public DayViewHolder(DayAdapter adapter, HolderDayRecordViewBinding binding) {
         super(binding.getRoot());
 
         this.adapter = adapter;

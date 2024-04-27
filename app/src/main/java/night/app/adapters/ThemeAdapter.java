@@ -14,7 +14,7 @@ import java.util.List;
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.entities.Product;
-import night.app.databinding.ItemShopThemeBinding;
+import night.app.databinding.HolderThemeViewBinding;
 
 public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public List<Product> productList;
@@ -30,8 +30,8 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public ThemeViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
-        ItemShopThemeBinding binding =
-            DataBindingUtil.inflate(inflater, R.layout.item_shop_theme, viewGroup, false);
+        HolderThemeViewBinding binding =
+            DataBindingUtil.inflate(inflater, R.layout.holder_theme_view, viewGroup, false);
 
         binding.setTheme(activity.binding.getTheme());
 

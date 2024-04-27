@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import night.app.activities.RingtoneActivity;
 import night.app.data.entities.Ringtone;
-import night.app.databinding.ItemRingtoneBinding;
+import night.app.databinding.HolderRingtoneViewBinding;
 
 public class RingtoneOwnedViewHolder extends RecyclerView.ViewHolder {
     private final RingtoneOwnedAdapter adapter;
-    private final ItemRingtoneBinding binding;
+    private final HolderRingtoneViewBinding binding;
     private int id;
 
     private void stopRingtone() {
@@ -57,7 +57,7 @@ public class RingtoneOwnedViewHolder extends RecyclerView.ViewHolder {
 //                binding.llItemRingtone.setOnClickListener(v -> playRingtone());
     }
 
-    public RingtoneOwnedViewHolder(RingtoneOwnedAdapter adapter, ItemRingtoneBinding binding) {
+    public RingtoneOwnedViewHolder(RingtoneOwnedAdapter adapter, HolderRingtoneViewBinding binding) {
         super(binding.getRoot());
 
         this.adapter = adapter;

@@ -11,7 +11,7 @@
         android:layout_height="48dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginVertical="8dp"
-        android:background="@drawable/view_rect_r10"
+        android:background="@drawable/drawable_rect_r10"
         android:backgroundTint="@{theme.surface}"
         android:foreground="?attr/selectableItemBackground">
 

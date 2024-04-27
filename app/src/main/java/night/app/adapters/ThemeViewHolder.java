@@ -15,12 +15,13 @@ import night.app.activities.MainActivity;
 import night.app.data.DataStoreHelper;
 import night.app.data.entities.Product;
 import night.app.data.entities.Theme;
-import night.app.databinding.ItemShopThemeBinding;
+import night.app.databinding.HolderThemeViewBinding;
 import night.app.fragments.widgets.WidgetsPageFragment;
 import night.app.fragments.dialogs.PurchaseDialog;
+import night.app.utils.LayoutUtils;
 
 public class ThemeViewHolder extends RecyclerView.ViewHolder {
-    private final ItemShopThemeBinding binding;
+    private final HolderThemeViewBinding binding;
     private final ThemeAdapter adapter;
     private Theme theme;
     private Product product;
@@ -59,11 +60,9 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                     }
 
                     // notify the shop page switch the theme (because cannot access its binding)
-                    activity.getSupportFragmentManager()
-                            .setFragmentResult("switchTheme", new Bundle());
+                    activity.getSupportFragmentManager().setFragmentResult("switchTheme", new Bundle());
 
-                    activity.getWindow().setStatusBarColor(theme.getPrimary());
-                    activity.getWindow().setNavigationBarColor(theme.getPrimary());
+                    LayoutUtils.setSystemBarColor(adapter.activity.getWindow(), theme.getPrimary(), theme.getPrimary());
 
                     // refresh the garden page for switching theme
                     activity.getSupportFragmentManager().beginTransaction()
@@ -140,7 +139,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    public ThemeViewHolder(ThemeAdapter adapter, ItemShopThemeBinding binding) {
+    public ThemeViewHolder(ThemeAdapter adapter, HolderThemeViewBinding binding) {
         super(binding.getRoot());
 
         this.adapter = adapter;

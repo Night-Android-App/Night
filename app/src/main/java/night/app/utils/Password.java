@@ -1,4 +1,4 @@
-package night.app.services;
+package night.app.utils;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
