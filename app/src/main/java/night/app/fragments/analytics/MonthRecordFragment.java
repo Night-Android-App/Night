@@ -32,12 +32,12 @@ public class MonthRecordFragment extends Fragment {
                 .setVisibility(dayList.size() > 0 ? View.INVISIBLE : View.VISIBLE);
     }
 
-    public void setUpperPanelResult(String date, int score, double info1, double info2) {
+    public void setUpperPanelResult(String date, int score, long info1, double info2) {
         Bundle bundle = new Bundle();
         bundle.putInt("type", 1);
         bundle.putString("date", date);
         bundle.putInt("score", score);
-        bundle.putDouble("info1", info1);
+        bundle.putLong("info1", info1);
         bundle.putDouble("info2", info2);
 
         if (!isAdded()) return;
@@ -85,7 +85,7 @@ public class MonthRecordFragment extends Fragment {
             setUpperPanelResult(
                     TimeUtils.toDateString(startedDate, endDate),
                     (int) sleepScore / dayList.size(),
-                    sleepSeconds / dayList.size(),
+                    (long) (sleepSeconds / dayList.size()),
                     sleepEfficiency / dayList.size()
             );
 

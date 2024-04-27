@@ -66,6 +66,10 @@ public class TimeUtils {
         return LocalTime.of(hours, minutes).toString();
     }
 
+    public static String toHrMinString(long ms) {
+        return toHrMinString((int) (ms / 1000));
+    }
+
     public static String toHrMinString(int seconds) {
         int hours = seconds / 3600;
         int minutes = seconds / 60 - hours * 60;

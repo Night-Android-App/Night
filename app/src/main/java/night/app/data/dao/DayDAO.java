@@ -16,7 +16,7 @@ public interface DayDAO {
     List<Day> getRecentDay();
 
     @Query("SELECT * FROM Days WHERE date BETWEEN :start AND :end")
-    List<Day> getDayRange(long start, long end);
+    Day[] getDayRange(long start, long end);
 
     @Query("SELECT * FROM Days ORDER BY date DESC LIMIT 30")
     List<Day> getAllDay();

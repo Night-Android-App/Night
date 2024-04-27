@@ -31,8 +31,8 @@ public class DayRecordFragment extends Fragment {
         bundle.putString("date", date);
 
         if (sleepData != null) {
-            bundle.putInt("score", Math.round(sleepData.getScore()));
-            bundle.putDouble("info1", sleepData.getFellAsleepDuration());
+            bundle.putInt("score", sleepData.getScore());
+            bundle.putLong("info1", sleepData.getFellAsleepDuration());
             bundle.putDouble("info2", sleepData.getSleepEfficiency());
         }
 
@@ -62,14 +62,13 @@ public class DayRecordFragment extends Fragment {
             SleepEvent[] events = db.sleepEventDAO().getByRange(day.date, day.startTime, day.endTime);
             SleepData data = new SleepData(events);
 
-            System.out.println(events.length);
             // load chart
             new ChartBuilder<>(binding.lineChartDayRecord, data.getTimelines(), data.getConfidences())
                     .invalidate();
 
-            binding.tvLightSleep.setText(TimeUtils.toHrMinString((int) data.getConfidenceDuration(50,74)));
-            binding.tvDeepSleep.setText(TimeUtils.toHrMinString((int) data.getConfidenceDuration(75,100)));
-            binding.tvInBed.setText(TimeUtils.toHrMinString((int) data.getInBedDuration()));
+            binding.tvLightSleep.setText(TimeUtils.toHrMinString(data.getConfidenceDuration(50,74)));
+            binding.tvDeepSleep.setText(TimeUtils.toHrMinString(data.getConfidenceDuration(75,100)));
+            binding.tvInBed.setText(TimeUtils.toHrMinString(data.getInBedDuration()));
 
             setUpperPanelResult(TimeUtils.toDateString(timestamp, true), data);
         }).start();

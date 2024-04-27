@@ -29,21 +29,22 @@ public class SleepData {
 
 
         if (isInRange(sleepTime, TimeUnit.HOURS.toMillis(7), TimeUnit.HOURS.toMillis(9))) {
-            score += 0.9;
+            score += 0.6;
         }
         else {
             long sdLowerLimit = Math.abs(sleepTime - TimeUnit.HOURS.toMillis(7));
             long sdUpperLimit = Math.abs(sleepTime - TimeUnit.HOURS.toMillis(9));
 
-            score += .9 * (1- (double) Math.min(sdLowerLimit, sdUpperLimit)/120);
+            long minDistance = Math.min(sdLowerLimit, sdUpperLimit);
+            score += .6 * Math.max(0,  1 - minDistance / TimeUnit.HOURS.toMillis(2));
         }
-
+        
         if (getSleepEfficiency() >= 0.85) score += 0.1;
         if (getSleepEfficiency() >= 0.75) score += 0.1;
 
         if (getFellAsleepDuration() != -1) {
-            if (getFellAsleepDuration() <= 2760) score += 0.1;
-            if (getFellAsleepDuration() <= 1800) score += 0.1;
+            if (getFellAsleepDuration() <= 2760) score += 0.05;
+            if (getFellAsleepDuration() <= 1800) score += 0.05;
         }
 
         int awake = -2;
@@ -51,14 +52,14 @@ public class SleepData {
             if (event.confidence < 50) awake++;
         }
 
-        if (awake <= 3) score += 0.1;
-        if (awake <= 1) score += 0.1;
+        if (awake <= 3) score += 0.05;
+        if (awake <= 1) score += 0.05;
 
         return (int) Math.round(score*100);
     }
 
     public double getSleepEfficiency() {
-        return (double) (getConfidenceDuration(50, 100) / (getInBedDuration() == 0 ? 1 : getInBedDuration()) );
+        return (double) getConfidenceDuration(50, 100) / (double) (getInBedDuration() == 0 ? 1 : getInBedDuration());
     }
 
     public long getInBedDuration() {
@@ -66,15 +67,6 @@ public class SleepData {
             return events[events.length-1].timeline - events[0].timeline;
         }
         return 0;
-    }
-
-    public static SleepData[] dayListToSleepDataArray(List<Day> dayList) {
-        SleepData[] sleepData = new SleepData[dayList.size()];
-        for (int i=0; i < dayList.size(); i++) {
-//            sleepData[i] = new SleepData(dayList.get(i).sleep);
-        }
-
-        return sleepData;
     }
 
     public long getFellAsleepDuration() {

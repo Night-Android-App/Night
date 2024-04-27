@@ -51,7 +51,7 @@ public class AnalyticsPageFragment extends Fragment {
         }).start();
     }
 
-    private void handleUpperPanelResult(int type, String date, int score, double info1, double info2) {
+    private void handleUpperPanelResult(int type, String date, int score, long info1, double info2) {
         binding.tvAnalMainInfoTitle1.setText(type == 0 ? "FELL ASLEEP" : "AVG SLEEP");
 
         binding.tvAnalDate.setText(date);
@@ -63,7 +63,7 @@ public class AnalyticsPageFragment extends Fragment {
             binding.tvAnalMainScoreData.setText("N/A");
         }
 
-        String info1String = info1 >= 0 ? TimeUtils.toHrMinString((int) Math.round(info1)) : "N/A";
+        String info1String = info1 >= 0 ? TimeUtils.toHrMinString(info1) : "N/A";
         binding.tvAnalMainInfoData1.setText(info1String);
 
         String info2String = info2 >= 0 ? Math.round(info2 * 100) + "%" : "N/A";
@@ -73,14 +73,12 @@ public class AnalyticsPageFragment extends Fragment {
     private void setUpperPanelResultListener() {
         getChildFragmentManager()
                 .setFragmentResultListener("updateAnalytics", this, (String key, Bundle bundle) -> {
-                    if (getActivity() == null) return;
-
-                    getActivity().runOnUiThread(() -> {
+                    requireActivity().runOnUiThread(() -> {
                         handleUpperPanelResult(
                                 bundle.getInt("type"),
                                 bundle.getString("date"),
                                 bundle.getInt("score", -1),
-                                bundle.getDouble("info1", -1),
+                                bundle.getLong("info1", -1),
                                 bundle.getDouble("info2", -1)
                         );
                     });
