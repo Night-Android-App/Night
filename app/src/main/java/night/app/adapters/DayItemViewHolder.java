@@ -14,7 +14,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import night.app.R;
+import night.app.activities.MainActivity;
 import night.app.data.entities.Day;
+import night.app.data.entities.SleepEvent;
 import night.app.databinding.ItemDayRecordBinding;
 import night.app.services.SleepData;
 import night.app.utils.TimeUtils;
@@ -55,21 +57,25 @@ public class DayItemViewHolder extends RecyclerView.ViewHolder {
         binding.clItemDay.setOnClickListener(this::handleOnClickItem);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(Date.from(Instant.ofEpochSecond(day.date)));
+        calendar.setTimeInMillis(day.date);
 
         decideIsMonthLabelEnable(calendar);
 
         String[] days = new String[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
-
         binding.tvDay.setText(calendar.get(Calendar.DAY_OF_MONTH) + getDayOfMonthSuffix(calendar.get(Calendar.DAY_OF_MONTH)));
-        binding.tvWeekOfDay.setText("(" + days[calendar.get(Calendar.DAY_OF_WEEK)] + ")");
+        binding.tvWeekOfDay.setText("(" + days[calendar.get(Calendar.DAY_OF_WEEK)-1] + ")");
 
+        new Thread(() -> {
+            SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO().getByRange(day.date, day.startTime, day.endTime);
+            SleepData sleepData = new SleepData(events);
 
-//        SleepData sleepData = new SleepData("{}");
-//        binding.tvSleepHrs.setText(TimeUtils.toHrMinString(sleepData.getTotalSleep()));
-//
-//        binding.tvSleepEfficiency.setText(Math.round(sleepData.getSleepEfficiency() * 100) + "%");
+            adapter.activity.runOnUiThread(() -> {
+                binding.tvSleepHrs.setText(TimeUtils.toHrMinString(sleepData.getConfidenceDuration(50, 100)));
+
+                binding.tvSleepEfficiency.setText(Math.round(sleepData.getSleepEfficiency() * 100) + "%");
+            });
+        }).start();
     }
 
     public DayItemViewHolder(DayItemAdapter adapter, ItemDayRecordBinding binding) {

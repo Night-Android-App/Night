@@ -26,8 +26,6 @@ public class SleepData {
 
         long sleepTime = getConfidenceDuration(50, 100);
         if (sleepTime <= 0) return 0;
-
-
         if (isInRange(sleepTime, TimeUnit.HOURS.toMillis(7), TimeUnit.HOURS.toMillis(9))) {
             score += 0.6;
         }
@@ -38,7 +36,6 @@ public class SleepData {
             long minDistance = Math.min(sdLowerLimit, sdUpperLimit);
             score += .6 * Math.max(0,  1 - minDistance / TimeUnit.HOURS.toMillis(2));
         }
-        
         if (getSleepEfficiency() >= 0.85) score += 0.1;
         if (getSleepEfficiency() >= 0.75) score += 0.1;
 

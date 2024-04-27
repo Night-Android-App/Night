@@ -16,8 +16,10 @@ import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.adapters.DayItemAdapter;
 import night.app.data.entities.Day;
+import night.app.data.entities.SleepEvent;
 import night.app.databinding.FragmentMonthRecordBinding;
 import night.app.services.Sample;
+import night.app.services.SleepData;
 import night.app.utils.TimeUtils;
 
 public class MonthRecordFragment extends Fragment {
@@ -62,35 +64,37 @@ public class MonthRecordFragment extends Fragment {
 
         long startedDate = TimeUtils.dayAdd(endDate, -29);
 
-        getActivity().runOnUiThread(() -> {
-            if (dayList.size() == 0) {
-                setUpperPanelResult(TimeUtils.toDateString(startedDate, endDate), 0, 0, 0);
-                return;
-            }
+        if (dayList.size() == 0) {
+            setUpperPanelResult(TimeUtils.toDateString(startedDate, endDate), 0, 0, 0);
+            return;
+        }
 
-            double sleepScore = 0, sleepSeconds = 0, sleepEfficiency = 0;
+            double sleepScore = 0, sleepInMills = 0, sleepEfficiency = 0;
 
             for (int i=0; i < dayList.size(); i++) {
-//                SleepData data = new SleepData("{}");
-//
-//                sleepScore += data.getScore();
-//
-//                double efficiency = data.getSleepEfficiency();
-//                if (efficiency >= 0) sleepEfficiency += efficiency;
-//
-//                int totalSleep = data.getTotalSleep();
-//                if (totalSleep >= 0) sleepSeconds += totalSleep;
+                Day day = dayList.get(i);
+
+                SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO()
+                        .getByRange(day.date, day.startTime, day.endTime);
+
+                SleepData data = new SleepData(events);
+
+                sleepScore += data.getScore();
+                sleepEfficiency += data.getSleepEfficiency();
+
+                sleepInMills += data.getConfidenceDuration(50, 100);
             }
 
             setUpperPanelResult(
                     TimeUtils.toDateString(startedDate, endDate),
                     (int) sleepScore / dayList.size(),
-                    (long) (sleepSeconds / dayList.size()),
+                    (long) (sleepInMills / dayList.size()),
                     sleepEfficiency / dayList.size()
             );
 
-            setAdapter(dayList);
-        });
+            requireActivity().runOnUiThread(() -> {
+                setAdapter(dayList);
+            });
     }
 
     @Override
