@@ -52,6 +52,8 @@ public class AlarmService extends Service {
         instance = this;
 
         Intent nextActivity = new Intent(getApplicationContext(), SleepActivity.class);
+        nextActivity.putExtra("isAlarm", true);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, nextActivity, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationChannel channel =

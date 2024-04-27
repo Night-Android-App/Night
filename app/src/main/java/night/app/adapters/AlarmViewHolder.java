@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
@@ -40,7 +41,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
     private void updateAlarmStatus(int id) {
         new Thread(() -> {
             MainActivity.getDatabase().alarmDAO()
-                    .updateAlarmEnabled(id, binding.swAlarmEnable.isChecked() ? 1 : 0);
+                    .setEnable(id, binding.swAlarmEnable.isChecked() ? 1 : 0);
 
             if (binding.swAlarmEnable.isChecked()) {
                 Calendar calendar = Calendar.getInstance();
@@ -62,7 +63,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
     public void loadData(Alarm alarm) {
         this.alarm = alarm;
 
-        binding.tvTime.setText(TimeUtils.toTimeNotation(alarm.endTime * 60));
+        binding.tvTime.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(alarm.endTime)));
         binding.swAlarmEnable.setChecked(alarm.enableAlarm == 1);
 
         binding.swAlarmEnable.setOnClickListener(v -> updateAlarmStatus(alarm.id));

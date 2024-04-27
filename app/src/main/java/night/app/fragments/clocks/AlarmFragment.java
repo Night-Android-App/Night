@@ -2,19 +2,13 @@ package night.app.fragments.clocks;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -22,14 +16,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.material.timepicker.MaterialTimePicker;
-import com.google.android.material.timepicker.TimeFormat;
-
-import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import night.app.R;
 import night.app.activities.AlarmActivity;
@@ -38,7 +28,6 @@ import night.app.adapters.AlarmAdapter;
 import night.app.data.entities.Alarm;
 import night.app.data.entities.Sleep;
 import night.app.databinding.FragmentAlarmBinding;
-import night.app.fragments.dialogs.ConfirmDialog;
 import night.app.utils.TimeUtils;
 
 public class AlarmFragment extends Fragment {
@@ -53,7 +42,7 @@ public class AlarmFragment extends Fragment {
 
     private void loadAlarmList() {
         new Thread(() -> {
-            List<Alarm> alarmList = MainActivity.getDatabase().alarmDAO().getAllAlarms();
+            List<Alarm> alarmList = MainActivity.getDatabase().alarmDAO().getAll();
 
             requireActivity().runOnUiThread(() -> {
                 AlarmAdapter adapter = new AlarmAdapter((AppCompatActivity) requireActivity(), this, alarmList);
@@ -105,8 +94,8 @@ public class AlarmFragment extends Fragment {
             if (entity != null) {
                 new Thread(() -> {
                     updateSleepMsg(
-                            "We will notify you at " + TimeUtils.toTimeNotation(entity.startTime*60),
-                            "and wake up at " +TimeUtils.toTimeNotation(entity.endTime*60)
+                            "We will notify you at " + TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.startTime)),
+                            "and wake up at " +TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.endTime))
                     );
                 }).start();
                 return;

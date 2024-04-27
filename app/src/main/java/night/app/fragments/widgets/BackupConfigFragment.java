@@ -81,7 +81,7 @@ public class BackupConfigFragment extends Fragment {
         JSONObject requestBody = new JSONObject();
         new Thread(() -> {
             List<Day> days = MainActivity.getDatabase().dayDAO().getAllDay();
-            List<Alarm> alarms = MainActivity.getDatabase().alarmDAO().getAllAlarms();
+            List<Alarm> alarms = MainActivity.getDatabase().alarmDAO().getAll();
 
             activity.runOnUiThread(() -> {
                 try {
@@ -169,7 +169,7 @@ public class BackupConfigFragment extends Fragment {
             String key = keys.next();
             JSONObject alarm = alarmList.getJSONObject(key);
 
-            dao.createAlarm(
+            dao.create(
                     alarm.getInt("endTime"),
                     alarm.optInt("enableMission", 0),
                     alarm.optInt("ringtone", 0)
@@ -181,7 +181,7 @@ public class BackupConfigFragment extends Fragment {
         try {
             DayDAO dao = MainActivity.getDatabase().dayDAO();
             dao.deleteAllDays();
-            MainActivity.getDatabase().alarmDAO().deleteAllAlarms();
+            MainActivity.getDatabase().alarmDAO().discardAll();
 
             JSONObject responseBody = res.getJSONObject("response");
 

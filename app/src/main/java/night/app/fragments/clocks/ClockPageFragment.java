@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import java.util.concurrent.TimeUnit;
+
 import night.app.R;
 import night.app.activities.AlarmActivity;
 import night.app.activities.MainActivity;
@@ -58,8 +60,8 @@ public class ClockPageFragment extends Fragment {
             });
 
     private void showExistedSleepRecord(Sleep entity) {
-        binding.upperMsg.setText("We will notify you at " + TimeUtils.toTimeNotation(entity.startTime*60));
-        binding.lowerMsg.setText("and wake up at " +TimeUtils.toTimeNotation(entity.endTime*60));
+        binding.upperMsg.setText("We will notify you at " + TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.startTime)));
+        binding.lowerMsg.setText("and wake up at " +TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.endTime)));
     }
 
     private void setOnTabSelectedListener() {

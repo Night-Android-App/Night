@@ -45,7 +45,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         new Thread(() -> {
-            MainActivity.getDatabase().alarmDAO().deleteAlarm(id);
+            MainActivity.getDatabase().alarmDAO().discard(id);
         }).start();
 
 //        selectedAlarms.clear();

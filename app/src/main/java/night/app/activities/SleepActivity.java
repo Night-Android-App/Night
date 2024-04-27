@@ -1,25 +1,19 @@
 package night.app.activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 
 import com.google.android.gms.location.ActivityRecognition;
-import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.SleepSegmentRequest;
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -58,22 +52,36 @@ public class SleepActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) disableAlarm();
     }
 
-    private void countdown(int seconds) {
-        countdownThread = new Thread(() -> {
-            int remain = seconds;
-            while (remain >= 0) {
-                try {
-                    Thread.sleep(1000);
+    private void countdown() {
+        if (getIntent().hasExtra("sleepMinutes")) {
+            int sleepMinutes = getIntent().getExtras().getInt("sleepMinutes");
 
-                    String text = "(" + TimeUtils.toHrMinSec(remain) + ")";
-                    runOnUiThread(() -> binding.tvCount.setText(text));
-                    remain--;
-                } catch (InterruptedException e) {
+            Calendar calendar = Calendar.getInstance();
+            binding.tvCurrent.setText(TimeUtils.toTimeNotation(calendar));
+
+            calendar.add(Calendar.MINUTE, sleepMinutes);
+
+            new AlarmSchedule(getApplicationContext())
+                    .post(-1, calendar.getTimeInMillis());
+
+            binding.tvWake.setText(TimeUtils.toTimeNotation(calendar));
+
+            countdownThread = new Thread(() -> {
+                int remain = sleepMinutes * 60 - 1;
+                while (remain >= 0) {
+                    try {
+                        Thread.sleep(1000);
+
+                        String text = "(" + TimeUtils.toHrMinSec(remain) + ")";
+                        runOnUiThread(() -> binding.tvCount.setText(text));
+                        remain--;
+                    }
+                    catch (InterruptedException e) { }
                 }
-            }
-            runOnUiThread(() -> binding.tvCount.setText("End"));
-        });
-        countdownThread.start();
+                runOnUiThread(() -> binding.tvCount.setText("End"));
+            });
+            countdownThread.start();
+        }
     }
 
     private void updateCurrentTime() {
@@ -107,43 +115,37 @@ public class SleepActivity extends AppCompatActivity {
         }
     }
 
-    private void gotoAlarmBranch() {
-        binding.btnPos.setText("Disable");
-        Calendar calendar = Calendar.getInstance();
-        binding.tvCurrent.setText(TimeUtils.toTimeNotation(calendar));
-        binding.tvWake.setText(TimeUtils.toTimeNotation(calendar));
-        updateCurrentTime();
-
-        new Thread(() -> {
-            Alarm alarm = MainActivity.getDatabase().alarmDAO().getAlarm(getIntent().getExtras().getInt("alarmId", 0));
-
-            if (alarm != null && alarm.ringtoneId != null) {
-                player.setId(alarm.ringtoneId);
-            }
-            countdown(1);
-
-            MainActivity.getDatabase().alarmDAO().updateAlarmEnabled(alarm.id, 0);
-        }).start();
-    }
-
     private void gotoSleepBranch() {
         int sleepMinutes = getIntent().getExtras().getInt("sleepMinutes");
 
-        if (sleepMinutes >= 0) {
-            Calendar calendar = Calendar.getInstance();
-            binding.tvCurrent.setText(TimeUtils.toTimeNotation(calendar));
+        if (sleepMinutes >= 0) countdown();
 
-            calendar.add(Calendar.MINUTE, sleepMinutes);
+        Intent intent = new Intent(getApplicationContext(), SleepReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
-            new AlarmSchedule(getApplicationContext())
-                    .post(-1, calendar.getTimeInMillis());
-
-            binding.tvWake.setText(TimeUtils.toTimeNotation(calendar));
-
-            String text = "(" + TimeUtils.toHrMinSec(sleepMinutes * 60) + ")";
-            binding.tvCount.setText(text);
-            countdown(sleepMinutes * 60 - 1);
+        if (checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("No permission");
+            return;
         }
+
+        new Thread(() -> {
+            long startTime = (int) (System.currentTimeMillis() - TimeUtils.getTodayAtMidNight());
+            long endTime = startTime + (int) TimeUnit.MINUTES.toMillis(getIntent().getExtras().getInt("sleepMinutes", 0));
+
+            MainActivity.getDatabase().dayDAO().create(
+                    TimeUtils.getTodayAtMidNight(), startTime, endTime, null
+            );
+        }).start();
+
+        ActivityRecognition.getClient(getApplicationContext())
+                .requestSleepSegmentUpdates(pendingIntent,
+                        new SleepSegmentRequest(SleepSegmentRequest.CLASSIFY_EVENTS_ONLY))
+                .addOnSuccessListener( o -> {
+                    System.out.println("Successfully subscribed to sleep data.");
+                })
+                .addOnFailureListener(e -> {
+                    System.out.println("Fail to subscribe to sleep data");
+                });
     }
 
     @Override
@@ -161,10 +163,15 @@ public class SleepActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        new ConfirmDialog("Exit page", "You cannot track the sleep if the app end.", (dialog) -> {
-            dialog.dismiss();
-            finish();
-        }).show(getSupportFragmentManager(), null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Exit page")
+                .setMessage("You cannot track the sleep if the app end.")
+                .setNegativeButton("CANCEL", null)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    finish();
+                });
+
+        builder.show();
     }
 
     @Override
@@ -182,43 +189,16 @@ public class SleepActivity extends AppCompatActivity {
 
         binding.btnPos.setOnClickListener(v -> wakeup());
 
-        if (getIntent().getExtras() == null) return;
 
-        if (getIntent().hasExtra("alarmId")) {
-            gotoAlarmBranch();
-        }
-        else {
+        if (getIntent().hasExtra("isAlarm")) {
+            if (getIntent().getExtras().getBoolean("isAlarm")) {
+                binding.tvCurrent.setText(TimeUtils.toTimeNotation(Calendar.getInstance()));
+                return;
+            }
             gotoSleepBranch();
         }
-
-        Intent intent = new Intent(getApplicationContext(), SleepReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
-
-        if (checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("No permission");
-            return;
+        else {
+            countdown();
         }
-
-
-        new Thread(() -> {
-            long startTime = (int) (System.currentTimeMillis() - TimeUtils.getTodayAtMidNight());
-            long endTime = startTime + (int) TimeUnit.MINUTES.toMillis(getIntent().getExtras().getInt("sleepMinutes", 0));
-
-            MainActivity.getDatabase().dayDAO().create(
-                    TimeUtils.getTodayAtMidNight(), startTime, endTime, null
-            );
-
-            System.out.println("End");
-        }).start();
-
-        ActivityRecognition.getClient(getApplicationContext())
-                .requestSleepSegmentUpdates(pendingIntent,
-                        new SleepSegmentRequest(SleepSegmentRequest.CLASSIFY_EVENTS_ONLY))
-                .addOnSuccessListener( o -> {
-                    System.out.println("Successfully subscribed to sleep data.");
-                })
-                .addOnFailureListener(e -> {
-                    System.out.println("Fail to subscribe to sleep data");
-                });
     }
 }

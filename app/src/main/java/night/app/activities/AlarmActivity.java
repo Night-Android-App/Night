@@ -1,12 +1,10 @@
 package night.app.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -32,8 +30,8 @@ import night.app.data.entities.Sleep;
 import night.app.data.dao.AlarmDAO;
 import night.app.databinding.ActivityAlarmBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
-import night.app.services.AlarmReceiver;
 import night.app.services.AlarmSchedule;
+import night.app.services.NotificationReceiver;
 import night.app.utils.LayoutUtils;
 import night.app.utils.TimeUtils;
 
@@ -47,8 +45,8 @@ public class AlarmActivity extends AppCompatActivity {
     private final static int NP_SLEEP = 0;
     private final static int NP_WAKE = 1;
 
-    private int sleepTime;
-    private int wakeUpTime;
+    private long sleepTime;
+    private long wakeUpTime;
     private Integer prodId = null;
 
     private boolean isUpdate = false;
@@ -74,7 +72,7 @@ public class AlarmActivity extends AppCompatActivity {
         int enableMission = binding.swMission.isChecked() ? 1 : 0;
 
         new Thread(() -> {
-            alarmDAO.updateAlarm(alarm.id, wakeUpTime, enableMission, prodId);
+            alarmDAO.update(alarm.id, wakeUpTime, enableMission, prodId);
             setResult(RESULT_OK);
         }).start();
         Toast.makeText(this, "Updated Alarm", Toast.LENGTH_SHORT).show();
@@ -92,7 +90,7 @@ public class AlarmActivity extends AppCompatActivity {
 
         System.out.println("Schedule Alarm: SleepTime = " + sleepTime);
         System.out.println("Schedule Alarm: WakeTime = " + wakeUpTime);
-        calendar.setTimeInMillis(TimeUtils.getClosestDateTime((long) wakeUpTime*60*1000));
+        calendar.setTimeInMillis(TimeUtils.getClosestDateTime(wakeUpTime));
 
         System.out.println(calendar.get(Calendar.MONTH)+1 + "/" + calendar.get(Calendar.DAY_OF_MONTH));
         System.out.println(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
@@ -105,19 +103,23 @@ public class AlarmActivity extends AppCompatActivity {
 
             new Thread(() -> {
                 if (MainActivity.getDatabase().sleepDAO().getSleep() == null) {
-                    MainActivity.getDatabase().sleepDAO().addSleep(
-                            sleepTime, wakeUpTime,
-                            binding.swMission.isChecked() ? 1 : 0, binding.swDnd.isChecked() ? 1 : 0,
-                            prodId
-                    );
+                    // disable previous alarm
                 }
-                else {
-                    MainActivity.getDatabase().sleepDAO().updateSleep(
-                            sleepTime, wakeUpTime,
-                            binding.swMission.isChecked() ? 1 : 0, binding.swDnd.isChecked() ? 1 : 0,
-                            prodId
-                    );
-                }
+                MainActivity.getDatabase().sleepDAO().insertUpdate(
+                        sleepTime, wakeUpTime,
+                        binding.swMission.isChecked() ? 1 : 0, binding.swDnd.isChecked() ? 1 : 0,
+                        prodId
+                );
+
+                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, NotificationReceiver.class), PendingIntent.FLAG_IMMUTABLE);
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(TimeUtils.getClosestDateTime(sleepTime));
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+                System.out.println(calendar.getTimeInMillis());
             }).start();
 
             setResult(RESULT_OK);
@@ -133,9 +135,9 @@ public class AlarmActivity extends AppCompatActivity {
             new Thread(() -> {
                 int enableMission = binding.swMission.isChecked() ? 1 : 0;
 
-                alarmDAO.createAlarm(wakeUpTime, enableMission, prodId);
+                alarmDAO.create(wakeUpTime, enableMission, prodId);
 
-                scheduleAlarm(alarmDAO.getLastAlarm().id);
+                scheduleAlarm(alarmDAO.getLast().id);
                 setResult(RESULT_OK);
                 finish();
             }).start();
@@ -148,22 +150,22 @@ public class AlarmActivity extends AppCompatActivity {
         calendar.add(Calendar.HOUR, binding.npHrs.getValue());
         calendar.add(Calendar.MINUTE, binding.npMins.getValue());
 
-        int hrValue = binding.npHrs.getValue() * 60;
-        int minValue = binding.npMins.getValue();
+        long hrValue = TimeUnit.HOURS.toMillis(binding.npHrs.getValue());
+        long minValue = TimeUnit.MINUTES.toMillis(binding.npMins.getValue());
 
         if (binding.getNpType() == NP_WAKE) {
             wakeUpTime = hrValue + minValue;
-            binding.tvWakeUp.setText(TimeUtils.toTimeNotation(wakeUpTime*60));
+            binding.tvWakeUp.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
         }
         else if (binding.getNpType() == NP_SLEEP) {
             sleepTime = hrValue + minValue;
-            binding.tvSleep.setText(TimeUtils.toTimeNotation(sleepTime*60));
+            binding.tvSleep.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
         }
     }
 
-    private void updateNumberPickers(int minutes) {
-        binding.npHrs.setValue(minutes / 60);
-        binding.npMins.setValue(minutes - binding.npHrs.getValue() * 60);
+    private void updateNumberPickers(long ms) {
+        binding.npHrs.setValue((int) TimeUnit.MILLISECONDS.toHours(ms));
+        binding.npMins.setValue((int) (TimeUnit.MILLISECONDS.toMinutes(ms) - binding.npHrs.getValue() * 60));
     }
 
     private void initSleepSettingStyles() {
@@ -177,7 +179,7 @@ public class AlarmActivity extends AppCompatActivity {
 
     private void loadAlarmSettings(int alarmId) {
         new Thread(() -> {
-            alarm = MainActivity.getDatabase().alarmDAO().getAlarm(alarmId);
+            alarm = MainActivity.getDatabase().alarmDAO().getById(alarmId);
             prodId = alarm.ringtoneId;
 
             if (alarm.ringtoneId != null) {
@@ -226,8 +228,8 @@ public class AlarmActivity extends AppCompatActivity {
                     wakeUpTime = sleep.endTime;
                     sleepTime = sleep.startTime;
 
-                    binding.tvSleep.setText(TimeUtils.toTimeNotation(sleepTime));
-                    binding.tvWakeUp.setText(TimeUtils.toTimeNotation(wakeUpTime));
+                    binding.tvSleep.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
+                    binding.tvWakeUp.setText(TimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(wakeUpTime)));
 
                     updateNumberPickers(sleepTime);
                 });
@@ -265,8 +267,8 @@ public class AlarmActivity extends AppCompatActivity {
 
         // set current time to number picker (more convenient for users)
         wakeUpTime = (int) TimeUnit.MILLISECONDS.toMinutes(TimeUtils.getMsOfToday());
-        binding.npHrs.setValue((int) TimeUnit.MINUTES.toHours(wakeUpTime));
-        binding.npMins.setValue(wakeUpTime - binding.npHrs.getValue() * 60);
+        binding.npHrs.setValue((int) TimeUnit.MILLISECONDS.toHours(wakeUpTime));
+        binding.npMins.setValue((int) (wakeUpTime - binding.npHrs.getValue() * 60));
 
 
         if (alarmId >= 0) {
