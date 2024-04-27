@@ -9,11 +9,11 @@ import androidx.room.PrimaryKey;
 public class Day {
     @NonNull
     @PrimaryKey
-    public Integer date;
+    public Long date;
 
-    public Integer startTime;
+    public Long startTime;
 
-    public Integer endTime;
+    public Long endTime;
 
     public String dream;
 }

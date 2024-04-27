@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import night.app.data.entities.Alarm;
 import night.app.databinding.ActivitySleepBinding;
@@ -126,7 +127,7 @@ public class SleepActivity extends AppCompatActivity {
     }
 
     private void gotoSleepBranch() {
-        Integer sleepMinutes = getIntent().getExtras().getInt("sleepMinutes");
+        int sleepMinutes = getIntent().getExtras().getInt("sleepMinutes");
 
         if (sleepMinutes >= 0) {
             Calendar calendar = Calendar.getInstance();
@@ -185,7 +186,8 @@ public class SleepActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra("alarmId")) {
             gotoAlarmBranch();
-        } else {
+        }
+        else {
             gotoSleepBranch();
         }
 
@@ -196,6 +198,18 @@ public class SleepActivity extends AppCompatActivity {
             System.out.println("No permission");
             return;
         }
+
+
+        new Thread(() -> {
+            long startTime = (int) (System.currentTimeMillis() - TimeUtils.getTodayAtMidNight());
+            long endTime = startTime + (int) TimeUnit.MINUTES.toMillis(getIntent().getExtras().getInt("sleepMinutes", 0));
+
+            MainActivity.getDatabase().dayDAO().create(
+                    TimeUtils.getTodayAtMidNight(), startTime, endTime, null
+            );
+
+            System.out.println("End");
+        }).start();
 
         ActivityRecognition.getClient(getApplicationContext())
                 .requestSleepSegmentUpdates(pendingIntent,

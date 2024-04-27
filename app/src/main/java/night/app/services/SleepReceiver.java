@@ -30,6 +30,8 @@ public class SleepReceiver extends BroadcastReceiver {
                                 event.getLight(),
                                 event.getMotion()
                         );
+
+                        System.out.println(event.getTimestampMillis() + " " + event.getConfidence());
                     }).start();
                 }
             }

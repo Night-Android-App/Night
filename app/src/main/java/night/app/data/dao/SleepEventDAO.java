@@ -16,6 +16,6 @@ public interface SleepEventDAO {
     SleepEvent[] getEventsByDay(long startTimeInSeconds);
 
     @Query("SELECT * FROM SleepEvents " +
-            "WHERE timeline BETWEEN:startInMills AND :endInMills")
-    SleepEvent[] getByRange(long startInMills, long endInMills);
+            "WHERE timeline BETWEEN :date + :startInMills AND :date + :endInMills")
+    SleepEvent[] getByRange(Long date, Long startInMills, Long endInMills);
 }

@@ -10,10 +10,8 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class TimeUtils {
-    public static int DayInSeconds = 24 * 60 * 60;
-
     public static long dayAdd(long date, int day) {
-        return date + day * (long) DayInSeconds;
+        return date + TimeUnit.DAYS.toMillis(day);
     }
 
     public static long getTodayAtMidNight() {
@@ -51,13 +49,6 @@ public class TimeUtils {
         current.set(Calendar.MILLISECOND, 0);
 
         return current.getTimeInMillis();
-    }
-
-    public static int timeDiff(int earlier, int later) {
-        if (earlier > later) {
-            return later + (24*60 - earlier);
-        }
-        return later - earlier;
     }
 
     public static String toTimeNotation(Calendar calendar) {
@@ -108,7 +99,7 @@ public class TimeUtils {
 
     public static String toDateString(long timestamp, boolean year) {
         ZoneId zoneId = ZoneId.systemDefault();
-        ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(timestamp), zoneId);
+        ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(timestamp), zoneId);
 
         String pattern = year ? "dd MMM yyyy" : "dd MMM";
         return DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH).format(dateTime);

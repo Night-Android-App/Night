@@ -55,7 +55,6 @@ public class WeekRecordFragment extends Fragment {
                 setUpperPanelResult(TimeUtils.toDateString(startDate, endDate), 0, 0, 0);
 
                 new ChartBuilder<>(binding.barChartWeekRecord, new Integer[] {})
-                        .setTheme(binding.getTheme())
                         .invalidate();
                 return;
             }
@@ -87,7 +86,6 @@ public class WeekRecordFragment extends Fragment {
             }
 
             new ChartBuilder<>(binding.barChartWeekRecord, sleepHrs)
-                    .setTheme(binding.getTheme())
                     .invalidate();
 
 

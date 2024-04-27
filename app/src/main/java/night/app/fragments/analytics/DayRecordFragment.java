@@ -10,10 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import java.util.Calendar;
-
 import night.app.R;
 import night.app.activities.MainActivity;
+import night.app.data.AppDatabase;
+import night.app.data.entities.Day;
 import night.app.data.entities.SleepEvent;
 import night.app.databinding.FragmentDayRecordBinding;
 import night.app.services.ChartBuilder;
@@ -44,48 +44,38 @@ public class DayRecordFragment extends Fragment {
         binding.tvDeepSleep.setText("N/A");
         binding.tvInBed.setText("N/A");
 
-        new ChartBuilder<>(binding.lineChartDayRecord, null, null)
-                .setTheme(binding.getTheme())
-                .invalidate();
+        new ChartBuilder<>(binding.lineChartDayRecord, null, null).invalidate();
 
         setUpperPanelResult(TimeUtils.toDateString(date, true), null);
     }
 
     private void loadDay(long timestamp) {
+        setUpperPanelResult(TimeUtils.toDateString(timestamp, true), null);
+
+        AppDatabase db = MainActivity.getDatabase();
+
         new Thread(() -> {
-            SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO().getEventsByDay(timestamp);
+            Day day = db.dayDAO().getDayByDate(timestamp);
 
-            String[] time = new String[events.length];
-            Integer[] confidence = new Integer[events.length];
-            for (int i=0; i < events.length; i++) {
-                confidence[i] = events[i].confidence;
+            if (day == null) day = new Day();
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(events[i].timeline);
+            SleepEvent[] events = db.sleepEventDAO().getByRange(day.date, day.startTime, day.endTime);
+            SleepData data = new SleepData(events);
 
-                time[i] = calendar.get(Calendar.HOUR_OF_DAY) + ":" +calendar.get(Calendar.MINUTE);
-            }
-
-            new ChartBuilder<>(binding.lineChartDayRecord, time, confidence)
-                    .setTheme(binding.getTheme())
+            System.out.println(events.length);
+            // load chart
+            new ChartBuilder<>(binding.lineChartDayRecord, data.getTimelines(), data.getConfidences())
                     .invalidate();
 
-            if (events.length >= 1) {
-                SleepData data = new SleepData(events);
-                setUpperPanelResult(TimeUtils.toDateString(timestamp, true), data);
+            binding.tvLightSleep.setText(TimeUtils.toHrMinString((int) data.getConfidenceDuration(50,74)));
+            binding.tvDeepSleep.setText(TimeUtils.toHrMinString((int) data.getConfidenceDuration(75,100)));
+            binding.tvInBed.setText(TimeUtils.toHrMinString((int) data.getInBedDuration()));
 
-                binding.tvLightSleep.setText(TimeUtils.toHrMinString((int) data.getConfidenceDuration(50,74)));
-                binding.tvDeepSleep.setText(TimeUtils.toHrMinString((int) data.getConfidenceDuration(75,100)));
-                binding.tvInBed.setText(TimeUtils.toHrMinString((int) data.getInBedDuration()));
-                return;
-            }
-            setUpperPanelResult(TimeUtils.toDateString(timestamp, true), null);
+            setUpperPanelResult(TimeUtils.toDateString(timestamp, true), data);
         }).start();
     }
 
-    private void setLoadDayResultListener() {
-        if (!isAdded()) return;
-
+    private void setLoadDayListener() {
         getParentFragmentManager()
                 .setFragmentResultListener("loadDay", this, (String key, Bundle bundle) -> {
                     int date = bundle.getInt("date", 0);
@@ -120,8 +110,6 @@ public class DayRecordFragment extends Fragment {
     }
 
     private void setStylesForNormalMode() {
-        if (getActivity() == null) return;
-
         ImageView ivLeft = getActivity().findViewById(R.id.iv_left);
         ImageView ivRight = getActivity().findViewById(R.id.iv_right);
 
@@ -136,13 +124,19 @@ public class DayRecordFragment extends Fragment {
             ivLeft.setVisibility(View.GONE);
         }
 
-        setLoadDayResultListener();
+        setLoadDayListener();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_day_record, container, false);
         binding.setTheme(MainActivity.getAppliedTheme());
+
+        getActivity().findViewById(R.id.iv_left).setOnClickListener(v -> loadDayByDiff(-1));
+        getActivity().findViewById(R.id.iv_right).setOnClickListener(v -> loadDayByDiff(+1));
+
+        loadDay(TimeUtils.getTodayAtMidNight());
+        setStylesForNormalMode();
 
         if (getArguments() != null) {
             int mode = getArguments().getInt("mode", 0);
@@ -152,12 +146,6 @@ public class DayRecordFragment extends Fragment {
                 return binding.getRoot();
             }
         }
-
-        getActivity().findViewById(R.id.iv_left).setOnClickListener(v -> loadDayByDiff(-1));
-        getActivity().findViewById(R.id.iv_right).setOnClickListener(v -> loadDayByDiff(+1));
-
-        loadDay(TimeUtils.getTodayAtMidNight());
-        setStylesForNormalMode();
 
         return binding.getRoot();
     }

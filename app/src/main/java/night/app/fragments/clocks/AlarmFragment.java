@@ -1,14 +1,17 @@
 package night.app.fragments.clocks;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -43,10 +46,7 @@ public class AlarmFragment extends Fragment {
 
     public ActivityResultLauncher<Intent> mStartForResult =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                System.out.println("Load Start...");
-
                 if(result.getResultCode()== Activity.RESULT_OK) {
-                    System.out.println("Load");
                     loadAlarmList();
                 }
             });
@@ -55,27 +55,30 @@ public class AlarmFragment extends Fragment {
         new Thread(() -> {
             List<Alarm> alarmList = MainActivity.getDatabase().alarmDAO().getAllAlarms();
 
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    AlarmAdapter adapter = new AlarmAdapter((AppCompatActivity) requireActivity(), this, alarmList);
-                    binding.rvAlarm.setAdapter(adapter);
-                });
-            }
+            requireActivity().runOnUiThread(() -> {
+                AlarmAdapter adapter = new AlarmAdapter((AppCompatActivity) requireActivity(), this, alarmList);
+                binding.rvAlarm.setAdapter(adapter);
+            });
         }).start();
 
     }
 
     private void handleOnClickDiscard(View view) {
-        new ConfirmDialog("Discard selected alarms", "This action cannot be reversed.", dialog -> {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity())
+                .setTitle("Discard selected alarms?")
+                .setMessage("This action cannot be reversed.")
+                .setNegativeButton("No", null)
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    AlarmAdapter adapter = (AlarmAdapter) binding.rvAlarm.getAdapter();
+                    if (adapter != null) {
+                        int totalAlarmsDiscarded = adapter.discardSelectedAlarms();
 
-            AlarmAdapter adapter = (AlarmAdapter) binding.rvAlarm.getAdapter();
-            if (adapter != null) {
-                int totalAlarmsDiscarded = adapter.discardSelectedAlarms();
+                        String desc = totalAlarmsDiscarded + " alarm(s) be discarded";
+                        Toast.makeText(requireActivity(), desc, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-                String dialogDesc = totalAlarmsDiscarded + " alarm(s) be discarded";
-                dialog.replaceContent("Discard successes", dialogDesc, null);
-            }
-        }).show(getParentFragmentManager(), null);
+        builder.show();
     }
 
     private void updateSleepMsg(String upper, String lower) {

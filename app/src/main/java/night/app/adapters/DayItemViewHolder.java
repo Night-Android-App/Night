@@ -28,7 +28,7 @@ public class DayItemViewHolder extends RecyclerView.ViewHolder {
         ((TabLayout) adapter.activity.findViewById(R.id.tab_anal)).getTabAt(0).select();
 
         Bundle bundle = new Bundle();
-        bundle.putInt("date", day.date);
+        bundle.putLong("date", day.date);
         adapter.activity.getSupportFragmentManager().setFragmentResult("loadDay", bundle);
     }
 

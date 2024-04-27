@@ -17,6 +17,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.util.ArrayList;
 
+import night.app.activities.MainActivity;
 import night.app.data.entities.Theme;
 
 
@@ -82,7 +83,9 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
         this.dataSet = dataSet;
     }
 
-    public ChartBuilder<T> setTheme(Theme theme) {
+    public ChartBuilder<T> setTheme() {
+        Theme theme = MainActivity.getAppliedTheme();
+
         dataSet.setValueTextColor(theme.getOnPrimaryVariant());
         dataSet.setColor(theme.getAccent());
 
@@ -109,6 +112,7 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
         yAxis.setLabelCount(4, true);
 
         setBarData(data);
+        setTheme();
     }
 
     public ChartBuilder(T chart, String[] xLabel, Integer[] data) {
@@ -136,6 +140,7 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
         });
 
         setLineData(data);
+        setTheme();
     }
 
     public void invalidate() {

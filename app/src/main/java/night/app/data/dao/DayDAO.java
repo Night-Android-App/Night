@@ -10,7 +10,7 @@ import night.app.data.entities.Day;
 @Dao
 public interface DayDAO {
     @Query("SELECT * FROM Days WHERE date=:date LIMIT 1")
-    List<Day> getDayByDate(long date);
+    Day getDayByDate(long date);
 
     @Query("SELECT * FROM Days ORDER BY date DESC LIMIT 1")
     List<Day> getRecentDay();
@@ -24,8 +24,9 @@ public interface DayDAO {
     @Query("DELETE FROM Days WHERE date < :dayBefore")
     void deleteOldDays(long dayBefore);
 
-    @Query("INSERT INTO Days (date, startTime, endTime, dream) VALUES (:date, :startTime, :endTime, :dream)")
-    void insertDay(int date, int startTime, int endTime, String dream);
+    @Query("REPLACE INTO Days (date, startTime, endTime, dream) " +
+            "VALUES (:date, :startTime, :endTime, :dream)")
+    void create(long date, long startTime, long endTime, String dream);
 
     @Query("DELETE FROM Days")
     void deleteAllDays();

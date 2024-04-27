@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -57,11 +58,14 @@ public class SleepData {
     }
 
     public double getSleepEfficiency() {
-        return (double) (getConfidenceDuration(50, 100) / getInBedDuration());
+        return (double) (getConfidenceDuration(50, 100) / (getInBedDuration() == 0 ? 1 : getInBedDuration()) );
     }
 
     public long getInBedDuration() {
-        return events[events.length-1].timeline - events[0].timeline;
+        if (events.length > 1) {
+            return events[events.length-1].timeline - events[0].timeline;
+        }
+        return 0;
     }
 
     public static SleepData[] dayListToSleepDataArray(List<Day> dayList) {
@@ -81,6 +85,29 @@ public class SleepData {
             durationInMills += getEventDuration(i);
         }
         return -1;
+    }
+
+    public String[] getTimelines() {
+        String[] time = new String[events.length];
+
+        for (int i=0; i < events.length; i++) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(events[i].timeline);
+
+            time[i] = calendar.get(Calendar.HOUR_OF_DAY) + ":" +calendar.get(Calendar.MINUTE);
+        }
+
+        return time;
+    }
+
+    public Integer[] getConfidences() {
+        Integer[] confidences = new Integer[events.length];
+
+        for (int i=0; i < events.length; i++) {
+            confidences[i] = events[i].confidence;
+        }
+
+        return confidences;
     }
 
     public long getEventDuration(int index) {

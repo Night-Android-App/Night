@@ -27,7 +27,6 @@ import night.app.activities.MainActivity;
 import night.app.data.dao.DayDAO;
 import night.app.data.entities.Alarm;
 import night.app.data.dao.AlarmDAO;
-import night.app.data.dao.AppDAO;
 import night.app.data.DataStoreHelper;
 import night.app.data.entities.Day;
 import night.app.data.PreferenceViewModel;
@@ -151,7 +150,7 @@ public class BackupConfigFragment extends Fragment {
             String key = keys.next();
             JSONObject day = sleepData.getJSONObject(key);
 
-            dao.insertDay(
+            dao.create(
                     Integer.parseInt(key),
                     day.getInt("startTime"),
                     day.getInt("endTime"),
