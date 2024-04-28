@@ -53,7 +53,7 @@ public class WidgetsPageFragment extends Fragment {
         LayoutUtils.onSelected(binding.tabSett, tab -> {
             Fragment fragment = tab.getPosition() == 0 ? new BackupConfigFragment() : new OthersConfigFragment();
 
-            getChildFragmentManager().beginTransaction()
+            getParentFragmentManager().beginTransaction()
                     .replace(R.id.fr_sett_details, fragment)
                     .commit();
         });
@@ -120,14 +120,14 @@ public class WidgetsPageFragment extends Fragment {
         createViewModel();
         loadDataFromDataStore();
 
-        getChildFragmentManager()
+        getParentFragmentManager()
                 .setFragmentResultListener("accountStatus", this, this::setAccountStatusResult);
 
         binding.ibShop.setOnClickListener(v -> {
             new ShopDialog().show(requireActivity().getSupportFragmentManager(), null);
         });
 
-        getChildFragmentManager().beginTransaction()
+        getParentFragmentManager().beginTransaction()
                 .add(R.id.fr_sett_details, BackupConfigFragment.class, null)
                 .commit();
 

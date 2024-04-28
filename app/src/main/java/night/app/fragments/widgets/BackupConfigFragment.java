@@ -14,6 +14,7 @@ import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,17 +43,23 @@ public class BackupConfigFragment extends Fragment {
     private FragmentBackupConfigBinding binding;
 
     @WorkerThread
-    private JSONObject[] getSleepDataInJson() {
+    private JSONArray getSleepDataInJson() {
         List<Day> days = MainActivity.getDatabase().dayDAO().getAll();
 
-        return Arrays.stream((Day[]) days.toArray()).map(Day::toJSON).toArray(JSONObject[]::new);
+        JSONArray array = new JSONArray();
+        for (Day day : days) array.put(day.toJSON());
+
+        return array;
     }
 
     @WorkerThread
-    private JSONObject[] getAlarmsInJson() {
+    private JSONArray getAlarmsInJson() {
         List<Alarm> alarms = MainActivity.getDatabase().alarmDAO().getAll();
 
-        return Arrays.stream((Alarm[]) alarms.toArray()).map(Alarm::toJSON).toArray(JSONObject[]::new);
+        JSONArray array = new JSONArray();
+        for (Alarm alarm : alarms) array.put(alarm.toJSON());
+
+        return array;
     }
 
     private void backup(ConfirmDialog dialog) {
@@ -62,89 +69,64 @@ public class BackupConfigFragment extends Fragment {
         Preferences prefs = MainActivity.getDataStore().getPrefs();
 
         JSONObject requestBody = new JSONObject();
-        try {
-            String sid = prefs.get(PreferencesKeys.stringKey("sessionId"));
-            String uid = prefs.get(PreferencesKeys.stringKey("username"));
+        String sid = prefs.get(PreferencesKeys.stringKey("sessionId"));
+        String uid = prefs.get(PreferencesKeys.stringKey("username"));
 
-            if (sid == null || uid == null) {
-                dialog.replaceContent("Backup Error", "You have to login to use this service.", null);
-                dialog.showMessage();
-                return;
-            }
-            requestBody.put("sid", sid);
-            requestBody.put("uid", uid);
-
-            requestBody.put("sleepData", getSleepDataInJson());
-            requestBody.put("alarmList", getAlarmsInJson());
-
-            dialog.showLoading();
-            new ServiceRequest().backup(requestBody.toString(), res -> {
-                int status = res.optInt("responseCode");
-                if (status == 200) {
-                    requireActivity().runOnUiThread(() -> {
-                        dialog.replaceContent("Backup Success", "The data should be available in local", null);
-                        dialog.showMessage();
-
-                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
-                        format.setTimeZone(TimeZone.getDefault());
-
-                        binding.tvSettBackupLastDate.setText(format.format(new Date()));
-                        MainActivity.getDataStore().update(
-                            PreferencesKeys.stringKey("lastBackupDate"),
-                            format.format(new Date())
-                        );
-                    });
-                    return;
-                }
-
-                String errorMsg = switch (status) {
-                    case 400 -> "Incorrect request structure";
-                    case 401 -> "Unauthorized user";
-                    case 404 -> "Request path not found";
-                    case 500 -> "Internal server error. Try again later.";
-                    default  -> "Unexpected error status: " + status;
-                };
-
-                dialog.replaceContent("Backup Error", errorMsg, null);
-                dialog.showMessage();
-            });
-        }
-        catch (JSONException e) {
-            dialog.replaceContent("Backup Error", "Unexpected error (JSONException)", null);
+        if (sid == null || uid == null) {
+            dialog.replaceContent("Backup Error", "You have to login to use this service.", null);
             dialog.showMessage();
+            return;
         }
-    }
 
-    private void recoverySleepData(String data) throws JSONException {
-        DayDAO dao = MainActivity.getDatabase().dayDAO();
+        dialog.showLoading();
+        new Thread(() -> {
+            try {
+                requestBody.put("sid", sid);
+                requestBody.put("uid", uid);
+                requestBody.put("sleepData", getSleepDataInJson().toString());
+                requestBody.put("alarmList", getAlarmsInJson().toString());
 
-        JSONObject sleepData = new JSONObject(data);
-        Iterator<String> keys = sleepData.keys();
+                new ServiceRequest().backup(requestBody.toString(), res -> {
+                    int status = res.optInt("responseCode");
+                    if (status == 200) {
+                        requireActivity().runOnUiThread(() -> {
+                            dialog.replaceContent("Backup Success", "The data should be available in local", null);
+                            dialog.showMessage();
 
-        while (keys.hasNext()) {
-            String key = keys.next();
-            JSONObject day = sleepData.getJSONObject(key);
+                            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
+                            format.setTimeZone(TimeZone.getDefault());
 
-            dao.create(Integer.parseInt(key), day.getInt("startTime"), day.getInt("endTime"));
-        }
-    }
+                            binding.tvSettBackupLastDate.setText(format.format(new Date()));
+                            MainActivity.getDataStore().update(
+                                    PreferencesKeys.stringKey("lastBackupDate"),
+                                    format.format(new Date())
+                            );
+                        });
+                        return;
+                    }
 
-    private void recoveryAlarmList(String data) throws JSONException {
-        AlarmDAO dao = MainActivity.getDatabase().alarmDAO();
+                    String errorMsg = switch (status) {
+                        case 400 -> "Incorrect request structure";
+                        case 401 -> "Unauthorized user";
+                        case 404 -> "Request path not found";
+                        case 500 -> "Internal server error. Try again later.";
+                        default -> "Unexpected error status: " + status;
+                    };
 
-        JSONObject alarmList = new JSONObject(data);
-        Iterator<String> keys = alarmList.keys();
-
-        while (keys.hasNext()) {
-            String key = keys.next();
-            JSONObject alarm = alarmList.getJSONObject(key);
-
-            dao.create(
-                    alarm.getInt("endTime"),
-                    alarm.optInt("enableMission", 0),
-                    alarm.optInt("ringtone", 0)
-            );
-        }
+                    requireActivity().runOnUiThread(() -> {
+                        dialog.replaceContent("Backup Error", errorMsg, null);
+                        dialog.showMessage();
+                    });
+                });
+            }
+            catch (JSONException e) {
+                requireActivity().runOnUiThread(() -> {
+                    dialog.replaceContent("Backup Error", "Unexpected error (JSONException)", null);
+                    dialog.showMessage();
+                });
+            }
+            dialog.dismiss();
+        }).start();
     }
 
     private void recoveryCallBack(JSONObject res) {
@@ -157,8 +139,8 @@ public class BackupConfigFragment extends Fragment {
 
             JSONObject responseBody = res.getJSONObject("response");
 
-            Day.resolveJSON(responseBody.getJSONArray("sleepData"));
-            Alarm.resolveJSON(responseBody.getJSONArray("alarmList"));
+            Day.resolveJSON(new JSONArray(responseBody.getString("sleepData")));
+            Alarm.resolveJSON(new JSONArray(responseBody.getString("alarmList")));
         }
         catch (JSONException e) {
             System.err.println(e);
@@ -189,6 +171,7 @@ public class BackupConfigFragment extends Fragment {
 
                 int status = res.optInt("responseCode");
                 if (status == 200) {
+                    System.out.println("200");
                     recoveryCallBack(res);
                     new ConfirmDialog("Backup Success", "The data should be available in local", null)
                             .show(activity.getSupportFragmentManager(), null);
@@ -210,6 +193,7 @@ public class BackupConfigFragment extends Fragment {
         catch (JSONException e) {
             throw new RuntimeException(e);
         }
+        dialog.dismiss();
     }
 
     @Override

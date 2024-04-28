@@ -4,18 +4,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AccountRequest extends Request {
-    public void validateSession(Callback Callback) {
-        new Thread(() -> {
-            JSONObject response = connect("session", "POST").getResponse();
-
-            if (response != null && response.optInt("responseCode") != 200) {
-                // set session id to empty in cookie
-            }
-
-            Callback.run(response);
-        });
-    }
-
     public void register(String uid, String hashedPwd, Callback Callback) {
         new Thread(() -> {
             try {

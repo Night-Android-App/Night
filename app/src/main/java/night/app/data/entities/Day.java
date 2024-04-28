@@ -36,7 +36,7 @@ public class Day {
                         json.getLong("date"),
                         json.getLong("startTime"),
                         json.getLong("endTime"),
-                        json.getString("dream")
+                        json.optString("dream")
                 );
 
                 SleepEvent.resolveJSON(json.getJSONArray("events"));
@@ -56,10 +56,11 @@ public class Day {
             }};
 
             SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO().get(this);
-            JSONObject[] eventsInJSON =
-                    Arrays.stream(events).map(SleepEvent::toJSON).toArray(JSONObject[]::new);
 
-            json.put("events", eventsInJSON);
+            JSONArray array = new JSONArray();
+            for (SleepEvent event : events) array.put(event.toJSON());
+
+            json.put("events", array);
 
             return json;
         }

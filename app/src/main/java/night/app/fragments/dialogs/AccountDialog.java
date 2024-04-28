@@ -112,7 +112,8 @@ public class  AccountDialog extends DialogFragment {
         dialog.showLoading();
 
         new AccountRequest().login(uidValue, Password.hash(pwdValue), res -> {
-            if (res != null && res.optInt("responseCode") == 200) {
+            System.out.println(res.optInt("responseCode"));
+            if (res.optInt("responseCode") == 200) {
                 try {
                     MainActivity.getDataStore().update(DataStoreHelper.KEY_COINS, res.getJSONObject("response").getInt("coins"));
 
@@ -125,8 +126,6 @@ public class  AccountDialog extends DialogFragment {
 
                     String date = res.getJSONObject("response").getString("createdDate");
                     bundle.putString("desc", date.substring(0, 10));
-
-                    bundle.putBoolean("isOnClickLogout", true);
 
                     getParentFragmentManager().setFragmentResult("accountStatus", bundle);
                     dialog.dismiss();
