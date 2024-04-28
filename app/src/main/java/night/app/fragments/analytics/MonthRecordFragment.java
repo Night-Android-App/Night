@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -98,7 +99,7 @@ public class MonthRecordFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_month_record, container, false);
         binding.setTheme(MainActivity.getAppliedTheme());
 
@@ -106,8 +107,8 @@ public class MonthRecordFragment extends Fragment {
 
         new Thread(this::loadData).start();
 
-        getActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
+        requireActivity().findViewById(R.id.iv_left).setVisibility(View.GONE);
+        requireActivity().findViewById(R.id.iv_right).setVisibility(View.GONE);
 
         return binding.getRoot();
     }

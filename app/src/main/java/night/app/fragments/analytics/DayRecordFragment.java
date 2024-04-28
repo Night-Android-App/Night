@@ -50,6 +50,8 @@ public class DayRecordFragment extends Fragment {
     }
 
     private void loadDay(long timestamp) {
+        setStylesForNormalMode();
+
         setUpperPanelResult(DatetimeUtils.toDateString(timestamp, true), null);
 
         AppDatabase db = MainActivity.getDatabase();
@@ -76,9 +78,8 @@ public class DayRecordFragment extends Fragment {
     }
 
     private void setLoadDayListener() {
-        getParentFragmentManager()
-                .setFragmentResultListener("loadDay", this, (String key, Bundle bundle) -> {
-                    int date = bundle.getInt("date", 0);
+        requireActivity().getSupportFragmentManager().setFragmentResultListener("loadDay", this, (String key, Bundle bundle) -> {
+                    long date = bundle.getLong("date", 0L);
 
                     if (date == 0) {
 //                        loadDay(Sample.getDay());
@@ -86,6 +87,7 @@ public class DayRecordFragment extends Fragment {
                         return;
                     }
 
+                    this.date = date;
                     loadDay(date);
                     setStylesForNormalMode();
                 });
@@ -116,8 +118,7 @@ public class DayRecordFragment extends Fragment {
         ivLeft.setVisibility(View.VISIBLE);
         ivRight.setVisibility(View.VISIBLE);
 
-
-        if (DatetimeUtils.dayAdd(date, 1) > DatetimeUtils.getTodayAtMidNight()) {
+        if (DatetimeUtils.dayAdd(date, 1) >= System.currentTimeMillis()) {
             ivRight.setVisibility(View.GONE);
         }
         else if (date <= DatetimeUtils.dayAdd(DatetimeUtils.getTodayAtMidNight(), -29)) {
@@ -136,7 +137,6 @@ public class DayRecordFragment extends Fragment {
         getActivity().findViewById(R.id.iv_right).setOnClickListener(v -> loadDayByDiff(+1));
 
         loadDay(DatetimeUtils.getTodayAtMidNight());
-        setStylesForNormalMode();
 
         if (getArguments() != null) {
             int mode = getArguments().getInt("mode", 0);

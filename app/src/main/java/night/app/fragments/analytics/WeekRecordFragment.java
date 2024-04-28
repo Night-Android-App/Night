@@ -54,7 +54,7 @@ public class WeekRecordFragment extends Fragment {
             if (days.length == 0) {
                 setUpperPanelResult(DatetimeUtils.toDateString(startDate, endDate), 0, 0, 0);
 
-                new ChartBuilder<>(binding.barChartWeekRecord, new Integer[] {}).invalidate();
+                new ChartBuilder<>(binding.barChartWeekRecord, new Integer[7]).invalidate();
                 return;
             }
 

@@ -82,7 +82,8 @@ public class DatetimeUtils {
         long hours = TimeUnit.MILLISECONDS.toHours(ms);
         long minutes = TimeUnit.MILLISECONDS.toMinutes(ms) - hours * 60;
 
-        if (hours > 0 && minutes <= 0) return hours + "h ";
+        if (hours == 0) return minutes +"m";
+        if (minutes <= 0) return hours + "h ";
         return hours + "h " + minutes + "m";
     }
 
