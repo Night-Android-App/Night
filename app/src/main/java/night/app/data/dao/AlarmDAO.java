@@ -9,12 +9,16 @@ import night.app.data.entities.Alarm;
 
 @Dao
 public interface AlarmDAO {
-    @Query("INSERT INTO Alarms (endTime, enableMission, ringtoneId) VALUES (:time, :enableMission, :prodId)")
+    @Query("INSERT INTO Alarms (endTime, enableMission, ringtoneId) " +
+            "VALUES (:time, :enableMission, :prodId)")
     void create(long time, int enableMission, Integer prodId);
+
+    @Query("INSERT INTO Alarms (id, endTime, enableMission, enableAlarm, ringtoneId) " +
+            "VALUES (:id, :time, :enableMission, :enableAlarm, :prodId)")
+    void create(int id, long time, int enableMission, int enableAlarm, Integer prodId);
 
     @Query("UPDATE Alarms SET enableAlarm=:isEnabled WHERE id=:id")
     void setEnable(int id, int isEnabled);
-
 
     @Query("SELECT * FROM Alarms")
     List<Alarm> getAll();

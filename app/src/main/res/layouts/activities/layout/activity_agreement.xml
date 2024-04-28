@@ -25,7 +25,6 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_marginLeft="12dp"
-            android:fontFamily="@font/rubik_bold"
             android:gravity="center_vertical"
             android:text="Night"
             android:textSize="24sp"

@@ -64,7 +64,7 @@ public class WeekRecordFragment extends Fragment {
                 SleepAnalyser[] sleepData = new SleepAnalyser[days.length];
                 for (int i=0; i < days.length; i++) {
                     if (days[i] != null) {
-                        sleepData[i] = new SleepAnalyser(MainActivity.getDatabase().sleepEventDAO().getByRange(days[i].date, days[i].startTime, days[i].endTime));
+                        sleepData[i] = new SleepAnalyser(MainActivity.getDatabase().sleepEventDAO().get(days[i].date, days[i].startTime, days[i].endTime));
 
                     }
                 }

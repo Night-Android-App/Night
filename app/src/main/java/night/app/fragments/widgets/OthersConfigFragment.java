@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
@@ -17,8 +18,6 @@ import night.app.activities.MainActivity;
 import night.app.databinding.FragmentOthersConfigBinding;
 
 public class OthersConfigFragment extends Fragment {
-    FragmentOthersConfigBinding binding;
-
     public void requestPermission() {
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -34,8 +33,10 @@ public class OthersConfigFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_others_config, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FragmentOthersConfigBinding binding =
+                DataBindingUtil.inflate(inflater, R.layout.fragment_others_config, container, false);
+
         binding.setTheme(MainActivity.getAppliedTheme());
 
         binding.btnPermission.setOnClickListener(v -> requestPermission());

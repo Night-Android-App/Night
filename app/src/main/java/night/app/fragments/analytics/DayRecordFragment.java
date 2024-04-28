@@ -59,7 +59,7 @@ public class DayRecordFragment extends Fragment {
 
             if (day == null) day = new Day();
 
-            SleepEvent[] events = db.sleepEventDAO().getByRange(day.date, day.startTime, day.endTime);
+            SleepEvent[] events = db.sleepEventDAO().get(day.date, day.startTime, day.endTime);
             SleepAnalyser data = new SleepAnalyser(events);
 
             // load chart

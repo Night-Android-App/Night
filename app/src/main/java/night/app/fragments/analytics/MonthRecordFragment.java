@@ -75,7 +75,7 @@ public class MonthRecordFragment extends Fragment {
                 Day day = dayList.get(i);
 
                 SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO()
-                        .getByRange(day.date, day.startTime, day.endTime);
+                        .get(day.date, day.startTime, day.endTime);
 
                 SleepAnalyser data = new SleepAnalyser(events);
 

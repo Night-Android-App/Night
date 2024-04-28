@@ -65,7 +65,7 @@ public class DayViewHolder extends RecyclerView.ViewHolder {
         binding.tvWeekOfDay.setText("(" + days[calendar.get(Calendar.DAY_OF_WEEK)-1] + ")");
 
         new Thread(() -> {
-            SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO().getByRange(day.date, day.startTime, day.endTime);
+            SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO().get(day.date, day.startTime, day.endTime);
             SleepAnalyser sleepData = new SleepAnalyser(events);
 
             adapter.activity.runOnUiThread(() -> {
