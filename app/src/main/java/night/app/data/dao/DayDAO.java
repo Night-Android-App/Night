@@ -15,6 +15,9 @@ public interface DayDAO {
     @Query("REPLACE INTO Days (date, startTime, endTime, dream) VALUES (:date, :startTime, :endTime, :dream)")
     void create(long date, long startTime, long endTime, String dream);
 
+    @Query("UPDATE Days SET endTime=:endTime WHERE date=:date")
+    void updateEndTime(long date, long endTime);
+
     @Query("UPDATE Days SET dream=:dream WHERE date=:date")
     void updateDream(long date, String dream);
 

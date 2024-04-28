@@ -3,6 +3,7 @@ package night.app.activities;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -31,8 +32,10 @@ import night.app.databinding.ActivityAlarmBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
 import night.app.utils.AlarmSchedule;
 import night.app.services.NotificationReceiver;
+import night.app.utils.DoNotDisturb;
 import night.app.utils.LayoutUtils;
 import night.app.utils.DatetimeUtils;
+import night.app.utils.Notification;
 
 public class AlarmActivity extends AppCompatActivity {
     public final static int TYPE_SLEEP = 0;
@@ -51,7 +54,6 @@ public class AlarmActivity extends AppCompatActivity {
     private boolean isUpdate = false;
 
     private Alarm alarm;
-
 
     private ActivityAlarmBinding binding;
 
@@ -92,6 +94,8 @@ public class AlarmActivity extends AppCompatActivity {
     }
 
     private void saveAlarm() {
+        Notification.requestPermission(this);
+
         if (type == TYPE_SLEEP) {
             new Thread(() -> {
                 int isMission = binding.swMission.isChecked() ? 1 : 0;
@@ -122,11 +126,12 @@ public class AlarmActivity extends AppCompatActivity {
                 alarmDAO.create(wakeUpTime, binding.swMission.isChecked() ? 1 : 0, prodId);
 
                 scheduleAlarm(alarmDAO.getLast().id);
-                Toast.makeText(this, "Created Alarm", Toast.LENGTH_SHORT).show();
 
                 setResult(RESULT_OK);
                 finish();
             }).start();
+
+            Toast.makeText(this, "Created Alarm", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -194,12 +199,18 @@ public class AlarmActivity extends AppCompatActivity {
             updateNumberPickers(wakeUpTime);
         });
 
+        binding.swDnd.setOnCheckedChangeListener((v, isChecked) -> {
+            if (isChecked) DoNotDisturb.requestPermission(this);
+        });
+
         new Thread(() -> {
             Sleep sleep = MainActivity.getDatabase().sleepDAO().getSleep();
 
             if (sleep != null) {
                 sleepTime = sleep.startTime;
                 wakeUpTime = sleep.endTime;
+                binding.swMission.setChecked(sleep.enableMission == 1);
+                binding.swDnd.setChecked(sleep.enableDND == 1);
             }
 
             binding.tvSleep.setText(DatetimeUtils.toTimeNotation(sleepTime));
@@ -243,23 +254,6 @@ public class AlarmActivity extends AppCompatActivity {
         }
     }
 
-    private void showNotificationDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Notification Permission")
-                .setMessage("Required for alarms.")
-                .setPositiveButton("Grant", (dialog, i) -> {
-                    Intent intent = new Intent();
-                    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
-
-                    startActivity(intent);
-                })
-                .setNegativeButton("Not now", ((dialog, i) -> saveAlarm()))
-                .show();
-    }
-
     @Override
     protected void onStop() {
         setResult(RESULT_OK);
@@ -279,6 +273,19 @@ public class AlarmActivity extends AppCompatActivity {
         binding.setTheme(MainActivity.getAppliedTheme());
 
         setContentView(binding.getRoot());
+        LayoutUtils.setSystemBarColor(getWindow(), binding.getTheme().getPrimary(), binding.getTheme().getPrimary());
+
+
+        binding.btnChangeRingtone.setOnClickListener(v -> {
+            startActivityForResult(new Intent(this, RingtoneActivity.class), 1);
+        });
+
+        binding.btnDiscard.setOnClickListener(v -> discardAlarm());
+        binding.btnSave.setOnClickListener(v -> saveAlarm());
+
+        binding.npHrs.setOnValueChangedListener(this::handlePickerValueChanged);
+        binding.npMins.setOnValueChangedListener(this::handlePickerValueChanged);
+
 
         if (getIntent().getExtras().getInt("type") == TYPE_SLEEP) {
             gotoSleepBranch();
@@ -286,25 +293,5 @@ public class AlarmActivity extends AppCompatActivity {
         else {
             gotoAlarmBranch();
         }
-
-        binding.btnChangeRingtone.setOnClickListener(v -> {
-            startActivityForResult(new Intent(this, RingtoneActivity.class), 1);
-        });
-
-        binding.btnDiscard.setOnClickListener(v -> discardAlarm());
-        binding.btnSave.setOnClickListener(v -> {
-            // check whether the user granted Notification Permission or not
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    == PackageManager.PERMISSION_GRANTED) {
-                saveAlarm();
-                return;
-            }
-            showNotificationDialog();
-        });
-
-        binding.npHrs.setOnValueChangedListener(this::handlePickerValueChanged);
-        binding.npMins.setOnValueChangedListener(this::handlePickerValueChanged);
-
-        LayoutUtils.setSystemBarColor(getWindow(), binding.getTheme().getPrimary(), binding.getTheme().getPrimary());
     }
 }

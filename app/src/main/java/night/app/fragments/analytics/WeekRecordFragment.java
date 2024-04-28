@@ -1,6 +1,7 @@
 package night.app.fragments.analytics;
 
 import android.os.Bundle;
+import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,14 +50,11 @@ public class WeekRecordFragment extends Fragment {
     }
 
     private void loadBarChart(Day[] days) {
-        if (getActivity() == null) return;
-
-        getActivity().runOnUiThread(() -> {
+        requireActivity().runOnUiThread(() -> {
             if (days.length == 0) {
                 setUpperPanelResult(DatetimeUtils.toDateString(startDate, endDate), 0, 0, 0);
 
-                new ChartBuilder<>(binding.barChartWeekRecord, new Integer[] {})
-                        .invalidate();
+                new ChartBuilder<>(binding.barChartWeekRecord, new Integer[] {}).invalidate();
                 return;
             }
 
@@ -65,7 +63,6 @@ public class WeekRecordFragment extends Fragment {
                 for (int i=0; i < days.length; i++) {
                     if (days[i] != null) {
                         sleepData[i] = new SleepAnalyser(MainActivity.getDatabase().sleepEventDAO().get(days[i].date, days[i].startTime, days[i].endTime));
-
                     }
                 }
 
@@ -108,10 +105,10 @@ public class WeekRecordFragment extends Fragment {
                 int finalScore = score;
                 long finalSleepInMills = sleepInMills;
                 double finalSleepEfficiency = sleepEfficiency;
+
                 requireActivity().runOnUiThread(() -> {
                     new ChartBuilder<>(binding.barChartWeekRecord, sleepHrs)
                             .invalidate();
-
 
                     setUpperPanelResult(
                             DatetimeUtils.toDateString(startDate, endDate),
@@ -192,11 +189,12 @@ public class WeekRecordFragment extends Fragment {
         ivRight.setOnClickListener(v -> toNextWeek());
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
         endDate = calendar.getTimeInMillis();
 
+        calendar.add(Calendar.DATE, -6);
+        startDate = DatetimeUtils.getAtMidnight(calendar);
+
         calendar.add(Calendar.DATE, -calendar.get(Calendar.DAY_OF_WEEK)+1);
-        startDate = calendar.getTimeInMillis();;
 
         loadBarChart(startDate, endDate);
 

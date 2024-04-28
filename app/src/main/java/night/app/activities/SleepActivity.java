@@ -27,17 +27,22 @@ import night.app.databinding.ActivitySleepBinding;
 import night.app.fragments.dialogs.MissionDialog;
 import night.app.utils.AlarmSchedule;
 import night.app.services.AlarmService;
+import night.app.utils.DoNotDisturb;
 import night.app.utils.RingtonePlayer;
 import night.app.services.SleepReceiver;
 import night.app.utils.LayoutUtils;
 import night.app.utils.DatetimeUtils;
+import night.app.utils.SleepTrack;
 
 public class SleepActivity extends AppCompatActivity {
     private ActivitySleepBinding binding;
     private final RingtonePlayer player = new RingtonePlayer(this);
 
+    private SleepTrack sleepTrack;
+    private DoNotDisturb dnd;
+
     private Thread countdownThread = null;
-    private long date = DatetimeUtils.getTodayAtMidNight();
+    private final long date = DatetimeUtils.getTodayAtMidNight();
 
     private void wakeup() {
         new MissionDialog().show(getSupportFragmentManager(), null);
@@ -104,6 +109,7 @@ public class SleepActivity extends AppCompatActivity {
             }
             runOnUiThread(() -> binding.tvCount.setText("End"));
 
+            if (dnd != null) dnd.stop();
             player.run();
         });
         countdownThread.start();
@@ -132,14 +138,6 @@ public class SleepActivity extends AppCompatActivity {
     }
 
     private void gotoSleepBranch() {
-        Intent intent = new Intent(getApplicationContext(), SleepReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
-
-        if (checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("No permission");
-            return;
-        }
-
         new Thread(() -> {
             Sleep sleep = MainActivity.getDatabase().sleepDAO().getSleep();
             long startTime = System.currentTimeMillis() - DatetimeUtils.getTodayAtMidNight();
@@ -147,6 +145,10 @@ public class SleepActivity extends AppCompatActivity {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(DatetimeUtils.getClosestDateTime(sleep.endTime));
 
+            if (sleep.enableDND == 1) {
+                dnd = new DoNotDisturb(this);
+                dnd.start();
+            }
 
             long endTime = DatetimeUtils.getClosestDateTime(sleep.endTime) - DatetimeUtils.getTodayAtMidNight();
 
@@ -154,8 +156,8 @@ public class SleepActivity extends AppCompatActivity {
             MainActivity.getDatabase().dayDAO().create(DatetimeUtils.getTodayAtMidNight(), startTime, endTime);
         }).start();
 
-        SleepSegmentRequest req = new SleepSegmentRequest(SleepSegmentRequest.CLASSIFY_EVENTS_ONLY);
-        ActivityRecognition.getClient(getApplicationContext()).requestSleepSegmentUpdates(pendingIntent, req);
+        sleepTrack = new SleepTrack(this);
+        sleepTrack.start();
     }
 
     @Override
@@ -165,11 +167,13 @@ public class SleepActivity extends AppCompatActivity {
         if (player != null) player.release();
         if (countdownThread != null) countdownThread.interrupt();
 
-        Intent intent = new Intent(getApplicationContext(), SleepReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        if (sleepTrack != null) {
+            new Thread(() -> {
+                MainActivity.getDatabase().dayDAO().updateEndTime(date, System.currentTimeMillis() - date);
+            }).start();
 
-        ActivityRecognition.getClient(getApplicationContext()).removeSleepSegmentUpdates(pendingIntent);
+            sleepTrack.stop();
+        }
     }
 
     @Override

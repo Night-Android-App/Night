@@ -46,17 +46,12 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
         ArrayList<BarEntry> dataEntries = new ArrayList<>();
 
         for (int i=0; i < 7; i++) {
-            if (i >= data.length) {
-                dataEntries.add(new BarEntry(i, 0));
-                continue;
-            }
-
             if (data[i] == null) {
                 dataEntries.add(new BarEntry(i, 0));
-                continue;
             }
-
-            dataEntries.add(new BarEntry(i, data[i]));
+            else {
+                dataEntries.add(new BarEntry(i, data[i]));
+            }
         }
 
         BarDataSet dataSet = new BarDataSet(dataEntries, "");
@@ -71,14 +66,21 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
         ArrayList<Entry> dataEntries = new ArrayList<>();
 
         for (int i=0; i < data.length; i++) {
-            dataEntries.add(new Entry(i, 0));
-            dataEntries.add(new Entry(i, data[i]));
+            if (data[i] >= 50 && data[i] <= 75) {
+                dataEntries.add(new Entry(i, data[i] + 25 * (data[i] - 50)/25));
+            }
+            else if (data[i] >= 75) {
+                dataEntries.add(new Entry(i, 99));
+            }
+            else {
+                dataEntries.add(new Entry(i, data[i]));
+            }
         }
 
         LineDataSet dataSet = new LineDataSet(dataEntries, "");
-        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-
+        dataSet.setMode(LineDataSet.Mode.LINEAR);
         dataSet.setHighlightEnabled(false);
+        dataSet.setDrawValues(false);
 
         this.dataSet = dataSet;
     }
@@ -104,7 +106,6 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
         String[] xLabel = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xLabel));
-
         YAxis yAxis = chart.getAxisLeft();
         yAxis.setAxisMinimum(0);
         yAxis.setAxisMaximum(12);
@@ -122,7 +123,6 @@ public class ChartBuilder <T extends  BarLineChartBase<?>> {
 
         if (xLabel == null) xLabel = new String[] {};
         if (data == null) data = new int[] {};
-
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xLabel));
 
         YAxis yAxis = chart.getAxisLeft();

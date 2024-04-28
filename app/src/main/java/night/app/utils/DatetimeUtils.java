@@ -80,7 +80,7 @@ public class DatetimeUtils {
 
     public static String toHrMinString(long ms) {
         long hours = TimeUnit.MILLISECONDS.toHours(ms);
-        long minutes = TimeUnit.MINUTES.toMinutes(ms) - hours * 60;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(ms) - hours * 60;
 
         if (hours > 0 && minutes <= 0) return hours + "h ";
         return hours + "h " + minutes + "m";

@@ -48,7 +48,7 @@ public class SleepAnalyser {
 
     public double getSleepEfficiency() {
         double sleepInMills = getConfidenceDuration(50, 100);
-        double inBedInMills = Math.min(1, getInBedDuration()); // avoid division of 0
+        double inBedInMills = Math.max(1, getInBedDuration()); // avoid division of 0
 
         return sleepInMills / inBedInMills;
     }
@@ -76,11 +76,11 @@ public class SleepAnalyser {
 
     public String[] getTimelines() {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-
         return Arrays.stream(events).map(e -> format.format(e.timeline)).toArray(String[]::new);
     }
 
     public int[] getConfidences() {
+        System.out.println(Arrays.toString(Arrays.stream(events).mapToInt(event -> event.confidence).toArray()));
         return Arrays.stream(events).mapToInt(event -> event.confidence).toArray();
     }
 
