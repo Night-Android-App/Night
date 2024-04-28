@@ -34,7 +34,7 @@ public class AnalyticsPageFragment extends Fragment {
     }
 
     private void switchDetailsPage(Class<? extends Fragment> fr) {
-        getChildFragmentManager().beginTransaction()
+        requireActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fr_anal_details, fr, createBundleForMode())
                 .commit();
     }
@@ -68,7 +68,7 @@ public class AnalyticsPageFragment extends Fragment {
     }
 
     private void setUpperPanelResultListener() {
-        getChildFragmentManager()
+        requireActivity().getSupportFragmentManager()
                 .setFragmentResultListener("updateAnalytics", this, (String key, Bundle bundle) -> {
                     requireActivity().runOnUiThread(() -> {
                         handleUpperPanelResult(
@@ -115,8 +115,9 @@ public class AnalyticsPageFragment extends Fragment {
             case MODE_SAMPLE -> setStyleForNormalMode();
         }
 
-        Fragment fr = getChildFragmentManager().findFragmentById(R.id.fr_anal_details);
+        Fragment fr = requireActivity().getSupportFragmentManager().findFragmentById(R.id.fr_anal_details);
         if (fr != null) switchDetailsPage(fr.getClass());
+        System.out.println("?");
     }
 
     @Override
@@ -137,7 +138,7 @@ public class AnalyticsPageFragment extends Fragment {
 
         binding.llTips.setOnClickListener(v -> toggleMode());
 
-        getChildFragmentManager().beginTransaction()
+        requireActivity().getSupportFragmentManager().beginTransaction()
                 .add(R.id.fr_anal_details, DayRecordFragment.class, createBundleForMode())
                 .commit();
 

@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import night.app.R;
@@ -44,18 +45,18 @@ public class MonthRecordFragment extends Fragment {
         bundle.putDouble("info2", info2);
 
         if (!isAdded()) return;
-        getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
+        requireActivity().getSupportFragmentManager().setFragmentResult("updateAnalytics", bundle);
     }
 
     private void loadData() {
         if (getActivity() == null || getArguments() == null) return;
 
-        List<Day> dayList;
+        List<Day> dayList = new ArrayList<>();
         long endDate;
 
         int mode = getArguments().getInt("mode", 0);
         if (mode == AnalyticsPageFragment.MODE_SAMPLE) {
-            dayList = DaySample.getDay();
+            dayList.add(new DaySample().getDay());
             endDate = 0;
         }
         else {
@@ -70,32 +71,37 @@ public class MonthRecordFragment extends Fragment {
             return;
         }
 
-            double sleepScore = 0, sleepInMills = 0, sleepEfficiency = 0;
+        double sleepScore = 0, sleepInMills = 0, sleepEfficiency = 0;
 
-            for (int i=0; i < dayList.size(); i++) {
-                Day day = dayList.get(i);
+        for (int i=0; i < dayList.size(); i++) {
+            Day day = dayList.get(i);
 
-                SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO()
+            SleepEvent[] events;
+            if (day.date != 0) {
+                events = MainActivity.getDatabase().sleepEventDAO()
                         .get(day.date, day.startTime, day.endTime);
-
-                SleepAnalyser data = new SleepAnalyser(events);
-
-                sleepScore += data.getScore();
-                sleepEfficiency += data.getSleepEfficiency();
-
-                sleepInMills += data.getConfidenceDuration(50, 100);
+            }
+            else {
+                events = new DaySample().getEvents();
             }
 
-            setUpperPanelResult(
-                    DatetimeUtils.toDateString(startedDate, endDate),
-                    (int) sleepScore / dayList.size(),
-                    (long) (sleepInMills / dayList.size()),
-                    sleepEfficiency / dayList.size()
-            );
+            SleepAnalyser data = new SleepAnalyser(events);
 
-            requireActivity().runOnUiThread(() -> {
-                setAdapter(dayList);
-            });
+            sleepScore += data.getScore();
+            sleepEfficiency += data.getSleepEfficiency();
+
+            sleepInMills += data.getConfidenceDuration(50, 100);
+        }
+
+        setUpperPanelResult(
+                DatetimeUtils.toDateString(startedDate, endDate),
+                (int) sleepScore / dayList.size(),
+                (long) (sleepInMills / dayList.size()),
+                sleepEfficiency / dayList.size()
+        );
+
+        List<Day> finalDayList = dayList;
+        requireActivity().runOnUiThread(() -> setAdapter(finalDayList));
     }
 
     @Override

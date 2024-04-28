@@ -39,7 +39,7 @@ public class WeekRecordFragment extends Fragment {
         bundle.putDouble("info2", info2);
 
         if (!isAdded()) return;
-        getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
+        requireActivity().getSupportFragmentManager().setFragmentResult("updateAnalytics", bundle);
     }
 
     private void loadBarChart(long startDate, long endDate) {
@@ -62,7 +62,13 @@ public class WeekRecordFragment extends Fragment {
                 SleepAnalyser[] sleepData = new SleepAnalyser[days.length];
                 for (int i=0; i < days.length; i++) {
                     if (days[i] != null) {
-                        sleepData[i] = new SleepAnalyser(MainActivity.getDatabase().sleepEventDAO().get(days[i].date, days[i].startTime, days[i].endTime));
+                        int mode = getArguments().getInt("mode", 0);
+                        if (mode == AnalyticsPageFragment.MODE_SAMPLE) {
+                            sleepData[i] = new SleepAnalyser(new DaySample().getEvents());
+                        }
+                        else {
+                            sleepData[i] = new SleepAnalyser(MainActivity.getDatabase().sleepEventDAO().get(days[i].date, days[i].startTime, days[i].endTime));
+                        }
                     }
                 }
 
@@ -99,7 +105,6 @@ public class WeekRecordFragment extends Fragment {
                     int sleepInHrs = (int) TimeUnit.MILLISECONDS.toHours(sleepInMills);
                     // to distinguish between no data and less sleep
                     sleepHrs[dayOfWeek-1] = Math.max(sleepInHrs, 1);
-
                 }
 
                 int finalScore = score;
@@ -170,11 +175,10 @@ public class WeekRecordFragment extends Fragment {
             int mode = getArguments().getInt("mode", 0);
 
             if (mode == AnalyticsPageFragment.MODE_SAMPLE) {
-                List<Day> days = DaySample.getDay();
-                startDate = DatetimeUtils.dayAdd(startDate, -7);
+                startDate = DatetimeUtils.dayAdd(0, -7);
                 endDate = 0;
 
-//                loadBarChart(days);
+                loadBarChart(new Day[] { new DaySample().getDay() });
 
                 ivLeft.setVisibility(View.GONE);
                 ivRight.setVisibility(View.GONE);

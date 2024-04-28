@@ -57,4 +57,11 @@ public class SleepEvent {
             return null;
         }
     }
+
+    public SleepEvent(long timeline, int confidence, int motion, int light) {
+        this.timeline = timeline;
+        this.confidence = confidence;
+        this.motion = motion;
+        this.light = light;
+    }
 }

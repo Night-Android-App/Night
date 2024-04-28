@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import java.util.Arrays;
+
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.AppDatabase;
@@ -17,6 +19,7 @@ import night.app.data.entities.Day;
 import night.app.data.entities.SleepEvent;
 import night.app.databinding.FragmentDayRecordBinding;
 import night.app.utils.ChartBuilder;
+import night.app.utils.DaySample;
 import night.app.utils.SleepAnalyser;
 import night.app.utils.DatetimeUtils;
 
@@ -36,17 +39,7 @@ public class DayRecordFragment extends Fragment {
             bundle.putDouble("info2", sleepData.getSleepEfficiency());
         }
 
-        getParentFragmentManager().setFragmentResult("updateAnalytics", bundle);
-    }
-
-    private void setStyleForEmptyRecord() {
-        binding.tvLightSleep.setText("N/A");
-        binding.tvDeepSleep.setText("N/A");
-        binding.tvInBed.setText("N/A");
-
-        new ChartBuilder<>(binding.lineChartDayRecord, null, null).invalidate();
-
-        setUpperPanelResult(DatetimeUtils.toDateString(date, true), null);
+        requireActivity().getSupportFragmentManager().setFragmentResult("updateAnalytics", bundle);
     }
 
     private void loadDay(long timestamp) {
@@ -58,13 +51,11 @@ public class DayRecordFragment extends Fragment {
 
         new Thread(() -> {
             Day day = db.dayDAO().getByDate(timestamp);
-
             if (day == null) day = new Day();
 
             SleepEvent[] events = db.sleepEventDAO().get(day);
             SleepAnalyser data = new SleepAnalyser(events);
 
-            // load chart
             new ChartBuilder<>(binding.lineChartDayRecord, data.getTimelines(), data.getConfidences())
                     .invalidate();
 
@@ -77,20 +68,29 @@ public class DayRecordFragment extends Fragment {
         }).start();
     }
 
+    private void loadDay(Day day) {
+        setStylesForSampleMode();
+        SleepAnalyser data = new SleepAnalyser(new DaySample().getEvents());
+
+        new ChartBuilder<>(binding.lineChartDayRecord, data.getTimelines(), data.getConfidences())
+                .invalidate();
+
+        binding.tvLightSleep.setText(DatetimeUtils.toHrMinString(data.getConfidenceDuration(50,74)));
+        binding.tvDeepSleep.setText(DatetimeUtils.toHrMinString(data.getConfidenceDuration(75,100)));
+        binding.tvInBed.setText(DatetimeUtils.toHrMinString(data.getInBedDuration()));
+
+        binding.tvAnalDream.setText(day.dream);
+        setUpperPanelResult(DatetimeUtils.toDateString(0, true), data);
+    }
+
     private void setLoadDayListener() {
         requireActivity().getSupportFragmentManager().setFragmentResultListener("loadDay", this, (String key, Bundle bundle) -> {
-                    long date = bundle.getLong("date", 0L);
+            long date = bundle.getLong("date", 0L);
+            if (date == 0) return;
 
-                    if (date == 0) {
-//                        loadDay(Sample.getDay());
-                        setStylesForSampleMode();
-                        return;
-                    }
-
-                    this.date = date;
-                    loadDay(date);
-                    setStylesForNormalMode();
-                });
+            loadDay(date);
+            setStylesForNormalMode();
+        });
     }
 
     private void loadDayByDiff(int diff) {
@@ -136,14 +136,15 @@ public class DayRecordFragment extends Fragment {
         getActivity().findViewById(R.id.iv_left).setOnClickListener(v -> loadDayByDiff(-1));
         getActivity().findViewById(R.id.iv_right).setOnClickListener(v -> loadDayByDiff(+1));
 
-        loadDay(DatetimeUtils.getTodayAtMidNight());
-
         if (getArguments() != null) {
             int mode = getArguments().getInt("mode", 0);
 
             if (mode == AnalyticsPageFragment.MODE_SAMPLE) {
                 setStylesForSampleMode();
-                return binding.getRoot();
+                loadDay(new DaySample().getDay());
+            }
+            else {
+                loadDay(DatetimeUtils.getTodayAtMidNight());
             }
         }
 

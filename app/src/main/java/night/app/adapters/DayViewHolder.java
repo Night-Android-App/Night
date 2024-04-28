@@ -16,6 +16,8 @@ import night.app.activities.MainActivity;
 import night.app.data.entities.Day;
 import night.app.data.entities.SleepEvent;
 import night.app.databinding.HolderDayRecordViewBinding;
+import night.app.fragments.analytics.AnalyticsPageFragment;
+import night.app.utils.DaySample;
 import night.app.utils.SleepAnalyser;
 import night.app.utils.DatetimeUtils;
 
@@ -29,6 +31,12 @@ public class DayViewHolder extends RecyclerView.ViewHolder {
 
         Bundle bundle = new Bundle();
         bundle.putLong("date", day.date);
+        if (day.date == 0) {
+            bundle.putInt("mode", AnalyticsPageFragment.MODE_SAMPLE);
+        }
+        else {
+            bundle.putInt("mode", AnalyticsPageFragment.MODE_NORMAL);
+        }
         adapter.activity.getSupportFragmentManager().setFragmentResult("loadDay", bundle);
     }
 
@@ -65,8 +73,15 @@ public class DayViewHolder extends RecyclerView.ViewHolder {
         binding.tvWeekOfDay.setText("(" + days[calendar.get(Calendar.DAY_OF_WEEK)-1] + ")");
 
         new Thread(() -> {
-            SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO().get(day.date, day.startTime, day.endTime);
-            SleepAnalyser sleepData = new SleepAnalyser(events);
+            SleepAnalyser sleepData;
+
+            if (day.date != 0) {
+                SleepEvent[] events = MainActivity.getDatabase().sleepEventDAO().get(day.date, day.startTime, day.endTime);
+                sleepData = new SleepAnalyser(events);
+            }
+            else {
+                sleepData = new SleepAnalyser(new DaySample().getEvents());
+            }
 
             adapter.activity.runOnUiThread(() -> {
                 binding.tvSleepHrs.setText(DatetimeUtils.toHrMinString(sleepData.getConfidenceDuration(50, 100)));

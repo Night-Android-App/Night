@@ -137,12 +137,9 @@ public class MainActivity extends AppCompatActivity {
         binding.setTheme(new Theme());
         LayoutUtils.setSystemBarColor(getWindow(), theme.getPrimary(), theme.getPrimary());
 
-        binding.btnPageClock
-                .setOnClickListener(v -> switchPage(v.getId(), ClockPageFragment.class));
-        binding.btnPageAnalysis
-                .setOnClickListener(v -> switchPage(v.getId(), AnalyticsPageFragment.class));
-        binding.btnPageSettings
-                .setOnClickListener(v -> switchPage(v.getId(), WidgetsPageFragment.class));
+        binding.btnPageClock .setOnClickListener(v -> switchPage(v.getId(), ClockPageFragment.class));
+        binding.btnPageAnalysis.setOnClickListener(v -> switchPage(v.getId(), AnalyticsPageFragment.class));
+        binding.btnPageSettings.setOnClickListener(v -> switchPage(v.getId(), WidgetsPageFragment.class));
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fr_app_page, ClockPageFragment.class, null)
@@ -159,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
             if (isServiceStarted == null || !isServiceStarted) {
                 dataStore.update(DataStoreHelper.KEY_BACKUP_ALARM, true);
                 dataStore.update(DataStoreHelper.KEY_BACKUP_SLEEP, true);
+                dataStore.update(DataStoreHelper.KEY_COINS, 40);
             }
 
             Integer appliedTheme = dataStore.getPrefs().get(DataStoreHelper.KEY_THEME);

@@ -26,6 +26,7 @@ public class MathDialog extends DialogFragment {
             int answer = Integer.parseInt(value);
             if (preNum * laterNum == answer) {
                 dismiss();
+                requireActivity().finish();
                 ((SleepActivity) getActivity()).disableAlarm();
             }
         }
