@@ -44,8 +44,8 @@ public class AlarmActivity extends AppCompatActivity {
     private final static int NP_SLEEP = 0;
     private final static int NP_WAKE = 1;
 
-    private long sleepTime;
-    private long wakeUpTime;
+    private long sleepTime = TimeUnit.HOURS.toMillis(23);;
+    private long wakeUpTime = TimeUnit.HOURS.toMillis(7);;
     private Integer prodId = null;
 
     private boolean isUpdate = false;
@@ -105,7 +105,7 @@ public class AlarmActivity extends AppCompatActivity {
                 calendar.setTimeInMillis(DatetimeUtils.getClosestDateTime(sleepTime));
 
                 AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             }).start();
 
             setResult(RESULT_OK);
@@ -131,21 +131,16 @@ public class AlarmActivity extends AppCompatActivity {
     }
 
     private void handlePickerValueChanged(NumberPicker np, int old, int newValue) {
-        Calendar calendar = Calendar.getInstance();
-
-        calendar.add(Calendar.HOUR, binding.npHrs.getValue());
-        calendar.add(Calendar.MINUTE, binding.npMins.getValue());
-
         long hrValue = TimeUnit.HOURS.toMillis(binding.npHrs.getValue());
         long minValue = TimeUnit.MINUTES.toMillis(binding.npMins.getValue());
 
         if (binding.getNpType() == NP_WAKE) {
             wakeUpTime = hrValue + minValue;
-            binding.tvWakeUp.setText(DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
+            binding.tvWakeUp.setText(DatetimeUtils.toTimeNotation(wakeUpTime));
         }
         else if (binding.getNpType() == NP_SLEEP) {
             sleepTime = hrValue + minValue;
-            binding.tvSleep.setText(DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
+            binding.tvSleep.setText(DatetimeUtils.toTimeNotation(sleepTime));
         }
     }
 
@@ -189,9 +184,6 @@ public class AlarmActivity extends AppCompatActivity {
 
         binding.setNpType(NP_SLEEP);
 
-        binding.tvRepeat.setVisibility(View.GONE);
-        binding.llRepeat.setVisibility(View.GONE);
-
         binding.llSleep.setOnClickListener(v -> {
             binding.setNpType(NP_SLEEP);
             updateNumberPickers(sleepTime);
@@ -202,25 +194,19 @@ public class AlarmActivity extends AppCompatActivity {
             updateNumberPickers(wakeUpTime);
         });
 
-        wakeUpTime = 7*60;
-        sleepTime = 23*60;
+        new Thread(() -> {
+            Sleep sleep = MainActivity.getDatabase().sleepDAO().getSleep();
 
-        int sleepId = getIntent().getExtras().getInt("id", -1);
-        if (sleepId >= 0) {
-            new Thread(() -> {
-                Sleep sleep = MainActivity.getDatabase().sleepDAO().getSleep();
+            if (sleep != null) {
+                sleepTime = sleep.startTime;
+                wakeUpTime = sleep.endTime;
+            }
 
-                runOnUiThread(() -> {
-                    wakeUpTime = sleep.endTime;
-                    sleepTime = sleep.startTime;
+            binding.tvSleep.setText(DatetimeUtils.toTimeNotation(sleepTime));
+            binding.tvWakeUp.setText(DatetimeUtils.toTimeNotation(wakeUpTime));
 
-                    binding.tvSleep.setText(DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(sleepTime)));
-                    binding.tvWakeUp.setText(DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(wakeUpTime)));
-
-                    updateNumberPickers(sleepTime);
-                });
-            }).start();
-        }
+            updateNumberPickers(sleepTime);
+        }).start();
     }
 
     @Override
@@ -232,18 +218,9 @@ public class AlarmActivity extends AppCompatActivity {
 
             new Thread(() -> {
                 String name = MainActivity.getDatabase().dao().getRingtone(prodId).get(0).name;
-
                 binding.tvRingName.setText(name);
             }).start();
         }
-    }
-
-    private void setRepeat(View view, boolean isActive) {
-        ((LinearLayout) view).getChildAt(0).setBackgroundTintList(
-                isActive
-                        ? ColorStateList.valueOf(binding.getTheme().getAccent())
-                        : ColorStateList.valueOf(binding.getTheme().getOnPrimaryVariant())
-        );
     }
 
     private void gotoAlarmBranch() {
@@ -252,10 +229,13 @@ public class AlarmActivity extends AppCompatActivity {
         binding.setNpType(NP_WAKE);
 
         // set current time to number picker (more convenient for users)
-        wakeUpTime = (int) TimeUnit.MILLISECONDS.toMinutes(DatetimeUtils.getMsOfToday());
-        binding.npHrs.setValue((int) TimeUnit.MILLISECONDS.toHours(wakeUpTime));
-        binding.npMins.setValue((int) (wakeUpTime - binding.npHrs.getValue() * 60));
+        wakeUpTime = DatetimeUtils.getMsOfToday();
 
+        long hours = TimeUnit.MILLISECONDS.toHours(wakeUpTime);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(wakeUpTime) - hours * 60L;
+
+        binding.npHrs.setValue((int) hours);
+        binding.npMins.setValue((int) minutes);
 
         if (alarmId >= 0) {
             isUpdate = true;

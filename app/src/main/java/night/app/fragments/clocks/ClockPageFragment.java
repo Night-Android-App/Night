@@ -55,8 +55,8 @@ public class ClockPageFragment extends Fragment {
             });
 
     private void showExistedSleepRecord(Sleep entity) {
-        binding.upperMsg.setText("We will notify you at " + DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.startTime)));
-        binding.lowerMsg.setText("and wake up at " + DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.endTime)));
+        binding.upperMsg.setText("Sleep between " + DatetimeUtils.toTimeNotation(entity.startTime) + " and " + DatetimeUtils.toTimeNotation(entity.endTime));
+        binding.lowerMsg.setText("Press here to configure");
     }
 
     private void setOnTabSelectedListener() {

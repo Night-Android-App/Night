@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import night.app.data.entities.Day;
+import night.app.data.entities.Sleep;
 import night.app.databinding.ActivitySleepBinding;
 import night.app.fragments.dialogs.MissionDialog;
 import night.app.utils.AlarmSchedule;
@@ -82,35 +83,30 @@ public class SleepActivity extends AppCompatActivity {
         };
     }
 
-    private void countdown() {
-        if (getIntent().hasExtra("sleepMinutes")) {
-            int sleepMinutes = getIntent().getExtras().getInt("sleepMinutes");
+    private void countdown(int sleepMinutes) {
+        Calendar calendar = Calendar.getInstance();
+        binding.tvCurrent.setText(DatetimeUtils.toTimeNotation(calendar));
 
-            Calendar calendar = Calendar.getInstance();
-            binding.tvCurrent.setText(DatetimeUtils.toTimeNotation(calendar));
+        calendar.add(Calendar.MINUTE, sleepMinutes);
+        binding.tvWake.setText(DatetimeUtils.toTimeNotation(calendar));
 
-            calendar.add(Calendar.MINUTE, sleepMinutes);
+        countdownThread = new Thread(() -> {
+            int remain = sleepMinutes * 60 - 1;
+            while (remain >= 0) {
+                try {
+                    Thread.sleep(1000);
 
-            new AlarmSchedule(getApplicationContext()).post(-1, calendar.getTimeInMillis());
-
-            binding.tvWake.setText(DatetimeUtils.toTimeNotation(calendar));
-
-            countdownThread = new Thread(() -> {
-                int remain = sleepMinutes * 60 - 1;
-                while (remain >= 0) {
-                    try {
-                        Thread.sleep(1000);
-
-                        String text = "(" + DatetimeUtils.toHrMinSec(remain) + ")";
-                        runOnUiThread(() -> binding.tvCount.setText(text));
-                        remain--;
-                    }
-                    catch (InterruptedException e) { }
+                    String text = "(" + DatetimeUtils.toHrMinSec(remain) + ")";
+                    runOnUiThread(() -> binding.tvCount.setText(text));
+                    remain--;
                 }
-                runOnUiThread(() -> binding.tvCount.setText("End"));
-            });
-            countdownThread.start();
-        }
+                catch (InterruptedException e) { }
+            }
+            runOnUiThread(() -> binding.tvCount.setText("End"));
+
+            player.run();
+        });
+        countdownThread.start();
     }
 
     private void updateCurrentTime() {
@@ -136,10 +132,6 @@ public class SleepActivity extends AppCompatActivity {
     }
 
     private void gotoSleepBranch() {
-        int sleepMinutes = getIntent().getExtras().getInt("sleepMinutes");
-
-        if (sleepMinutes >= 0) countdown();
-
         Intent intent = new Intent(getApplicationContext(), SleepReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
@@ -149,9 +141,16 @@ public class SleepActivity extends AppCompatActivity {
         }
 
         new Thread(() -> {
+            Sleep sleep = MainActivity.getDatabase().sleepDAO().getSleep();
             long startTime = System.currentTimeMillis() - DatetimeUtils.getTodayAtMidNight();
-            long endTime = startTime + TimeUnit.MINUTES.toMillis(getIntent().getExtras().getInt("sleepMinutes", 0));
 
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(DatetimeUtils.getClosestDateTime(sleep.endTime));
+
+
+            long endTime = DatetimeUtils.getClosestDateTime(sleep.endTime) - DatetimeUtils.getTodayAtMidNight();
+
+            runOnUiThread(() -> countdown((int) TimeUnit.MILLISECONDS.toMinutes(endTime - startTime)));
             MainActivity.getDatabase().dayDAO().create(DatetimeUtils.getTodayAtMidNight(), startTime, endTime);
         }).start();
 
@@ -192,7 +191,7 @@ public class SleepActivity extends AppCompatActivity {
         binding.setTheme(MainActivity.getAppliedTheme());
 
         setContentView(binding.getRoot());
-        LayoutUtils.setSystemBarColor(getWindow(),  0xFF1D134A, 0xFF221752);
+        LayoutUtils.setSystemBarColor(getWindow(), 0xFF1D134A, 0xFF221752);
 
         updateCurrentTime();
         setWeekOfDay();
@@ -223,7 +222,10 @@ public class SleepActivity extends AppCompatActivity {
             }).start();
         }
         else {
-            countdown();
+            if (getIntent().hasExtra("sleepMinutes")) {
+                int sleepMinutes = getIntent().getExtras().getInt("sleepMinutes");
+                countdown(sleepMinutes);
+            }
         }
     }
 }

@@ -10,10 +10,10 @@ public class Sleep {
     public Integer day;
 
     @NonNull
-    public Integer startTime;
+    public Long startTime;
 
     @NonNull
-    public Integer endTime;
+    public Long endTime;
 
     public Integer enableMission;
 

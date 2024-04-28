@@ -1,11 +1,13 @@
 package night.app.utils;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +18,15 @@ public class DatetimeUtils {
 
     public static long getTodayAtMidNight() {
         Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar.getTimeInMillis();
+    }
+
+    public static long getAtMidnight(Calendar calendar) {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -61,6 +72,10 @@ public class DatetimeUtils {
         int minutes = seconds / 60 - hours * 60;
 
         return LocalTime.of(hours, minutes).toString();
+    }
+
+    public static String toTimeNotation(long ms) {
+        return toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(ms));
     }
 
     public static String toHrMinString(long ms) {

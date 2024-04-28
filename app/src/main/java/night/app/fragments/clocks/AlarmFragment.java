@@ -35,9 +35,7 @@ public class AlarmFragment extends Fragment {
 
     public ActivityResultLauncher<Intent> mStartForResult =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if(result.getResultCode()== Activity.RESULT_OK) {
-                    loadAlarmList();
-                }
+                if (result.getResultCode()== Activity.RESULT_OK) loadAlarmList();
             });
 
     private void loadAlarmList() {
@@ -94,8 +92,8 @@ public class AlarmFragment extends Fragment {
             if (entity != null) {
                 new Thread(() -> {
                     updateSleepMsg(
-                            "We will notify you at " + DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.startTime)),
-                            "and wake up at " + DatetimeUtils.toTimeNotation((int) TimeUnit.MILLISECONDS.toSeconds(entity.endTime))
+                            "Sleep between " + DatetimeUtils.toTimeNotation(entity.startTime) + " and " + DatetimeUtils.toTimeNotation(entity.endTime),
+                            "Press here to configure"
                     );
                 }).start();
                 return;

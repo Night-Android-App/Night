@@ -105,10 +105,6 @@ public class Theme {
         return new ColorStateList(states, colors);
     }
 
-    public ColorStateList getOnPrimaryColorStateList() {
-        return ColorStateList.valueOf(getOnPrimary());
-    }
-
     public ColorStateList getOnPrimaryVColorStateList() {
         return ColorStateList.valueOf(getOnPrimaryVariant());
     }

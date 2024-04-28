@@ -1,6 +1,7 @@
 package night.app.data.entities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -24,6 +25,7 @@ public class SleepEvent {
     @NonNull
     public int light;
 
+    @WorkerThread
     public static void resolveJSON(JSONArray eventsInJSON) {
         for (int i=0; i < eventsInJSON.length(); i++) {
             try {
