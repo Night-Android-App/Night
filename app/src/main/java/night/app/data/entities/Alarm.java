@@ -37,8 +37,8 @@ public class Alarm {
                         json.getInt("id"),
                         json.getInt("endTime"),
                         json.getInt("enableMission"),
-                        json.getInt("enableAlarm"),
-                        json.getInt("ringtoneId")
+                        0,
+                        json.optInt("ringtoneId", 1)
                 );
             }
             catch (JSONException e) { System.err.println(e); }

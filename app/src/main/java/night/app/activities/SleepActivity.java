@@ -54,38 +54,43 @@ public class SleepActivity extends AppCompatActivity {
         }
     }
 
+    public void showDreamRecord() {
+        @SuppressLint("RestrictedApi")
+        AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Record dream? (if any)")
+                .setNegativeButton("No", (dialog, which) -> finish())
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    EditText et = new EditText(this);
+
+                    new AlertDialog.Builder(this)
+                            .setView(et, 24, 24, 24, 24)
+                            .setTitle("Enter dream record")
+                            .setNegativeButton("Cancel", null)
+                            .setPositiveButton("Done", (d, i) -> {
+                                System.out.println("?");
+
+                                String dreamRecord = et.getText().toString();
+                                new Thread(() -> {
+                                    MainActivity.getDatabase().dayDAO().updateDream(date, dreamRecord);
+                                    finish();
+                                }).start();
+                            })
+                            .setCancelable(false)
+                            .show();
+                });
+
+        builder.show();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             disableAlarm();
 
-            @SuppressLint("RestrictedApi")
-            AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Record dream? (if any)")
-                    .setNegativeButton("No", (dialog, which) -> finish())
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        EditText et = new EditText(this);
-
-                        new AlertDialog.Builder(this)
-                                .setView(et, 24, 24, 24, 24)
-                                .setTitle("Enter dream record")
-                                .setNegativeButton("Cancel", null)
-                                .setPositiveButton("Done", (d, i) -> {
-                                    System.out.println("?");
-
-                                    String dreamRecord = et.getText().toString();
-                                    new Thread(() -> {
-                                        MainActivity.getDatabase().dayDAO().updateDream(date, dreamRecord);
-                                        finish();
-                                    }).start();
-                                })
-                                .setCancelable(false)
-                                .show();
-                    });
-
-            builder.show();
-        };
+            if (sleepTrack == null) finish();
+            else showDreamRecord();
+        }
     }
 
     private void countdown(int sleepMinutes) {

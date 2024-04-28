@@ -171,7 +171,6 @@ public class BackupConfigFragment extends Fragment {
 
                 int status = res.optInt("responseCode");
                 if (status == 200) {
-                    System.out.println("200");
                     recoveryCallBack(res);
                     new ConfirmDialog("Backup Success", "The data should be available in local", null)
                             .show(activity.getSupportFragmentManager(), null);
