@@ -109,7 +109,7 @@ public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extend
                                         ((RingtoneViewHolder) holder).setOwned();
                                     }
                                     else if (holder instanceof ThemeViewHolder) {
-                                        ((ThemeViewHolder) holder).setThemeApplied();
+                                        ((ThemeViewHolder) holder).setThemePurchased();
                                     }
                                 }
                                 catch (JSONException e) { }
@@ -142,9 +142,7 @@ public class  PurchaseDialog <ViewHolder extends RecyclerView.ViewHolder> extend
                         });
                     });
                 }
-                catch (JSONException e) {
-
-                }
+                catch (JSONException e) { }
             });
         }
 

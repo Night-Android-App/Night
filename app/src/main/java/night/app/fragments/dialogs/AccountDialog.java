@@ -17,12 +17,15 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Locale;
 
 import night.app.R;
@@ -112,7 +115,6 @@ public class  AccountDialog extends DialogFragment {
         dialog.showLoading();
 
         new AccountRequest().login(uidValue, Password.hash(pwdValue), res -> {
-            System.out.println(res.optInt("responseCode"));
             if (res.optInt("responseCode") == 200) {
                 try {
                     MainActivity.getDataStore().update(DataStoreHelper.KEY_COINS, res.getJSONObject("response").getInt("coins"));
@@ -120,6 +122,14 @@ public class  AccountDialog extends DialogFragment {
                     String sid = res.getJSONObject("response").getString("sessionId");
                     MainActivity.getDataStore().update(DataStoreHelper.KEY_SESSION, sid);
 
+                    JSONArray prodInArray = res.getJSONObject("response").getJSONArray("prodId");
+
+                    int[] idList = new int[prodInArray.length()];
+                    for (int i=0; i < prodInArray.length(); i++) {
+                        idList[i] = prodInArray.getInt(i);
+                    }
+
+                    new Thread(() -> MainActivity.getDatabase().dao().update(1, idList)).start();
 
                     Bundle bundle = new Bundle();
                     bundle.putString("uid", uidValue);

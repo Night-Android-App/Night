@@ -16,10 +16,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.Arrays;
+
 import night.app.R;
 import night.app.activities.MainActivity;
 import night.app.data.DataStoreHelper;
 import night.app.data.PreferenceViewModel;
+import night.app.data.entities.Product;
 import night.app.databinding.FragmentWidgetsPageBinding;
 import night.app.fragments.dialogs.AccountDialog;
 import night.app.fragments.dialogs.ConfirmDialog;
@@ -91,7 +94,17 @@ public class WidgetsPageFragment extends Fragment {
                 .setTitle("Logout?")
                 .setMessage("You have to login again to use part of services")
                 .setNegativeButton("No", null)
-                .setPositiveButton("Yes", (dialog, which) -> setStylesForGuest());
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    setStylesForGuest();
+
+                    new Thread(() -> {
+                        Product[] products = MainActivity.getDatabase().dao().getNotFree();
+
+                        MainActivity.getDatabase().dao().update(
+                                0, Arrays.stream(products).mapToInt(p -> p.prodId).toArray()
+                        );
+                    }).start();
+                });
 
         builder.show();
     }

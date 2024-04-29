@@ -2,6 +2,8 @@ package night.app.adapters;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,10 +29,6 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
     private Theme theme;
     private Product product;
 
-    public void loadTheme() {
-        binding.setTheme(MainActivity.getAppliedTheme());
-    }
-
     public void setThemeApplied() {
         binding.btnShopItemPurchase.setEnabled(false);
         binding.btnShopItemPurchase.setText("APPLIED");
@@ -48,7 +46,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
             new Thread(() -> {
                 MainActivity.getDataStore().update(DataStoreHelper.KEY_THEME, theme.prodId);
 
-                activity.runOnUiThread(() -> {
+                new Handler(Looper.getMainLooper()).post(() -> {
                     MainActivity.setTheme(theme);
                     activity.binding.setTheme(theme);
 
@@ -64,7 +62,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                             .replace(R.id.fr_app_page, WidgetsPageFragment.class, null)
                             .commit();
 
-                    setThemeApplied();
+                    setThemePurchased();
                     loadThemeForNavBar();
                 });
             }).start();
@@ -78,12 +76,7 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
             LinearLayout navItemComponent = (LinearLayout) navbar.getChildAt(nth);
 
             ImageView navItemIcon = (ImageView) navItemComponent.getChildAt(0);
-            // shop page is opened from Garden (the first navbar item), it uses active color
-            if (nth == 2) {
-                navItemIcon.setColorFilter(theme.getOnPrimary());
-                continue;
-            }
-            navItemIcon.setColorFilter(theme.getOnPrimaryVariant());
+            navItemIcon.setColorFilter(nth == 2 ? theme.getOnPrimary() : theme.getOnPrimaryVariant());
         }
     }
 
@@ -93,15 +86,15 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
 
     public void loadData(Product itemData) {
         product = itemData;
-        MainActivity activity = adapter.activity;
 
+        binding.setTheme(MainActivity.getAppliedTheme());
         binding.setPreview(MainActivity.getAppliedTheme());
 
         new Thread(() -> {
             theme = MainActivity.getDatabase().dao().getTheme(itemData.prodId);
             if (theme == null) theme = new Theme();
 
-            activity.runOnUiThread(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
                 binding.setPreview(theme);
 
                 if (itemData.prodId == MainActivity.getAppliedTheme().prodId) {
@@ -119,10 +112,11 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
                 binding.btnShopItemPurchase.setOnClickListener(v -> {
                     showPurchaseDialog(itemData.prodId, theme.name, itemData.price);
                 });
+
+                binding.tvShopItemPrice.setText(itemData.price == 0 ? "Free" : itemData.price + " coins");
+                binding.tvShopItemPrice.setVisibility(View.VISIBLE);
             });
         }).start();
-
-        binding.tvShopItemPrice.setText(itemData.price == 0 ? "Free" : itemData.price + " coins");
     }
 
     private void showPurchaseDialog(int prodId, String name, int price) {

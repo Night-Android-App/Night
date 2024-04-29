@@ -21,6 +21,7 @@ import night.app.adapters.ThemeAdapter;
 import night.app.data.entities.Product;
 import night.app.data.entities.Theme;
 import night.app.databinding.DialogShopBinding;
+import night.app.fragments.widgets.WidgetsPageFragment;
 import night.app.utils.LayoutUtils;
 
 public class ShopDialog extends DialogFragment {
@@ -36,10 +37,6 @@ public class ShopDialog extends DialogFragment {
         }
     }
 
-    private void switchTheme(String reqKey, Bundle bundle) {
-        switchTheme();
-    }
-
     private void switchTheme() {
         Theme theme = MainActivity.getAppliedTheme();
         binding.setTheme(theme);
@@ -47,8 +44,7 @@ public class ShopDialog extends DialogFragment {
         binding.tabShop.setSelectedTabIndicatorColor(theme.getOnPrimary());
         binding.tabShop.setTabTextColors(theme.getOnPrimaryVariant(), theme.getOnPrimary());
 
-        requireDialog().getWindow().setStatusBarColor(theme.getPrimary());
-        requireDialog().getWindow().setNavigationBarColor(theme.getSecondary());
+        LayoutUtils.setSystemBarColor(requireDialog().getWindow(), theme.getPrimary(), theme.getPrimary());
     }
 
     private void loadItemList(Integer type) {
@@ -95,7 +91,7 @@ public class ShopDialog extends DialogFragment {
         loadItemList(1);
 
         getParentFragmentManager()
-                .setFragmentResultListener("switchTheme", this, this::switchTheme);
+                .setFragmentResultListener("switchTheme", this, (key, bundle) -> switchTheme());
 
         WindowInsetsControllerCompat windowController =
                 WindowCompat.getInsetsController(requireDialog().getWindow(), requireDialog().getWindow().getDecorView());

@@ -16,6 +16,9 @@ public interface AppDAO {
     @Query("SELECT * FROM Products WHERE type=:type ORDER BY isBought DESC")
     Product[] getProducts(Integer type);
 
+    @Query("SELECT * FROM Products WHERE price > 0")
+    Product[] getNotFree();
+
     @Query("SELECT * FROM Themes WHERE prodId=:id")
     Theme getTheme(int id);
 
@@ -27,4 +30,7 @@ public interface AppDAO {
 
     @Query("UPDATE Products SET isBought=1 WHERE prodId=:id ")
     void updateProductStatus(int id);
+
+    @Query("UPDATE Products SET isBought=:isBought WHERE prodId in (:idList)")
+    void update(int isBought, int[] idList);
 }

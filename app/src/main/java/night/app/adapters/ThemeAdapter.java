@@ -20,7 +20,6 @@ import night.app.databinding.HolderThemeViewBinding;
 public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public Product[] products;
     public final MainActivity activity;
-    public List<ThemeViewHolder> viewHolders = new ArrayList<>();
 
     @Override
     public int getItemCount() {
@@ -34,15 +33,13 @@ public class ThemeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         HolderThemeViewBinding binding =
             DataBindingUtil.inflate(inflater, R.layout.holder_theme_view, viewGroup, false);
 
-        binding.setTheme(MainActivity.getAppliedTheme());
-
         return new ThemeViewHolder(this, binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads) {
         super.onBindViewHolder(holder, position, payloads);
-        ((ThemeViewHolder) holder).loadTheme();
+        ((ThemeViewHolder) holder).loadData(products[position]);
     }
 
     @Override
