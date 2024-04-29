@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -59,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void requestPermissions() {
         requestPermissionLauncher.launch(new String[]{
-                "android.permission.ACTIVITY_RECOGNITION",
-                "android.permission.POST_NOTIFICATIONS"
+                Manifest.permission.ACTIVITY_RECOGNITION,
+                Manifest.permission.POST_NOTIFICATIONS,
+                Manifest.permission.CAMERA
         });
     }
 
@@ -129,8 +131,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setDataStore(new DataStoreHelper(this));
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -140,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
         binding.btnPageClock .setOnClickListener(v -> switchPage(v.getId(), ClockPageFragment.class));
         binding.btnPageAnalysis.setOnClickListener(v -> switchPage(v.getId(), AnalyticsPageFragment.class));
         binding.btnPageSettings.setOnClickListener(v -> switchPage(v.getId(), WidgetsPageFragment.class));
+
+        setDataStore(new DataStoreHelper(this));
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fr_app_page, ClockPageFragment.class, null)
@@ -161,11 +163,9 @@ public class MainActivity extends AppCompatActivity {
 
             Integer appliedTheme = dataStore.getPrefs().get(DataStoreHelper.KEY_THEME);
             if (appliedTheme != null) {
-                List<Theme> themeList = database.dao().getTheme(appliedTheme);
+                Theme theme = database.dao().getTheme(appliedTheme);
 
-                if (themeList.size() > 0) {
-                    runOnUiThread(() -> loadTheme(themeList.get(0)));
-                }
+                if (theme != null) runOnUiThread(() -> loadTheme(theme));
             }
         }).start();
 

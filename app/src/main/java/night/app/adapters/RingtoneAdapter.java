@@ -19,7 +19,7 @@ import night.app.databinding.HolderRingtoneViewBinding;
 import night.app.utils.RingtonePlayer;
 
 public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    public List<Product> productList;
+    public Product[] productList;
 
     public final AppCompatActivity activity;
     final public RingtonePlayer ringtonePlayer;
@@ -27,7 +27,7 @@ public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return productList.size();
+        return productList.length;
     }
 
     @Override @NonNull
@@ -43,13 +43,13 @@ public class RingtoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) {
-        ((RingtoneViewHolder) viewHolder).loadData(productList.get(position));
+        ((RingtoneViewHolder) viewHolder).loadData(productList[position]);
 
         viewHolders.add((RingtoneViewHolder) viewHolder);
 
     }
 
-    public RingtoneAdapter(AppCompatActivity activity, List<Product> productList) {
+    public RingtoneAdapter(AppCompatActivity activity, Product[] productList) {
         this.activity = activity;
         this.productList = productList;
 

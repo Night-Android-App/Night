@@ -13,11 +13,11 @@ import night.app.data.entities.Theme;
 @Dao
 public interface AppDAO {
     // Shop Query
-    @Query("SELECT * FROM Products WHERE type=:type")
-    List<Product> getProducts(Integer type);
+    @Query("SELECT * FROM Products WHERE type=:type ORDER BY isBought DESC")
+    Product[] getProducts(Integer type);
 
-    @Query("SELECT * FROM Themes WHERE prodId=:id LIMIT 1")
-    List<Theme> getTheme(int id);
+    @Query("SELECT * FROM Themes WHERE prodId=:id")
+    Theme getTheme(int id);
 
     @Query("SELECT * FROM Ringtones WHERE prodId=:id LIMIT 1")
     List<Ringtone> getRingtone(int id);

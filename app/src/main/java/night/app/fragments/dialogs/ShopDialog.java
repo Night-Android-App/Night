@@ -56,7 +56,7 @@ public class ShopDialog extends DialogFragment {
         binding.rvShopItems.removeAllViewsInLayout();
 
         new Thread(() -> {
-            List<Product> productList = MainActivity.getDatabase().dao().getProducts(type);
+            Product[] productList = MainActivity.getDatabase().dao().getProducts(type);
 
             activity.runOnUiThread(() -> {
                 if (type == 1) {

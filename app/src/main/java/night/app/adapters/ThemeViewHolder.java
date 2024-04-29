@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Arrays;
 import java.util.List;
 
 import night.app.R;
@@ -26,6 +27,10 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
     private Theme theme;
     private Product product;
 
+    public void loadTheme() {
+        binding.setTheme(MainActivity.getAppliedTheme());
+    }
+
     public void setThemeApplied() {
         binding.btnShopItemPurchase.setEnabled(false);
         binding.btnShopItemPurchase.setText("APPLIED");
@@ -39,25 +44,15 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
 
         binding.btnShopItemPurchase.setOnClickListener(v -> {
             MainActivity activity = adapter.activity;
-            int preAppliedTheme = MainActivity.getAppliedTheme().prodId;
 
             new Thread(() -> {
-                MainActivity.setTheme(theme);
-                activity.binding.setTheme(MainActivity.getAppliedTheme());
-
                 MainActivity.getDataStore().update(DataStoreHelper.KEY_THEME, theme.prodId);
 
                 activity.runOnUiThread(() -> {
-                    // update items directly, rather than updating them from the adapter
-                    for (ThemeViewHolder holder : adapter.viewHolders) {
-                        holder.binding.setTheme(MainActivity.getAppliedTheme());
+                    MainActivity.setTheme(theme);
+                    activity.binding.setTheme(theme);
 
-                        if (preAppliedTheme == theme.prodId) {
-                            holder.setThemePurchased();
-                            continue;
-                        }
-                        holder.loadData();
-                    }
+                    adapter.notifyDataSetChanged();
 
                     // notify the shop page switch the theme (because cannot access its binding)
                     activity.getSupportFragmentManager().setFragmentResult("switchTheme", new Bundle());
@@ -103,27 +98,31 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
         binding.setPreview(MainActivity.getAppliedTheme());
 
         new Thread(() -> {
-            List<Theme> themes = MainActivity.getDatabase().dao().getTheme(itemData.prodId);
-            theme = themes.size() > 0 ? themes.get(0) : new Theme();
+            theme = MainActivity.getDatabase().dao().getTheme(itemData.prodId);
+            if (theme == null) theme = new Theme();
 
             activity.runOnUiThread(() -> {
                 binding.setPreview(theme);
 
-                if (MainActivity.getAppliedTheme().prodId == theme.prodId) {
+                if (itemData.prodId == MainActivity.getAppliedTheme().prodId) {
                     setThemeApplied();
                     return;
                 }
 
-                if (itemData.isBought == 1) setThemePurchased();
+                if (itemData.isBought == 1 ) {
+                    setThemePurchased();
+                    return;
+                }
+
+                binding.btnShopItemPurchase.setText("Purchase");
+                binding.btnShopItemPurchase.setEnabled(true);
+                binding.btnShopItemPurchase.setOnClickListener(v -> {
+                    showPurchaseDialog(itemData.prodId, theme.name, itemData.price);
+                });
             });
         }).start();
 
         binding.tvShopItemPrice.setText(itemData.price == 0 ? "Free" : itemData.price + " coins");
-
-        binding.btnShopItemPurchase.setOnClickListener(v -> {
-            showPurchaseDialog(itemData.prodId, theme.name, itemData.price);
-        });
-
     }
 
     private void showPurchaseDialog(int prodId, String name, int price) {
@@ -146,8 +145,6 @@ public class ThemeViewHolder extends RecyclerView.ViewHolder {
         this.binding = binding;
 
         // disable TabLayout of the preview component
-        for (View v : binding.tabAnal.getTouchables()) {
-            v.setClickable(false);
-        }
+        for (View v : binding.tabAnal.getTouchables()) v.setClickable(false);
     }
 }
