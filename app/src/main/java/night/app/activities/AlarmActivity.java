@@ -30,6 +30,7 @@ import night.app.data.entities.Sleep;
 import night.app.data.dao.AlarmDAO;
 import night.app.databinding.ActivityAlarmBinding;
 import night.app.fragments.dialogs.ConfirmDialog;
+import night.app.services.AlarmReceiver;
 import night.app.utils.AlarmSchedule;
 import night.app.services.NotificationReceiver;
 import night.app.utils.DoNotDisturb;
@@ -42,7 +43,6 @@ public class AlarmActivity extends AppCompatActivity {
     public final static int TYPE_ALARM = 1;
 
     private int type = TYPE_ALARM;
-
 
     private final static int NP_SLEEP = 0;
     private final static int NP_WAKE = 1;
@@ -67,22 +67,32 @@ public class AlarmActivity extends AppCompatActivity {
         }).show(getSupportFragmentManager(), null);
     }
 
+    private void insertAlarm() {
+        AlarmDAO alarmDAO = MainActivity.getDatabase().alarmDAO();
+
+        new Thread(() -> {
+            alarmDAO.create(wakeUpTime, binding.swMission.isChecked() ? 1 : 0, prodId);
+
+            scheduleAlarm(alarmDAO.getLast().id);
+
+            setResult(RESULT_OK);
+            finish();
+        }).start();
+
+        Toast.makeText(this, "Created Alarm", Toast.LENGTH_SHORT).show();
+    }
+
     private void updateExistedAlarm() {
         AlarmDAO alarmDAO = MainActivity.getDatabase().alarmDAO();
         int enableMission = binding.swMission.isChecked() ? 1 : 0;
 
-        new Thread(() -> {
-            alarmDAO.update(alarm.id, wakeUpTime, enableMission, prodId);
-            setResult(RESULT_OK);
-        }).start();
+        new Thread(() -> alarmDAO.update(alarm.id, wakeUpTime, enableMission, prodId)).start();
 
         Toast.makeText(this, "Updated Alarm", Toast.LENGTH_SHORT).show();
 
-        new AlarmSchedule(getApplicationContext())
-                .setRingtone(prodId)
-                .cancel(alarm.id);
-
         scheduleAlarm(alarm.id);
+
+        setResult(RESULT_OK);
         finish();
     }
 
@@ -102,36 +112,15 @@ public class AlarmActivity extends AppCompatActivity {
                 int isDnd = binding.swDnd.isChecked() ? 1 : 0;
                 MainActivity.getDatabase().sleepDAO().insertUpdate(sleepTime, wakeUpTime, isMission, isDnd, prodId);
 
-                Intent intent = new Intent(this, NotificationReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(DatetimeUtils.getClosestDateTime(sleepTime));
-
-                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                NotificationReceiver.schedule(getApplicationContext(), sleepTime);
             }).start();
 
             setResult(RESULT_OK);
             finish();
         }
         else if (type == TYPE_ALARM) {
-            AlarmDAO alarmDAO = MainActivity.getDatabase().alarmDAO();
-
-            if (isUpdate) {
-                updateExistedAlarm();
-                return;
-            }
-            new Thread(() -> {
-                alarmDAO.create(wakeUpTime, binding.swMission.isChecked() ? 1 : 0, prodId);
-
-                scheduleAlarm(alarmDAO.getLast().id);
-
-                setResult(RESULT_OK);
-                finish();
-            }).start();
-
-            Toast.makeText(this, "Created Alarm", Toast.LENGTH_SHORT).show();
+            if (isUpdate) updateExistedAlarm();
+            else insertAlarm();
         }
     }
 
@@ -287,11 +276,7 @@ public class AlarmActivity extends AppCompatActivity {
         binding.npMins.setOnValueChangedListener(this::handlePickerValueChanged);
 
 
-        if (getIntent().getExtras().getInt("type") == TYPE_SLEEP) {
-            gotoSleepBranch();
-        }
-        else {
-            gotoAlarmBranch();
-        }
+        if (getIntent().getExtras().getInt("type") == TYPE_SLEEP) gotoSleepBranch();
+        else gotoAlarmBranch();
     }
 }

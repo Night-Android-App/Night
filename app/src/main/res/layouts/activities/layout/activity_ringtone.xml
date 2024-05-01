@@ -47,7 +47,6 @@
             android:id="@+id/rv_ringtones"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
             android:background="@{theme.secondary}" />
 
     </LinearLayout>

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import java.util.List;
 
 import night.app.adapters.RingtoneOwnedAdapter;
+import night.app.adapters.RingtoneOwnedViewHolder;
 import night.app.data.entities.Ringtone;
 import night.app.databinding.ActivityRingtoneBinding;
 import night.app.utils.LayoutUtils;
@@ -21,6 +22,8 @@ public class RingtoneActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ((RingtoneOwnedAdapter) binding.rvRingtones.getAdapter()).ringtonePlayer.release();
+
         if (ringtoneId != null) {
             Intent intent = new Intent();
             intent.putExtra("ringtoneId", ringtoneId);
@@ -52,6 +55,6 @@ public class RingtoneActivity extends AppCompatActivity {
 
         LayoutUtils.setSystemBarColor(getWindow(), binding.getTheme().getPrimary(), binding.getTheme().getSecondary());
 
-        binding.textView7.setOnClickListener(v -> finish());
+        binding.ibExit.setOnClickListener(v -> finish());
     }
 }

@@ -125,7 +125,6 @@ public class BackupConfigFragment extends Fragment {
                     dialog.showMessage();
                 });
             }
-            dialog.dismiss();
         }).start();
     }
 
@@ -172,7 +171,7 @@ public class BackupConfigFragment extends Fragment {
                 int status = res.optInt("responseCode");
                 if (status == 200) {
                     recoveryCallBack(res);
-                    new ConfirmDialog("Backup Success", "The data should be available in local", null)
+                    new ConfirmDialog("Recovery Success", "The data should be available in local", null)
                             .show(activity.getSupportFragmentManager(), null);
                     return;
                 }
@@ -185,7 +184,7 @@ public class BackupConfigFragment extends Fragment {
                     default  -> "Unexpected error status: " + status;
                 };
 
-                new ConfirmDialog("Backup Error", errorMsg, null)
+                new ConfirmDialog("Recovery Error", errorMsg, null)
                         .show(getParentFragmentManager(), null);
             });
         }

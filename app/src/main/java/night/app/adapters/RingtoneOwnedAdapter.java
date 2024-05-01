@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import night.app.R;
@@ -22,6 +23,8 @@ public class RingtoneOwnedAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public final AppCompatActivity activity;
     final public RingtonePlayer ringtonePlayer;
+    public List<RingtoneOwnedViewHolder> viewHolders = new ArrayList<>();
+
 
     @Override
     public int getItemCount() {
@@ -43,6 +46,7 @@ public class RingtoneOwnedAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) {
         ((RingtoneOwnedViewHolder) viewHolder).loadData(ringtoneList.get(position));
 
+        viewHolders.add((RingtoneOwnedViewHolder) viewHolder);
     }
 
     public RingtoneOwnedAdapter(AppCompatActivity activity, List<Ringtone> ringtoneList) {

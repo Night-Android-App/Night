@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import night.app.data.entities.Alarm;
 import night.app.data.entities.Day;
 import night.app.data.entities.Sleep;
 import night.app.databinding.ActivitySleepBinding;
@@ -45,7 +46,29 @@ public class SleepActivity extends AppCompatActivity {
     private final long date = DatetimeUtils.getTodayAtMidNight();
 
     private void wakeup() {
-        new MissionDialog().show(getSupportFragmentManager(), null);
+        new Thread(() -> {
+            if (sleepTrack != null) {
+                if (MainActivity.getDatabase().sleepDAO().getSleep().enableMission == 1) {
+                    new MissionDialog().show(getSupportFragmentManager(), null);
+                }
+                else {
+                    finish();
+                }
+            }
+            else if (getIntent().hasExtra("isAlarm")){
+                Alarm alarm = MainActivity.getDatabase().alarmDAO().getById(getIntent().getExtras().getInt("alarmId"));
+                if (alarm != null && alarm.enableMission == 1) {
+                    new MissionDialog().show(getSupportFragmentManager(), null);
+                }
+                else {
+                    AlarmService.getInstance().stopSelf();
+                    finish();
+                }
+            }
+            else {
+                new MissionDialog().show(getSupportFragmentManager(), null);
+            }
+        }).start();
     }
 
     public void disableAlarm() {
@@ -115,6 +138,12 @@ public class SleepActivity extends AppCompatActivity {
             runOnUiThread(() -> binding.tvCount.setText("End"));
 
             if (dnd != null) dnd.stop();
+
+            if (sleepTrack != null) {
+                Integer prodId = MainActivity.getDatabase().sleepDAO().getSleep().ringtoneId;
+                if (prodId != null) player.setId(prodId);
+            }
+
             player.run();
         });
         countdownThread.start();

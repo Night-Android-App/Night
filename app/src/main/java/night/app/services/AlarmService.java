@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import night.app.R;
+import night.app.activities.MainActivity;
 import night.app.activities.SleepActivity;
+import night.app.data.entities.Alarm;
 import night.app.utils.Notification;
 import night.app.utils.RingtonePlayer;
 
@@ -28,12 +30,16 @@ public class AlarmService extends Service {
     private RingtonePlayer player = null;
 
     private void playRingtone() {
-
-        player = new RingtonePlayer(getApplicationContext());
-        if (intent != null && intent.hasExtra("ringtoneId")) {
-            player.setId(intent.getExtras().getInt("ringtoneId"));
-        }
-        player.run();
+        new Thread(() -> {
+            player = new RingtonePlayer(getApplicationContext());
+            if (intent != null && intent.hasExtra("alarmId")) {
+                Alarm alarm = MainActivity.getDatabase().alarmDAO().getById(intent.getExtras().getInt("alarmId"));
+                if (alarm.ringtoneId != null) {
+                    player.setId(alarm.ringtoneId);
+                }
+            }
+            player.run();
+        }).start();
     }
 
     @Override
@@ -44,8 +50,10 @@ public class AlarmService extends Service {
 
         Intent nextActivity = new Intent(getApplicationContext(), SleepActivity.class);
         nextActivity.putExtra("isAlarm", true);
+        System.out.println("?" + intent.getExtras().getInt("alarmId"));
+        nextActivity.putExtra("alarmId", intent.getExtras().getInt("alarmId"));
 
-        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, nextActivity, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, nextActivity, PendingIntent.FLAG_MUTABLE);
 
         Notification notification = new Notification(getApplicationContext(), pi, "Night", "Wake up!");
         startForeground(1, notification.getBuilder().build());

@@ -29,7 +29,7 @@ public class RingtoneOwnedViewHolder extends RecyclerView.ViewHolder {
         binding.llItemRingtone.setBackgroundTintList(ColorStateList.valueOf(binding.getTheme().getSurfaceVariant()));
 
         if (adapter.ringtonePlayer.playerOwner != null) {
-//            adapter.viewHolders.get(adapter.ringtonePlayer.playerOwner).stopRingtone();
+            adapter.viewHolders.get(adapter.ringtonePlayer.playerOwner).stopRingtone();
         }
 
         adapter.ringtonePlayer.replaceRingtone(id, getAdapterPosition());
@@ -39,6 +39,8 @@ public class RingtoneOwnedViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void loadData(Ringtone itemData) {
+        id = itemData.prodId;
+
         binding.tvShopItemPrice.setVisibility(View.GONE);
 
         binding.tvRingtoneName.setText(itemData.name);
@@ -53,8 +55,19 @@ public class RingtoneOwnedViewHolder extends RecyclerView.ViewHolder {
             adapter.activity.setResult(Activity.RESULT_OK, intent);
 
             ((RingtoneActivity) adapter.activity).selectRingtone(itemData.prodId);
+
+            for (RingtoneOwnedViewHolder holder : adapter.viewHolders) {
+                if (!holder.equals(this)) {
+                    holder.binding.button2.setText("Apply");
+                    holder.binding.button2.setEnabled(true);
+                }
+            }
+
+            binding.button2.setText("Applied");
+            binding.button2.setEnabled(false);
         });
-//                binding.llItemRingtone.setOnClickListener(v -> playRingtone());
+
+        binding.llItemRingtone.setOnClickListener(v -> playRingtone());
     }
 
     public RingtoneOwnedViewHolder(RingtoneOwnedAdapter adapter, HolderRingtoneViewBinding binding) {

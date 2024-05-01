@@ -45,17 +45,12 @@ public class RingtoneViewHolder extends RecyclerView.ViewHolder {
 
     public void loadData(Product itemData) {
         id = itemData.prodId;
-        binding.tvShopItemPrice.setText(itemData.price + " coins");
+//        binding.tvShopItemPrice.setText(itemData.price + " coins");
 
         new Thread(() -> {
             Ringtone ringtone = MainActivity.getDatabase().dao().getRingtone(itemData.prodId).get(0);
             adapter.activity.runOnUiThread(() -> {
                 binding.tvRingtoneName.setText(ringtone.name);
-
-//                int hours = (int) Math.floor(ringtone.duration/60f);
-//                int minutes = ringtone.duration % 60;
-//                binding.tvRingtoneDuration.setText(LocalTime.of(hours, minutes).toString());
-
                 binding.llItemRingtone.setOnClickListener(v -> playRingtone());
 
 
