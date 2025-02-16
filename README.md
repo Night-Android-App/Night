@@ -19,3 +19,11 @@ Users can enable missions to ensure they wake up and stop the alarm sounds
 #### 4. Theme Shop
 Switch the theme color of the user interface
 Note: Users cannot purchase themes at this time due to server closure.
+
+## Showcase
+
+https://github.com/user-attachments/assets/94900ecf-5220-45e1-be69-297054779dc4
+
+
+
+
